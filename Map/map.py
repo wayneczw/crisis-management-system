@@ -95,25 +95,38 @@ def psimapview():
     return render_template('psimap.html', psimap=psimap)
 #end def
 
+ICONS = {"Partly Cloudy": "https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png",
+            "Cloudy": "https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png",
+            "Fair": "https://images.sftcdn.net/images/t_app-logo-l,f_auto,dpr_auto/p/6342e25c-9b2e-11e6-8327-00163ed833e7/297691412/heliospaint-logo.png",
+            "Fair and Warm": "https://images.sftcdn.net/images/t_app-logo-l,f_auto,dpr_auto/p/6342e25c-9b2e-11e6-8327-00163ed833e7/297691412/heliospaint-logo.png",
+            "Light Rain": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
+            "Moderate Rain": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
+            "Heacy Rain": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
+            "Passing Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
+            "Light Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
+            "Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
+            "Heavy Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
+            "Thundery Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
+            "Heavy Thundery Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
+            "Heavy Thundery Showers with Gustly wind": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566"
+            }
 
 @app.route("/weather")
 def weathermapview():
     weather_response = urllib.request.urlopen('https://api.data.gov.sg/v1/environment/2-hour-weather-forecast', timeout=5)
     weather = [line.decode('utf-8') for line in weather_response]
     weather_json_dict_list = [json.loads(js) for js in weather]
-    # print(weather_json_dict_list[0]['items'][0]['forecasts'])
 
-    weather_dict = dict()
-    for item in weather_json_dict_list[0]['area_metadata']:
-        weather_dict[item['name']] = dict(lat=item['label_location']['latitude'], lng=item['label_location']['longitude'])
+    weather_dict = {item['name']: dict(lat=item['label_location']['latitude'], lng=item['label_location']['longitude']) for item in weather_json_dict_list[0]['area_metadata']} 
 
     for item in weather_json_dict_list[0]['items'][0]['forecasts']:
         weather_dict[item['area']]['forecast'] = item['forecast']
+    #end for
 
     #create markers
     markers_list = list()
     for area, info_dict in weather_dict.items():
-        tmp_dict = dict(icon='http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+        tmp_dict = dict(icon=ICONS[info_dict['forecast']],
                         lat=info_dict['lat'],
                         lng=info_dict['lng'],
                         infobox="{} Forecast: \n {}</b>".format(area, info_dict['forecast']))
