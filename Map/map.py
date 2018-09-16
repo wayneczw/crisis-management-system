@@ -179,7 +179,7 @@ def sheltermapview():
     #create markers
     markers_list = list()
     for area, info_dict in shelters_dict.items():
-        tmp_dict = dict(icon='http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+        tmp_dict = dict(icon='https://addons-media.operacdn.com/media/extensions/55/178855/1.1.11.1-rev2/icons/icon_64x64.png',
                         lat=info_dict['lat'],
                         lng=info_dict['lng'],
                         infobox="{}\n Address: {}\n Postal Code: {}\n Description: {}</b>".format(area, info_dict['address'], info_dict['postal_code'], info_dict['description']))
