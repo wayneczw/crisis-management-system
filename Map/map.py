@@ -7,6 +7,8 @@ import json
 import requests
 import urllib.request
 from urllib.request import Request, urlopen
+import bs4
+from geopy.geocoders import Nominatim
 
 app = Flask(__name__, template_folder="templates")
 
@@ -21,6 +23,9 @@ REGION_LAT_LNG = dict(east=dict(lat=1.3413, lng=103.9638),
                 central=dict(lat=1.36, lng=103.8))
 
 COLOR_CODE = dict(green='#228B22', blue='#4169e1', yellow='#ffcc00', orange='#FF4500', red='#B22222')
+
+GEOCODE_URL = 'https://maps.googleapis.com/maps/api/geocode/json'
+DENGUE_URL = 'https://www.nea.gov.sg/dengue-zika/dengue/dengue-clusters'
 
 @app.route("/")
 def psimapview():
@@ -199,6 +204,55 @@ def sheltermapview():
     return render_template('sheltersmap.html', sheltersmap=sheltersmap)
 #end def
 
+@app.route("/dengue")
+def denguemapview():
+
+    dengue_clusters = get_dengue_clusters()
+    markers_list = []
+    for cluster in dengue_clusters:
+        latlng = address_to_latlng(cluster['locality'])
+        tmp_dict = dict(
+            icon='https://addons-media.operacdn.com/media/extensions/55/178855/1.1.11.1-rev2/icons/icon_64x64.png',
+            lat=latlng['lat'],
+            lng=latlng['lng'],
+            infobox="")
+        markers_list.append(tmp_dict)
+    denguemap = Map(
+        identifier="denguemap",
+        lat=1.3521,
+        lng=103.8198,
+        zoom=12,
+        region='SG',
+        style="height:800px;width:1200px;margin:0;",
+        markers=markers_list
+    )
+    return render_template('denguemap.html', denguemap=denguemap)
+
+def get_dengue_clusters():
+    results = []
+    r = requests.get(DENGUE_URL)
+    soup = bs4.BeautifulSoup(r.text, 'html.parser')
+    for l in soup.findAll('td', attrs={'data-type':'locality'}):
+        a = l.find('a')
+        cases_last2weeks = l.find_next('td')
+        cases_sincestart = l.find_next('td').find_next('td')
+        results.append({'locality': a.text, 'num_last2weeks':int(cases_last2weeks.text), 'num_all':int(cases_sincestart.text)})
+    return results
+
+
+def address_to_latlng(address):
+    '''address = address.split('/')[0]
+    print (address)
+    params = {'sensor': 'false', 'address': address, 'key' : API_KEY}
+    r = requests.get(GEOCODE_URL, params = params)
+    results = r.json()['results']
+    location = results[0]['geometry']['location']
+    return {'lat': location['lat'], 'lng': location['lng']}
+    '''
+    geolocator = Nominatim(user_agent="cms")
+    location = geolocator.geocode(address + ", Singapore")
+    return {'lat': location.latitude, 'lng': location.longitude}
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=True)
+    #print (get_dengue_clusters())
