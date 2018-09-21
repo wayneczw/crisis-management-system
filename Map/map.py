@@ -114,7 +114,7 @@ ICONS = {"Partly Cloudy": "https://addons-media.operacdn.com/media/extensions/52
             "Heavy Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
             "Thundery Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
             "Heavy Thundery Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
-            "Heavy Thundery Showers with Gustly wind": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566"
+            "Heavy Thundery Showers with Gusty Winds": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566"
             }
 
 @app.route("/weather")
@@ -135,7 +135,7 @@ def weathermapview():
         tmp_dict = dict(icon=ICONS[info_dict['forecast']],
                         lat=info_dict['lat'],
                         lng=info_dict['lng'],
-                        infobox="{} Forecast: \n {}</b>".format(area, info_dict['forecast']))
+                        infobox="<b>{} Forecast: \n {}</b>".format(area, info_dict['forecast']))
         markers_list.append(tmp_dict)
 
     weathermap = Map(
@@ -178,6 +178,10 @@ def sheltermapview():
                 lat=lat,
                 lng=lng)
         #end else
+        # tmp_dict = dict(address=item['address'],
+        #     postal_code=item['postal_code'],
+        #     description=item['description'])
+        # tmp_dict.update(address_to_latlng(item['address']))
 
         shelters_dict[item['name']] = tmp_dict
     #end for
@@ -185,7 +189,11 @@ def sheltermapview():
     #create markers
     markers_list = list()
     for area, info_dict in shelters_dict.items():
-        tmp_dict = dict(icon='https://addons-media.operacdn.com/media/extensions/55/178855/1.1.11.1-rev2/icons/icon_64x64.png',
+        # tmp_dict = dict(icon='https://addons-media.operacdn.com/media/extensions/55/178855/1.1.11.1-rev2/icons/icon_64x64.png',
+        #                 lat=info_dict['lat'],
+        #                 lng=info_dict['lng'],
+        #                 infobox="{}\n Address: {}\n Postal Code: {}\n Description: {}</b>".format(area, info_dict['address'], info_dict['postal_code'], info_dict['description']))
+        tmp_dict = dict(icon=icons.dots.green,
                         lat=info_dict['lat'],
                         lng=info_dict['lng'],
                         infobox="{}\n Address: {}\n Postal Code: {}\n Description: {}</b>".format(area, info_dict['address'], info_dict['postal_code'], info_dict['description']))
@@ -252,7 +260,10 @@ def address_to_latlng(address):
     '''
     geolocator = Nominatim(user_agent="cms")
     location = geolocator.geocode(address + ", Singapore")
-    return {'lat': location.latitude, 'lng': location.longitude}
+    try:
+        return {'lat': location.latitude, 'lng': location.longitude}
+    except AttributeError:
+        return {'lat': 0, 'lng': 0}
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=True)
