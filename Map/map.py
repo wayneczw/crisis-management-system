@@ -159,29 +159,10 @@ def sheltermapview():
 
     shelters_dict = dict()
     for item in shelters_dict_list:
-        geo_api_response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}'.format(item['address'].replace(" ", "+"), API_KEY))
-        geo_api_response_dict = geo_api_response.json()
-        if geo_api_response_dict['status'] == 'OK':
-            lat = geo_api_response_dict['results'][0]['geometry']['location']['lat']
-            lng = geo_api_response_dict['results'][0]['geometry']['location']['lng']
-            tmp_dict = dict(address=item['address'],
-                postal_code=item['postal_code'],
-                description=item['description'],
-                lat=lat,
-                lng=lng)
-        else:
-            lat = 0
-            lng = 0
-            tmp_dict = dict(address=item['address'],
-                postal_code=item['postal_code'],
-                description=item['description'],
-                lat=lat,
-                lng=lng)
-        #end else
-        # tmp_dict = dict(address=item['address'],
-        #     postal_code=item['postal_code'],
-        #     description=item['description'])
-        # tmp_dict.update(address_to_latlng(item['address']))
+        tmp_dict = dict(address=item['address'],
+            postal_code=item['postal_code'],
+            description=item['description'])
+        tmp_dict.update(address_to_latlng(item['address']))
 
         shelters_dict[item['name']] = tmp_dict
     #end for
@@ -258,12 +239,25 @@ def address_to_latlng(address):
     location = results[0]['geometry']['location']
     return {'lat': location['lat'], 'lng': location['lng']}
     '''
-    geolocator = Nominatim(user_agent="cms")
-    location = geolocator.geocode(address + ", Singapore")
-    try:
-        return {'lat': location.latitude, 'lng': location.longitude}
-    except AttributeError:
-        return {'lat': 0, 'lng': 0}
+    # geolocator = Nominatim(user_agent="cms")
+    # location = geolocator.geocode(address + ", Singapore")
+    # try:
+    #     return {'lat': location.latitude, 'lng': location.longitude}
+    # except AttributeError:
+    #     return {'lat': 0, 'lng': 0}
+    geo_api_response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}'.format(address.replace(" ", "+"), API_KEY))
+    geo_api_response_dict = geo_api_response.json()
+    if geo_api_response_dict['status'] == 'OK':
+        lat = geo_api_response_dict['results'][0]['geometry']['location']['lat']
+        lng = geo_api_response_dict['results'][0]['geometry']['location']['lng']
+    else:
+        lat = 0
+        lng = 0
+    #end if
+
+    return dict(lat=lat, lng=lng)
+#end def
+
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=True)
