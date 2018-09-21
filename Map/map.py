@@ -201,12 +201,20 @@ def denguemapview():
     markers_list = []
     for cluster in dengue_clusters:
         latlng = address_to_latlng(cluster['locality'])
+        # tmp_dict = dict(
+        #     icon='https://addons-media.operacdn.com/media/extensions/55/178855/1.1.11.1-rev2/icons/icon_64x64.png',
+        #     lat=latlng['lat'],
+        #     lng=latlng['lng'],
+        #     infobox="")
         tmp_dict = dict(
-            icon='https://addons-media.operacdn.com/media/extensions/55/178855/1.1.11.1-rev2/icons/icon_64x64.png',
+            icon=icons.dots.red,
             lat=latlng['lat'],
             lng=latlng['lng'],
             infobox="")
+
         markers_list.append(tmp_dict)
+    #end for
+
     denguemap = Map(
         identifier="denguemap",
         lat=1.3521,
@@ -217,6 +225,8 @@ def denguemapview():
         markers=markers_list
     )
     return render_template('denguemap.html', denguemap=denguemap)
+#end def
+
 
 def get_dengue_clusters():
     results = []
@@ -228,6 +238,7 @@ def get_dengue_clusters():
         cases_sincestart = l.find_next('td').find_next('td')
         results.append({'locality': a.text, 'num_last2weeks':int(cases_last2weeks.text), 'num_all':int(cases_sincestart.text)})
     return results
+#end def
 
 
 def address_to_latlng(address):
