@@ -1,7 +1,7 @@
 # import the Flask class from the flask module
 from flask import Flask, render_template, redirect, url_for, request, session, flash
 from functools import wraps
-from Dashboard.dashboard import dashboard_api, dashboard
+from dashboard import dashboard_api, dashboard
 
 # create the application object
 app = Flask(__name__)
