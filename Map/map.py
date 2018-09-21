@@ -12,9 +12,10 @@ from geopy.geocoders import Nominatim
 
 app = Flask(__name__, template_folder="templates")
 
-app.config['GOOGLEMAPS_KEY'] = "AIzaSyAYnlWxEoOaBVFkv6VijmIEZ1pumZfhFoA"
-GoogleMaps(app, key="AIzaSyAYnlWxEoOaBVFkv6VijmIEZ1pumZfhFoA")
-API_KEY = "AIzaSyAYnlWxEoOaBVFkv6VijmIEZ1pumZfhFoA"
+API_KEY = "AIzaSyDc1Hx9zrh10qY4FSl-A0OwIVKRNTBkZGs"
+app.config['GOOGLEMAPS_KEY'] = API_KEY
+GoogleMaps(app, key=API_KEY)
+#API_KEY = "AIzaSyAYnlWxEoOaBVFkv6VijmIEZ1pumZfhFoA"
 
 REGION_LAT_LNG = dict(east=dict(lat=1.3413, lng=103.9638),
                 west=dict(lat=1.3483, lng=103.6831),
