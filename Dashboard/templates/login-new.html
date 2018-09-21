@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<link href="static/css/login.css" rel="stylesheet" media="screen">
+  <head>
+    <title>Crisis Management System - Login</title>
+  </head>
+  <body id="LoginForm">
+        <div class="login-form">
+            <div class="main-div">
+                <div class="panel">
+                    <h2>Crisis Management System</h2>
+                    <p>Please enter your username and password</p>
+                </div>
+                <form id="Login" action="" method="post">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Username" name="username" value="{{request.form.username }}">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Password" name="password" value="{{request.form.password }}">
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" placeholder="Login As" name="role" value="{{request.form.role}}">
+                            <option value="Admin">Admin</option>
+                            <option value="Call Operator">Call Operator</option>
+                            <option value="Government Agency">Government Agency</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <!-- errors -->
+                {% if error %}
+                <p class="error"><strong>Error:</strong> {{ error }}</p>
+                {% endif %}
+            </div>
+            <p class="botto-text"> Powered by Giligili </p>
+        </div>
+  </body>
+{% endblock %}
