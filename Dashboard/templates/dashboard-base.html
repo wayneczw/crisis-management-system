@@ -69,7 +69,7 @@
 
                     <h3 class="menu-title">Account Management</h3><!-- /.menu-title -->
 
-                    <li class="menu-item-has-children dropdown">
+                    <li class="menu-item">
                         <a href="{{ url_for('account.register') }}"> <i class="menu-icon fa fa-sign-in"></i>Register</a>
                     </li>
                     <li>
@@ -77,7 +77,12 @@
                     </li>
                     <h3 class="menu-title">Call Operator</h3><!-- /.menu-title -->
                     <li class="menu-item-has-children dropdown">
-                        <a href="#"> <i class="menu-icon fa fa-glass"></i>Incident Report</a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-glass"></i>Incident Report</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="fa fa-puzzle-piece"></i><a href="#">Submit</a></li>
+                            <li><i class="fa fa-id-badge"></i><a href="#">Modify</a></li>
+                            <li><i class="fa fa-id-badge"></i><a href="#">Delete</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div><!-- /.navbar-collapse -->

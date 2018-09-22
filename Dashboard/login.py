@@ -18,13 +18,10 @@ def welcome():
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+        if not __verify_login(request.form['username'], request.form['password'], request.form['role']):
             error = 'Invalid Credentials. Please try again.'
-        elif request.form['role'] != 'Admin':
-            error = 'You are {}'.format(request.form['role'])
         else:
             session["logged_in"] = True
-            flash('You were just logged in')
             return redirect(url_for('dashboard.dashboard'))
     return render_template('login-new.html', error=error)
 
@@ -33,6 +30,15 @@ def logout():
     session.pop('logged_in', None)
     flash('You were just logged out')
     return redirect(url_for('welcome'))
+
+
+def __verify_login(username, password, role):
+    string = '{},{},{}'.format(username, password, role)
+    userlist = open('db/userlist.csv').readlines()
+    for line in userlist:
+        if string in line:
+            return True
+    return False
 
 # start the server with the 'run()' method
 if __name__ == '__main__':
