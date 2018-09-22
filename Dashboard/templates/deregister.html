@@ -24,26 +24,35 @@
                         <form action="" method="post" class="form-horizontal">
                           <div class="row form-group">
                             <div class="col col-md-2"><label for="hf-email" class=" form-control-label">Username</label></div>
-                            <div class="col-12 col-md-10"><input type="email" id="hf-email" name="hf-email" placeholder="Enter Username..." class="form-control"></div>
+                            <div class="col-12 col-md-10"><input type="text" id="hf-email" name="username" placeholder="Enter Username..." class="form-control"></div>
                           </div>
                             <div class="row form-group">
                                 <div class="col col-md-2"></div>
                             <!--<div class="col col-md-2"><label for="hf-email" class=" form-control-label">Username</label></div>-->
                             <div class="col-12 col-md-10"><label for="checkbox1">
-                                    <input type="checkbox" id="checkbox1" name="checkbox1" value="option1">  I confirm that this account will be deregistered.
+                                    <input type="checkbox" id="checkbox1" name="checkbox1" value="{{request.form.checkbox1}}">  I confirm that this account will be deregistered.
                                   </label></div>
                           </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa fa-dot-circle-o"></i> Deregister
+                                </button>
+                            </div>
                         </form>
-                      </div>
-
-                      <div class="card-footer">
-                        <button type="submit" class="btn btn-danger btn-sm">
-                          <i class="fa fa-dot-circle-o"></i> Deregister
-                        </button>
                       </div>
                     </div>
         </div>
     </div>
     <!-- some content -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <script>
+          var messages = {{ messages | safe }};
+          for (var i=0; i<messages.length; i++) {
+            alert(messages[i]);
+          }
+        </script>
+      {% endif %}
+    {% endwith %}
 
 {% endblock %}
