@@ -7,10 +7,3 @@ dashboard_api = Blueprint('dashboard', __name__, template_folder='templates')
 @login_required
 def dashboard():
     return render_template('dashboard.html')  # render a template
-
-
-#
-@dashboard_api.route('/deregister')
-@login_required
-def deregister():
-    return render_template('deregister.html')  # render a template

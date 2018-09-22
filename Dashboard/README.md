@@ -10,13 +10,12 @@ pip install -r requirements.txt
 ```
 python login.py
 ``` 
-- Open _localhost:5000/login_ in your browser to view the login page.
+- Open `localhost:5000/login` in your browser to view the login page.
 
 
-#### About login 
-_(to be changed after further development)_
+### About login 
+All accounts created are stored in `db/userlist.csv`. Please
+refer to the file if you need to use dummy accounts for testing. 
 
-For now, input username as "admin" and password as "admin", and select "Admin" under the Login As field.
-
-You will be redirected to the dashboard route at _localhost:5000/dashboard_.
+After successful login, you will be redirected to the dashboard route at `localhost:5000/dashboard`.
 
