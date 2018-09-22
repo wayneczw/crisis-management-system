@@ -1,29 +1,13 @@
 # import the Flask class from the flask module
 from flask import Flask, render_template, redirect, url_for, request, session, flash
-from functools import wraps
-from dashboard import dashboard_api, dashboard
+from Dashboard.dashboard import dashboard_api
+from Dashboard.account_management import account_api
 
 # create the application object
 app = Flask(__name__)
 app.secret_key = "aD1R3s2"
 app.register_blueprint(dashboard_api)
-
-# # login required decorator
-# def login_required(f):
-#     @wraps(f)
-#     def wrap(*args, **kwargs):
-#         if 'logged_in' in session:
-#             return f(*args, **kwargs)
-#         else:
-#             flash('You need to login first.')
-#             return redirect(url_for('login'))
-#     return wrap
-
-# use decorators to link the function to a url
-# @app.route('/dashboard')
-# @login_required
-# def home():
-#     return render_template('dashboard.html')  # render a template
+app.register_blueprint(account_api)
 
 @app.route('/welcome')
 def welcome():
