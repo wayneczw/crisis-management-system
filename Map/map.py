@@ -84,34 +84,34 @@ def psimapview():
         style="height:800px;width:1200px;margin:0;",
         markers=[
             {
-                'icon': icons.alpha.E,
+                'icon': "//maps.google.com/mapfiles/kml/paddle/E.png",
                 'lat':  east_info['lat'],
                 'lng':  east_info['lng'],
-                'infobox': "<b style='color:{};'>East PSI: \n {}\n{}</b>".format(COLOR_CODE[east_info['color']], east_info['status'], east_info['psi'])
+                'infobox': "<b style='color:{};'> <h3>North PSI:</h3> <h4>{} {}</h4></b>".format(COLOR_CODE[east_info['color']], east_info['status'], east_info['psi'])
             },
             {
-                'icon': icons.alpha.W,
+                'icon': "//maps.google.com/mapfiles/kml/paddle/W.png",
                 'lat':  west_info['lat'],
                 'lng':  west_info['lng'],
-                'infobox': "<b style='color:{};'>West PSI: \n {}\n{}</b>".format(COLOR_CODE[west_info['color']], west_info['status'], west_info['psi'])
+                'infobox': "<b style='color:{};'> <h3>West PSI:</h3> <h4>{} {}</h4></b>".format(COLOR_CODE[west_info['color']], west_info['status'], west_info['psi'])
             },
             {
-                'icon': icons.alpha.S,
+                'icon': "//maps.google.com/mapfiles/kml/paddle/S.png",
                 'lat':  south_info['lat'],
                 'lng':  south_info['lng'],
-                'infobox': "<b style='color:{};'>South PSI: \n {}\n{}</b>".format(COLOR_CODE[south_info['color']], south_info['status'], south_info['psi'])
+                'infobox': "<b style='color:{};'> <h3>South PSI:</h3> <h4>{} {}</h4></b>".format(COLOR_CODE[south_info['color']], south_info['status'], south_info['psi'])
             },
             {
-                'icon': icons.alpha.N,
+                'icon': "//maps.google.com/mapfiles/kml/paddle/N.png",
                 'lat':  north_info['lat'],
                 'lng':  north_info['lng'],
-                'infobox': "<b style='color:{};'>North PSI: \n {}\n{}</b>".format(COLOR_CODE[north_info['color']], north_info['status'], north_info['psi'])
+                'infobox': "<b style='color:{};'> <h3>North PSI:</h3> <h4>{} {}</h4></b>".format(COLOR_CODE[north_info['color']], north_info['status'], north_info['psi'])
             },
             {
-                'icon': icons.alpha.C,
+                'icon': "//maps.google.com/mapfiles/kml/paddle/C.png",
                 'lat':  central_info['lat'],
                 'lng':  central_info['lng'],
-                'infobox': "<b style='color:{};'>Central PSI: \n {}\n{}</b>".format(COLOR_CODE[central_info['color']], central_info['status'], central_info['psi'])
+                'infobox': "<b style='color:{};'> <h3>Central PSI:</h3> <h4>{} {}</h4></b>".format(COLOR_CODE[central_info['color']], central_info['status'], central_info['psi'])
             }
         ]
     )
@@ -137,7 +137,7 @@ def weathermapview():
         tmp_dict = dict(icon=ICONS[info_dict['forecast']],
                         lat=info_dict['lat'],
                         lng=info_dict['lng'],
-                        infobox="<b>{} Forecast: \n {}</b>".format(area, info_dict['forecast']))
+                        infobox="<h3>{}</h3> <h4>Forecast: {}</h4>".format(area, info_dict['forecast']))
         markers_list.append(tmp_dict)
 
     weathermap = Map(
@@ -172,14 +172,11 @@ def sheltermapview():
     #create markers
     markers_list = list()
     for area, info_dict in shelters_dict.items():
-        # tmp_dict = dict(icon='https://addons-media.operacdn.com/media/extensions/55/178855/1.1.11.1-rev2/icons/icon_64x64.png',
-        #                 lat=info_dict['lat'],
-        #                 lng=info_dict['lng'],
-        #                 infobox="{}\n Address: {}\n Postal Code: {}\n Description: {}</b>".format(area, info_dict['address'], info_dict['postal_code'], info_dict['description']))
+        
         tmp_dict = dict(icon='http://maps.google.com/mapfiles/kml/pal2/icon10.png',
                         lat=info_dict['lat'],
                         lng=info_dict['lng'],
-                        infobox="{}\n Address: {}\n Postal Code: {}\n Description: {}</b>".format(area, info_dict['address'], info_dict['postal_code'], info_dict['description']))
+                        infobox="<h3> {}</h3> <h4>Address: {}</h4> <h4>Description: {}</h4>".format(area, info_dict['address'], info_dict['description']))
         markers_list.append(tmp_dict)
     #end for
 
