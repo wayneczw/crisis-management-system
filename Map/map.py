@@ -25,8 +25,25 @@ REGION_LAT_LNG = dict(east=dict(lat=1.3413, lng=103.9638),
 
 COLOR_CODE = dict(green='#228B22', blue='#4169e1', yellow='#ffcc00', orange='#FF4500', red='#B22222')
 
-GEOCODE_URL = 'https://maps.googleapis.com/maps/api/geocode/json'
+# GEOCODE_URL = 'https://maps.googleapis.com/maps/api/geocode/json'
 DENGUE_URL = 'https://www.nea.gov.sg/dengue-zika/dengue/dengue-clusters'
+ICONS = {"Partly Cloudy": "https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png",
+            "Cloudy": "https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png",
+            "Fair (Day)": "https://images.sftcdn.net/images/t_app-logo-l,f_auto,dpr_auto/p/6342e25c-9b2e-11e6-8327-00163ed833e7/297691412/heliospaint-logo.png",
+            "Fair (Night)": "https://addons-media.operacdn.com/media/extensions/59/228359/0.2.8-rev1/icons/icon_64x64_0681774836f9505465805085bb518811.png",
+            "Fair and Warm": "https://images.sftcdn.net/images/t_app-logo-l,f_auto,dpr_auto/p/6342e25c-9b2e-11e6-8327-00163ed833e7/297691412/heliospaint-logo.png",
+            "Light Rain": "http://maps.google.com/mapfiles/kml/shapes/rainy.png",
+            "Moderate Rain": "http://maps.google.com/mapfiles/kml/shapes/rainy.png",
+            "Heavy Rain": "http://maps.google.com/mapfiles/kml/shapes/rainy.png",
+            "Passing Showers": "http://maps.google.com/mapfiles/kml/shapes/rainy.png",
+            "Light Showers": "http://maps.google.com/mapfiles/kml/shapes/rainy.png",
+            "Showers": "http://maps.google.com/mapfiles/kml/shapes/rainy.png",
+            "Heavy Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
+            "Thundery Showers": "http://maps.google.com/mapfiles/kml/shapes/thunderstorm.png",
+            "Heavy Thundery Showers": "http://maps.google.com/mapfiles/kml/shapes/thunderstorm.png",
+            "Heavy Thundery Showers with Gusty Winds": "http://maps.google.com/mapfiles/kml/shapes/thunderstorm.png"
+            }
+
 
 @app.route("/")
 def psimapview():
@@ -101,21 +118,6 @@ def psimapview():
     return render_template('psimap.html', psimap=psimap)
 #end def
 
-ICONS = {"Partly Cloudy": "https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png",
-            "Cloudy": "https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png",
-            "Fair": "https://images.sftcdn.net/images/t_app-logo-l,f_auto,dpr_auto/p/6342e25c-9b2e-11e6-8327-00163ed833e7/297691412/heliospaint-logo.png",
-            "Fair and Warm": "https://images.sftcdn.net/images/t_app-logo-l,f_auto,dpr_auto/p/6342e25c-9b2e-11e6-8327-00163ed833e7/297691412/heliospaint-logo.png",
-            "Light Rain": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
-            "Moderate Rain": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
-            "Heavy Rain": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
-            "Passing Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
-            "Light Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
-            "Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
-            "Heavy Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
-            "Thundery Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
-            "Heavy Thundery Showers": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566",
-            "Heavy Thundery Showers with Gusty Winds": "https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566"
-            }
 
 @app.route("/weather")
 def weathermapview():
@@ -174,7 +176,7 @@ def sheltermapview():
         #                 lat=info_dict['lat'],
         #                 lng=info_dict['lng'],
         #                 infobox="{}\n Address: {}\n Postal Code: {}\n Description: {}</b>".format(area, info_dict['address'], info_dict['postal_code'], info_dict['description']))
-        tmp_dict = dict(icon=icons.dots.green,
+        tmp_dict = dict(icon='http://maps.google.com/mapfiles/kml/pal2/icon10.png',
                         lat=info_dict['lat'],
                         lng=info_dict['lng'],
                         infobox="{}\n Address: {}\n Postal Code: {}\n Description: {}</b>".format(area, info_dict['address'], info_dict['postal_code'], info_dict['description']))
