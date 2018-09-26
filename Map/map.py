@@ -224,6 +224,37 @@ def denguemapview():
     return render_template('denguemap.html', denguemap=denguemap)
 #end def
 
+@app.route("/incidents")
+def incidentsmapview(incidents_list):
+
+
+    # create markers
+    markers_list = list()
+    for incident in incidents_list.items():
+        tmp_dict = dict(icon='http://maps.google.com/mapfiles/kml/pal2/icon10.png',
+                        lat=incident['lat'],
+                        lng=incident['lng'],
+                        infobox="<h4>Name: {}</h4> <h4>Report Date: {}</h4> <h4>Address: {}</h4> <h4>Description: {}</h4> <h4>Level: {}</h4> <h4>Assignee: {}</h4>".format(incident['name'],
+                                                                                                                                                                           incident['report_date'],
+                                                                                                                                                                           incident['address'],
+                                                                                                                                                                           incident['description'],
+                                                                                                                                                                           incident['level'],
+                                                                                                                                                                           incident['assignee']
+                                                                                                                                                                           ))
+        markers_list.append(tmp_dict)
+    # end for
+
+    incidentsmap = Map(
+        identifier="incidentsmap",
+        lat=1.3521,
+        lng=103.8198,
+        zoom=12,
+        region='SG',
+        style="height:800px;width:1200px;margin:0;",
+        markers=markers_list
+    )
+
+    return render_template('incidentsmap.html', incidentsmap=incidentsmap)
 
 def get_dengue_clusters():
     results = []
