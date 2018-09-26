@@ -200,17 +200,15 @@ def denguemapview():
     markers_list = []
     for cluster in dengue_clusters:
         latlng = address_to_latlng(cluster['locality'])
-        # tmp_dict = dict(
-        #     icon='https://addons-media.operacdn.com/media/extensions/55/178855/1.1.11.1-rev2/icons/icon_64x64.png',
-        #     lat=latlng['lat'],
-        #     lng=latlng['lng'],
-        #     infobox="")
+        if cluster['num_all'] >= 10:
+            icon = icons.dots.red
+        else:
+            icon = icons.dots.orange
         tmp_dict = dict(
-            icon=icons.dots.red,
+            icon=icon,
             lat=latlng['lat'],
             lng=latlng['lng'],
-            infobox="")
-
+            infobox="<h3> {}</h3> <h4>Cases with onset in last 2 weeks: {}</h4> <h4>Cases since start of cluster: {}</h4> ".format(cluster['cluster'], cluster['num_last2weeks'], cluster['num_all']))
         markers_list.append(tmp_dict)
     #end for
 
@@ -232,29 +230,16 @@ def get_dengue_clusters():
     r = requests.get(DENGUE_URL)
     soup = bs4.BeautifulSoup(r.text, 'html.parser')
     for l in soup.findAll('td', attrs={'data-type':'locality'}):
-        a = l.find('a')
+        cluster = l.find('a')
         cases_last2weeks = l.find_next('td')
         cases_sincestart = l.find_next('td').find_next('td')
-        results.append({'locality': a.text, 'num_last2weeks':int(cases_last2weeks.text), 'num_all':int(cases_sincestart.text)})
+        locality = l.find_next('td').find_next('td').find_next('td')
+        results.append({'locality': locality.text, 'cluster': cluster.text, 'num_last2weeks':int(cases_last2weeks.text), 'num_all':int(cases_sincestart.text)})
     return results
 #end def
 
 
 def address_to_latlng(address):
-    '''address = address.split('/')[0]
-    print (address)
-    params = {'sensor': 'false', 'address': address, 'key' : API_KEY}
-    r = requests.get(GEOCODE_URL, params = params)
-    results = r.json()['results']
-    location = results[0]['geometry']['location']
-    return {'lat': location['lat'], 'lng': location['lng']}
-    '''
-    # geolocator = Nominatim(user_agent="cms")
-    # location = geolocator.geocode(address + ", Singapore")
-    # try:
-    #     return {'lat': location.latitude, 'lng': location.longitude}
-    # except AttributeError:
-    #     return {'lat': 0, 'lng': 0}
     geo_api_response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}'.format(address.replace(" ", "+"), API_KEY))
     geo_api_response_dict = geo_api_response.json()
     if geo_api_response_dict['status'] == 'OK':
@@ -271,4 +256,3 @@ def address_to_latlng(address):
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=True)
-    #print (get_dengue_clusters())
