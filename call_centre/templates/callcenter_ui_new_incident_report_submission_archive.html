@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Below is asking to use Bootstrap - We use Bootstrap for its HTML design templates E.g. See the Bootstrap classes below -->
+        <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    </head>
+    <body>
+        <h4> &nbsp; &nbsp;  Enter the Caller/Reporter's Name</h4>
+        <!-- action="/submit_new_incident_report" will bring the User to the Web Address that ends with "/submit_new_incident_report" after the User has POST/'submitted' -->
+        <form method="POST" action="/submit_new_incident_report">
+            <!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="margin-left: 20px;"> 
+                <input type="text" name="caller_name" >
+            </div>
+
+
+            <!-- "btn btn-primary" is a bootstrap class that we use to create a submit button -->
+            <div>&nbsp;</div>
+            <input class="btn btn-primary" type="submit" value="submit" style="margin-left: 20px;">
+        </form>
+    </body>
+</html>
