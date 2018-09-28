@@ -45,3 +45,7 @@ lib/
 lib64/
 pyvenv.cfg
 include/
+
+# one lib file is needed in this case #
+#######################################
+!Dashboard/static/assets/js/lib
