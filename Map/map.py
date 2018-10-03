@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from flask import Flask, render_template
+from flask import Flask, render_template, Blueprint
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map, icons
 import json
@@ -10,12 +10,8 @@ from urllib.request import Request, urlopen
 import bs4
 from geopy.geocoders import Nominatim
 
-app = Flask(__name__, template_folder="templates")
-
+map_api = Blueprint('map', __name__, template_folder='templates', )
 API_KEY = "AIzaSyDc1Hx9zrh10qY4FSl-A0OwIVKRNTBkZGs"
-app.config['GOOGLEMAPS_KEY'] = API_KEY
-GoogleMaps(app, key=API_KEY)
-#API_KEY = "AIzaSyAYnlWxEoOaBVFkv6VijmIEZ1pumZfhFoA"
 
 REGION_LAT_LNG = dict(east=dict(lat=1.3413, lng=103.9638),
                 west=dict(lat=1.3483, lng=103.6831),
@@ -45,7 +41,7 @@ ICONS = {"Partly Cloudy": "https://addons-media.operacdn.com/media/extensions/52
             }
 
 
-@app.route("/")
+@map_api.route("/psi")
 def psimapview():
     def _get_psi_info(region, psi_json_dict_list):
         return dict(lat=REGION_LAT_LNG[region], lng=REGION_LAT_LNG[region], psi=psi_json_dict_list[0]['items'][0]['readings']['pm25_twenty_four_hourly'][region])
@@ -119,7 +115,7 @@ def psimapview():
 #end def
 
 
-@app.route("/weather")
+@map_api.route("/weather")
 def weathermapview():
     weather_response = urllib.request.urlopen('https://api.data.gov.sg/v1/environment/2-hour-weather-forecast', timeout=5)
     weather = [line.decode('utf-8') for line in weather_response]
@@ -153,7 +149,7 @@ def weathermapview():
     return render_template('weathermap.html', weathermap=weathermap)
 #end def
 
-@app.route("/shelters")
+@map_api.route("/shelters")
 def sheltermapview():
     shelters_response = Request('https://data.gov.sg/api/action/datastore_search?resource_id=4ee17930-4780-403b-b6d4-b963c7bb1c09', headers={'User-Agent': 'Mozilla/5.0'})
     shelters_response = urlopen(shelters_response).read().decode('utf-8')
@@ -193,7 +189,7 @@ def sheltermapview():
     return render_template('sheltersmap.html', sheltersmap=sheltersmap)
 #end def
 
-@app.route("/dengue")
+@map_api.route("/dengue")
 def denguemapview():
 
     dengue_clusters = get_dengue_clusters()
@@ -224,7 +220,7 @@ def denguemapview():
     return render_template('denguemap.html', denguemap=denguemap)
 #end def
 
-@app.route("/incidents")
+@map_api.route("/incidents")
 def incidentsmapview(incidents_list):
 
 
@@ -285,5 +281,5 @@ def address_to_latlng(address):
 #end def
 
 
-if __name__ == "__main__":
-    app.run(debug=True, use_reloader=True)
+# if __name__ == "__main__":
+#     app.run(debug=True, use_reloader=True)

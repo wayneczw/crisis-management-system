@@ -1,0 +1,66 @@
+{% extends "dashboard-base.html" %}
+{% block content %}
+
+    <!-- some header -->
+    <div class="breadcrumbs">
+        <div class="col-sm-4">
+            <div class="page-header float-left">
+                <div class="page-title">
+                    <h1>Account Management</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- some header -->
+
+    <!-- some content -->
+    <div class="content mt-3">
+        <div class="col-sm-12">
+            <div class="card">
+                <form action="" method="post" class="form-horizontal">
+                      <div class="card-header">
+                        <strong>Register User</strong>
+                      </div>
+                      <div class="card-body card-block">
+                          <div class="row form-group">
+                            <div class="col col-md-2"><label for="hf-username" class=" form-control-label">Username</label></div>
+                            <div class="col-12 col-md-10"><input type="text" id="hf-username" name="hf-username" value="{{request.form.new_username}}" placeholder="Enter Username..." class="form-control"></div>
+                          </div>
+                          <div class="row form-group">
+                            <div class="col col-md-2"><label for="hf-password" class=" form-control-label">Password</label></div>
+                            <div class="col-12 col-md-10"><input type="password" id="hf-password" name="hf-password" value="{{request.form.password}}" placeholder="Enter Password..." class="form-control"></div>
+                          </div>
+                            <div class="row form-group">
+                                <div class="col col-md-2"><label for="select" class=" form-control-label">User Role</label></div>
+                                <div class="col-12 col-md-10">
+                                  <select name="select" value="{{request.form.role}}" id="select" class="form-control">
+                                    <option value="0">Please select</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Call Operator">Call Operator</option>
+                                    <option value="Government Agency">Government Agency</option>
+                                  </select>
+                                </div>
+                            </div>
+                      </div>
+                    <div class="card-footer">
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="fa fa-dot-circle-o"></i> Register
+                                </button>
+                            </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+    <!-- some content -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <script>
+          var messages = {{ messages | safe }};
+          for (var i=0; i<messages.length; i++) {
+            alert(messages[i]);
+          }
+        </script>
+      {% endif %}
+    {% endwith %}
+
+{% endblock %}

@@ -1,9 +1,14 @@
-<!DOCTYPE html>
-<html>
+{% extends "map-base.html" %}
+
+{% block title %}
+    <h1>Crisis Map - Haze</h1>
+{% endblock %}
+
+{% block map %}
     <head>
         {{psimap.js}}
     </head>
     <body>
         {{psimap.html}}
     </body>
-</html>
+{% endblock %}
