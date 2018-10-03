@@ -1,10 +1,14 @@
+{% extends "map-base.html" %}
 
-<!DOCTYPE html>
-<html>
+{% block title %}
+    <h1>Crisis Map - Incidents Reported</h1>
+{% endblock %}
+
+{% block map %}
     <head>
         {{incidentsmap.js}}
     </head>
     <body>
         {{incidentsmap.html}}
     </body>
-</html>
+{% endblock %}

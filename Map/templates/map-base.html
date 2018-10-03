@@ -1,0 +1,27 @@
+{% extends "dashboard-base.html" %}
+{% block content %}
+
+    <!-- some header -->
+    <div class="breadcrumbs">
+        <div class="col-sm-4">
+            <div class="page-header float-left">
+                <div class="page-title">
+                    {% block title %}{% endblock %}
+                    <!--<h1>Account Management</h1>-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- some header -->
+
+    <!-- some content -->
+    <div class="content mt-3">
+        <div class="container">
+            <div class="row">
+                <!-- map -->
+                {% block map %}{% endblock %}
+                <!-- map -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
