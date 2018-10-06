@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Below is asking to use Bootstrap - We use Bootstrap for its HTML design templates E.g. See the Bootstrap classes below -->
+        <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <style>
+
+                input[readonly="readonly"]{background-color:#EBEBE4; color:#808080;}
+                select[readonly="readonly"]{background-color:#EBEBE4; color:#808080;}
+
+    </style>
+
+    </head>
+    <body background="https://crazyblessedlife.files.wordpress.com/2014/01/latest-blue-vintage-background-background-patterns-others.jpg">
+        <h3>&nbsp;&nbsp; Confirmation of Deleting the selected Incident Report</h3>
+        <div>&nbsp;</div>
+        <!-- action="/submit_new_incident_report" will bring the User to the Web Address that ends with "/submit_new_incident_report" after the User has POST/'submitted' -->
+        <form method="POST">
+
+
+
+            <div>&nbsp;</div>
+            <p><b>&nbsp;&nbsp;&nbsp;&nbsp;  Incident Report ID</b></p><!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="margin-left: 20px;">
+                <input type="text" value="{{ id_of_incident_report }}" id="id_of_incident_report" name="id_of_incident_report" readonly="readonly">
+            </div>
+
+            <div>&nbsp;</div>
+            <p><b>&nbsp;&nbsp;&nbsp;&nbsp;  First reported at</b></p><!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="margin-left: 20px;">
+                <input type="text" value="{{ first_reported }}" id="first_reported" name="first_reported" readonly="readonly"">
+            </div>
+
+            
+            <p> <b>&nbsp;&nbsp;&nbsp;&nbsp;  Caller's Full Name</b> </p
+
+            <!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="margin-left: 20px;"> 
+                <input type="text" value="{{ caller_name }}" id="caller_name" name="caller_name" readonly="readonly" > 
+            </div>
+
+            <div>&nbsp;</div>
+            <p><b>&nbsp;&nbsp;&nbsp;&nbsp;  Caller's Mobile Number</b></p><!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="margin-left: 20px;">
+                <input type="text" value="{{ caller_mobile_number }}" id="caller_mobile_number" name="caller_mobile_number" readonly="readonly">
+            </div>
+
+            <div>&nbsp;</div>
+            <p><b>&nbsp;&nbsp;&nbsp;&nbsp;  Caller's Location</b></p><!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="margin-left: 20px;">
+                <input type="text" value="{{ caller_location }}" id="caller_location" name="caller_location" readonly="readonly">
+            </div>
+
+           
+            <div>&nbsp;</div>
+            <p><b>&nbsp;&nbsp;&nbsp;&nbsp;  Type of Assistance required</b></p>
+
+            <select name="type_of_assistance" selected="{{ type_of_assistance }}" id="type_of_assistance" style="margin-left: 20px;" readonly="readonly">
+                <option value="0">NONE</option>
+                <option value="1">Emergency Ambulance [SCDF]</option>
+                <option value="2">Rescue and Evacuation [SCDF]</option>
+                <option value="3">Gas Leak Control [Singapore Power]</option>
+            </select>
+
+
+
+            <div>&nbsp;</div>
+            <p><b>&nbsp;&nbsp;&nbsp;&nbsp;  Description of Incident</b></p><!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="margin-left: 20px;">
+                <input class=form-control input-lgg" type="text" value="{{ description }}" id="description"  name="description" readonly="readonly">
+            </div>
+
+
+            <div>&nbsp;</div>
+            <p><b>&nbsp;&nbsp;&nbsp;&nbsp;  Priority Evaluation Metrics</b></p>
+
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;  1. Enter Priority for Severity of Injuries</p>
+            <select name="priority_for_severity_of_injuries" id="priority_for_severity_of_injuries" style="margin-left: 20px;" readonly="readonly">
+                <option value="1" {% if priority_for_severity_of_injuries==1 %} selected="selected" {% endif %}>1</option>
+                <option value="2" {% if priority_for_severity_of_injuries==2 %} selected="selected" {% endif %}>2</option>
+                <option value="3" {% if priority_for_severity_of_injuries==3 %} selected="selected" {% endif %}>3</option>
+                <option value="4" {% if priority_for_severity_of_injuries==4 %} selected="selected" {% endif %}>4</option>
+                <option value="5" {% if priority_for_severity_of_injuries==5 %} selected="selected" {% endif %}>5</option>
+                <option value="6" {% if priority_for_severity_of_injuries==6 %} selected="selected" {% endif %}>6</option>
+                <option value="7" {% if priority_for_severity_of_injuries==7 %} selected="selected" {% endif %}>7</option>
+                <option value="8" {% if priority_for_severity_of_injuries==8 %} selected="selected" {% endif %}>8</option>
+                <option value="9" {% if priority_for_severity_of_injuries==9 %} selected="selected" {% endif %}>9</option>
+                <option value="10" {% if priority_for_severity_of_injuries==10 %} selected="selected" {% endif %}>10</option>
+            </select>
+
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;  2. Enter Priority for Impending Dangers</p>
+            <select name="priority_for_impending_dangers" id="priority_for_impending_dangers" style="margin-left: 20px;" readonly="readonly">
+                <option value="1" {% if priority_for_impending_dangers==1 %} selected="selected" {% endif %}>1</option>
+                <option value="2" {% if priority_for_impending_dangers==2 %} selected="selected" {% endif %}>2</option>
+                <option value="3" {% if priority_for_impending_dangers==3 %} selected="selected" {% endif %}>3</option>
+                <option value="4" {% if priority_for_impending_dangers==4 %} selected="selected" {% endif %}>4</option>
+                <option value="5" {% if priority_for_impending_dangers==5 %} selected="selected" {% endif %}>5</option>
+                <option value="6" {% if priority_for_impending_dangers==6 %} selected="selected" {% endif %}>6</option>
+                <option value="7" {% if priority_for_impending_dangers==7 %} selected="selected" {% endif %}>7</option>
+                <option value="8" {% if priority_for_impending_dangers==8 %} selected="selected" {% endif %}>8</option>
+                <option value="9" {% if priority_for_impending_dangers==9 %} selected="selected" {% endif %}>9</option>
+                <option value="10" {% if priority_for_impending_dangers==10 %} selected="selected" {% endif %}>10</option>
+            </select>
+
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;  3. Enter Priority for Presence of Nearby Help</p>
+            <select name="priority_for_presence_of_nearby_help"  id="priority_for_presence_of_nearby_help" style="margin-left: 20px;" readonly="readonly">
+                <option value="1"{% if priority_for_presence_of_nearby_help==1 %} selected="selected"{% endif %}>1</option>
+                <option value="2"{% if priority_for_presence_of_nearby_help==2 %} selected="selected"{% endif %}>2</option>
+                <option value="3"{% if priority_for_presence_of_nearby_help==3 %} selected="selected"{% endif %}>3</option>
+                <option value="4"{% if priority_for_presence_of_nearby_help==4 %} selected="selected"{% endif %}>4</option>
+                <option value="5"{% if priority_for_presence_of_nearby_help==5 %} selected="selected"{% endif %}>5</option>
+                <option value="6"{% if priority_for_presence_of_nearby_help==6 %} selected="selected"{% endif %}>6</option>
+                <option value="7"{% if priority_for_presence_of_nearby_help==7 %} selected="selected"{% endif %}>7</option>
+                <option value="8"{% if priority_for_presence_of_nearby_help==8 %} selected="selected"{% endif %}>8</option>
+                <option value="9"{% if priority_for_presence_of_nearby_help==9 %} selected="selected"{% endif %}>9</option>
+                <option value="10" {% if priority_for_presence_of_nearby_help==10 %} selected="selected"{% endif %}>10</option>
+            </select>
+
+
+            <div>&nbsp;</div>
+            <p><b>&nbsp;&nbsp;&nbsp;&nbsp;  Status of the Incident Report </b></p>
+            <select name="report_status" id="report_status" style="margin-left: 20px;" readonly="readonly">
+                <option value="1"{% if report_status=='REPORTED' %} selected="selected"{% endif %}>REPORTED</option>
+                <option value="2"{% if report_status=='PENDING' %} selected="selected"{% endif %}>PENDING</option>
+                <option value="3"{% if report_status=='CLOSED' %} selected="selected"{% endif %}>CLOSED</option>
+            </select>
+
+
+            <div>&nbsp;</div>
+            <p><b>&nbsp;&nbsp;&nbsp;&nbsp;  First such Incident reported </b></p>
+            <select name="is_first_such_incident" id="is_first_such_incident" style="margin-left: 20px;" readonly="readonly">
+                <option value="0"{% if is_first_such_incident=='FALSE' %} selected="selected"{% endif %}>FALSE</option>
+                <option value="1"{% if is_first_such_incident=='TRUE' %} selected="selected"{% endif %}>TRUE</option>
+            </select>
+
+
+            <div>&nbsp;</div>
+            <!-- "btn btn-primary" is a bootstrap class that we use to create a submit button -->
+            <input class="btn btn-primary" type="submit" value="submit" style="margin-left: 20px;">
+        </form>
+
+
+    </body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    </head>
+    <body background="https://www.wallpaperboulevard.com/Images/product/0015963_light-green-renaissance-texture-l.jpeg">
+        <!-- The {{ argument_name }} is used below. When we call this html file from the Python file, the Python file pass in an argument that this html file would use. -->
+        <h3>&nbsp; Incident Report by Caller "{{ caller_name }}" has been successfully updated</h3>
+        <div>&nbsp;</div>
+        <h4>&nbsp; Details of the Newly Updated Incident Report:</h4>
+
+        <div>&nbsp;</div>
+        <table style="width:90%; margin-left: 20px;" >
+            <tr>
+                <th>Report Element</th>
+                <th>Submitted Input</th>
+            </tr>
+
+            <tr>
+                <td>ID of Incident Report</td>
+                <td>{{ id_of_incident_report }}</td>
+            </tr>
+
+            <tr>
+                <td>First reported Time</td>
+                <td>{{ first_reported }}</td>
+            </tr>
+
+            <tr>
+                <td>Caller's Name</td>
+                <td>{{ caller_name }}</td>
+
+            </tr>
+            <tr>
+                <td>Caller's Mobile Number</td>
+                <td>{{ caller_mobile_number }}</td>
+
+            </tr>
+            <tr>
+                <td>Caller's Location</td>
+                <td>{{ caller_location }}</td>
+            </tr>
+
+            <tr>
+                <td>Type of Assistance required</td>
+                <td>{{ type_of_assistance }}</td>
+            </tr>
+
+            <tr>
+                <td>Description of Incident</td>
+                <td>{{ description }}</td>
+            </tr>
+
+            <tr>
+                <td>Priority for Severity of Injuries</td>
+                <td>{{ priority_for_severity_of_injuries }}</td>
+            </tr>
+
+            <tr>
+                <td>Priority for Impending Dangers</td>
+                <td>{{ priority_for_impending_dangers }}</td>
+            </tr>
+
+            <tr>
+                <td>Priority for Presence of Nearby Help</td>
+                <td>{{ priority_for_presence_of_nearby_help }}</td>
+            </tr>
+
+            <tr>
+                <td>Status of Incident Report</td>
+                <td>{{ report_status }}</td>
+            </tr>
+
+            <tr>
+                <td>Is the first such Incident reported</td>
+                <td>{{ is_first_such_incident }}</td>
+            </tr>
+
+        </table>
+
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+
+        <form method="POST">
+
+            <div>&nbsp;</div>
+            <!-- "btn btn-primary" is a bootstrap class that we use to create a submit button -->
+            <input class="btn btn-primary" type="submit" value="Go Back" style="margin-left: 20px;">
+
+        </form>
+
+    </body>
+</html>
