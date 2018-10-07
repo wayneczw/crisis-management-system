@@ -33,6 +33,16 @@ def get_psi():
         else: return ('Hazardous', 'red')
     #end def
 
+    '''
+    :return: 4 dictionaries of the same formats
+        {'status': 'Healthy',
+        'psi': 30,
+        'color': 'green',
+        'lat': 130.21,
+        'lng': 128.12
+        }
+    '''
+
     psi_response = urllib.request.urlopen(PSI_URL, timeout=5)
     psi = [line.decode('utf-8') for line in psi_response]
     psi_json_dict_list = [json.loads(js) for js in psi]
@@ -50,8 +60,19 @@ def get_psi():
     central_info['status'], central_info['color'] = _check_status(central_info)
 
     return east_info, west_info, south_info, north_info, central_info
+#end def
 
 def get_dengue_clusters():
+    '''
+    :return: a list of dictionaries
+        [{'locality': 'sldfjla',
+        'cluster': 'jdsfaf',
+        'num_last2weeks: 10,
+        'num_all': 100},
+                        ...
+        ]
+    '''
+
     results = []
     r = requests.get(DENGUE_URL)
     soup = bs4.BeautifulSoup(r.text, 'html.parser')
@@ -68,6 +89,13 @@ def get_dengue_clusters():
 
 
 def get_weather():
+    '''
+    :return: a dictionary of dictionaries
+        {'Ang Mo Kio': {'forecast': 'sldfjla',
+                        'label_location': {'latitude': '130.3', 'longitude': '130.2'}},
+                        ...
+        }
+    '''
     weather_response = urllib.request.urlopen(WEATHER_URL, timeout=5)
     weather = [line.decode('utf-8') for line in weather_response]
     weather_json_dict_list = [json.loads(js) for js in weather]
@@ -83,6 +111,15 @@ def get_weather():
 
 
 def get_shelter():
+    '''
+    :return: a dictionary of dictionaries
+        {'Pioneer MRT': {'address': 'sldfjla',
+                        'postal_code': '123981',
+                        'description': 'jfsao'},
+                        ...
+        }
+    '''
+
     shelters_response = Request(SHELTER_URL, headers={'User-Agent': 'Mozilla/5.0'})
     shelters_response = urlopen(shelters_response).read().decode('utf-8')
     shelters_dict_list = json.loads(shelters_response)['result']['records']
