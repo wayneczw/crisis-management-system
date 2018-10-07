@@ -3,27 +3,19 @@
 from flask import Flask, render_template, Blueprint
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map, icons
-import json
-import requests
-import urllib.request
-from urllib.request import Request, urlopen
-import bs4
-from geopy.geocoders import Nominatim
+from .map_api import get_psi, get_dengue_clusters, get_weather, get_shelter, address_to_latlng
 
 map_api = Blueprint('map', __name__, template_folder='templates', )
-API_KEY = "AIzaSyDc1Hx9zrh10qY4FSl-A0OwIVKRNTBkZGs"
-
-REGION_LAT_LNG = dict(east=dict(lat=1.3413, lng=103.9638),
-                west=dict(lat=1.3483, lng=103.6831),
-                south=dict(lat=1.2957, lng=103.8065),
-                north=dict(lat=1.4382, lng=103.7890),
-                central=dict(lat=1.36, lng=103.8))
 
 COLOR_CODE = dict(green='#228B22', blue='#4169e1', yellow='#ffcc00', orange='#FF4500', red='#B22222')
 
-# GEOCODE_URL = 'https://maps.googleapis.com/maps/api/geocode/json'
-DENGUE_URL = 'https://www.nea.gov.sg/dengue-zika/dengue/dengue-clusters'
-ICONS = {"Partly Cloudy": "https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png",
+PSI_ICONS = {'E': "//maps.google.com/mapfiles/kml/paddle/E.png",
+            'W': "//maps.google.com/mapfiles/kml/paddle/W.png",
+            'S': "//maps.google.com/mapfiles/kml/paddle/S.png",
+            'N': "//maps.google.com/mapfiles/kml/paddle/N.png",
+            'C': "//maps.google.com/mapfiles/kml/paddle/C.png"
+            }
+WEATHER_ICONS = {"Partly Cloudy": "https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png",
             "Cloudy": "https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png",
             "Fair (Day)": "https://images.sftcdn.net/images/t_app-logo-l,f_auto,dpr_auto/p/6342e25c-9b2e-11e6-8327-00163ed833e7/297691412/heliospaint-logo.png",
             "Fair (Night)": "https://addons-media.operacdn.com/media/extensions/59/228359/0.2.8-rev1/icons/icon_64x64_0681774836f9505465805085bb518811.png",
@@ -39,37 +31,11 @@ ICONS = {"Partly Cloudy": "https://addons-media.operacdn.com/media/extensions/52
             "Heavy Thundery Showers": "http://maps.google.com/mapfiles/kml/shapes/thunderstorm.png",
             "Heavy Thundery Showers with Gusty Winds": "http://maps.google.com/mapfiles/kml/shapes/thunderstorm.png"
             }
-
+SHELTER_ICON = 'http://maps.google.com/mapfiles/kml/pal2/icon10.png'
 
 @map_api.route("/psi")
 def psimapview():
-    def _get_psi_info(region, psi_json_dict_list):
-        return dict(lat=REGION_LAT_LNG[region], lng=REGION_LAT_LNG[region], psi=psi_json_dict_list[0]['items'][0]['readings']['pm25_twenty_four_hourly'][region])
-    #end def
-
-    def _check_status(info_dict):
-        if info_dict['psi'] <= 50: return ('Healthy', 'green')
-        elif info_dict['psi'] <= 100: return ('Moderate', 'blue')
-        elif info_dict['psi'] <= 200: return ('Unhealthy', 'yellow')
-        elif info_dict['psi'] <= 300: return ('Very Unhealthy', 'orange')
-        else: return ('Hazardous', 'red')
-    #end def
-
-    psi_response = urllib.request.urlopen('https://api.data.gov.sg/v1/environment/psi', timeout=5)
-    psi = [line.decode('utf-8') for line in psi_response]
-    psi_json_dict_list = [json.loads(js) for js in psi]
-
-    east_info = _get_psi_info('east', psi_json_dict_list)
-    west_info = _get_psi_info('west', psi_json_dict_list)
-    south_info = _get_psi_info('south', psi_json_dict_list)
-    north_info = _get_psi_info('north', psi_json_dict_list)
-    central_info = _get_psi_info('central', psi_json_dict_list)
-
-    east_info['status'], east_info['color'] = _check_status(east_info)
-    west_info['status'], west_info['color'] = _check_status(west_info)
-    south_info['status'], south_info['color'] = _check_status(south_info)
-    north_info['status'], north_info['color'] = _check_status(north_info)
-    central_info['status'], central_info['color'] = _check_status(central_info)
+    east_info, west_info, south_info, north_info, central_info = get_psi()
 
     psimap = Map(
         identifier="psimap",
@@ -79,32 +45,32 @@ def psimapview():
         region='SG',
         style="height:800px;width:1200px;margin:0;",
         markers=[
-            {
-                'icon': "//maps.google.com/mapfiles/kml/paddle/E.png",
+            {   
+                'icon': PSI_ICONS['E'],
                 'lat':  east_info['lat'],
                 'lng':  east_info['lng'],
                 'infobox': "<b style='color:{};'> <h3>North PSI:</h3> <h4>{} {}</h4></b>".format(COLOR_CODE[east_info['color']], east_info['status'], east_info['psi'])
             },
             {
-                'icon': "//maps.google.com/mapfiles/kml/paddle/W.png",
+                'icon': PSI_ICONS['W'],
                 'lat':  west_info['lat'],
                 'lng':  west_info['lng'],
                 'infobox': "<b style='color:{};'> <h3>West PSI:</h3> <h4>{} {}</h4></b>".format(COLOR_CODE[west_info['color']], west_info['status'], west_info['psi'])
             },
             {
-                'icon': "//maps.google.com/mapfiles/kml/paddle/S.png",
+                'icon': PSI_ICONS['S'],
                 'lat':  south_info['lat'],
                 'lng':  south_info['lng'],
                 'infobox': "<b style='color:{};'> <h3>South PSI:</h3> <h4>{} {}</h4></b>".format(COLOR_CODE[south_info['color']], south_info['status'], south_info['psi'])
             },
             {
-                'icon': "//maps.google.com/mapfiles/kml/paddle/N.png",
+                'icon': PSI_ICONS['N'],
                 'lat':  north_info['lat'],
                 'lng':  north_info['lng'],
                 'infobox': "<b style='color:{};'> <h3>North PSI:</h3> <h4>{} {}</h4></b>".format(COLOR_CODE[north_info['color']], north_info['status'], north_info['psi'])
             },
             {
-                'icon': "//maps.google.com/mapfiles/kml/paddle/C.png",
+                'icon': PSI_ICONS['C'],
                 'lat':  central_info['lat'],
                 'lng':  central_info['lng'],
                 'infobox': "<b style='color:{};'> <h3>Central PSI:</h3> <h4>{} {}</h4></b>".format(COLOR_CODE[central_info['color']], central_info['status'], central_info['psi'])
@@ -117,20 +83,12 @@ def psimapview():
 
 @map_api.route("/weather")
 def weathermapview():
-    weather_response = urllib.request.urlopen('https://api.data.gov.sg/v1/environment/2-hour-weather-forecast', timeout=5)
-    weather = [line.decode('utf-8') for line in weather_response]
-    weather_json_dict_list = [json.loads(js) for js in weather]
-
-    weather_dict = {item['name']: dict(lat=item['label_location']['latitude'], lng=item['label_location']['longitude']) for item in weather_json_dict_list[0]['area_metadata']} 
-
-    for item in weather_json_dict_list[0]['items'][0]['forecasts']:
-        weather_dict[item['area']]['forecast'] = item['forecast']
-    #end for
+    weather_dict = get_weather()
 
     #create markers
     markers_list = list()
     for area, info_dict in weather_dict.items():
-        tmp_dict = dict(icon=ICONS[info_dict['forecast']],
+        tmp_dict = dict(icon=WEATHER_ICONS[info_dict['forecast']],
                         lat=info_dict['lat'],
                         lng=info_dict['lng'],
                         infobox="<h3>{}</h3> <h4>Forecast: {}</h4>".format(area, info_dict['forecast']))
@@ -151,25 +109,13 @@ def weathermapview():
 
 @map_api.route("/shelters")
 def sheltermapview():
-    shelters_response = Request('https://data.gov.sg/api/action/datastore_search?resource_id=4ee17930-4780-403b-b6d4-b963c7bb1c09', headers={'User-Agent': 'Mozilla/5.0'})
-    shelters_response = urlopen(shelters_response).read().decode('utf-8')
-    shelters_dict_list = json.loads(shelters_response)['result']['records']
-
-    shelters_dict = dict()
-    for item in shelters_dict_list:
-        tmp_dict = dict(address=item['address'],
-            postal_code=item['postal_code'],
-            description=item['description'])
-        tmp_dict.update(address_to_latlng(item['address']))
-
-        shelters_dict[item['name']] = tmp_dict
-    #end for
+    shelters_dict = get_shelter()
 
     #create markers
     markers_list = list()
     for area, info_dict in shelters_dict.items():
         
-        tmp_dict = dict(icon='http://maps.google.com/mapfiles/kml/pal2/icon10.png',
+        tmp_dict = dict(icon=SHELTER_ICON,
                         lat=info_dict['lat'],
                         lng=info_dict['lng'],
                         infobox="<h3> {}</h3> <h4>Address: {}</h4> <h4>Description: {}</h4>".format(area, info_dict['address'], info_dict['description']))
@@ -193,6 +139,7 @@ def sheltermapview():
 def denguemapview():
 
     dengue_clusters = get_dengue_clusters()
+
     markers_list = []
     for cluster in dengue_clusters:
         latlng = address_to_latlng(cluster['locality'])
@@ -251,33 +198,6 @@ def incidentsmapview(incidents_list):
     )
 
     return render_template('incidentsmap.html', incidentsmap=incidentsmap)
-
-def get_dengue_clusters():
-    results = []
-    r = requests.get(DENGUE_URL)
-    soup = bs4.BeautifulSoup(r.text, 'html.parser')
-    for l in soup.findAll('td', attrs={'data-type':'locality'}):
-        cluster = l.find('a')
-        cases_last2weeks = l.find_next('td')
-        cases_sincestart = l.find_next('td').find_next('td')
-        locality = l.find_next('td').find_next('td').find_next('td')
-        results.append({'locality': locality.text, 'cluster': cluster.text, 'num_last2weeks':int(cases_last2weeks.text), 'num_all':int(cases_sincestart.text)})
-    return results
-#end def
-
-
-def address_to_latlng(address):
-    geo_api_response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}'.format(address.replace(" ", "+"), API_KEY))
-    geo_api_response_dict = geo_api_response.json()
-    if geo_api_response_dict['status'] == 'OK':
-        lat = geo_api_response_dict['results'][0]['geometry']['location']['lat']
-        lng = geo_api_response_dict['results'][0]['geometry']['location']['lng']
-    else:
-        lat = 0
-        lng = 0
-    #end if
-
-    return dict(lat=lat, lng=lng)
 #end def
 
 
