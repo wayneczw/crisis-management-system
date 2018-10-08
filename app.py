@@ -6,6 +6,10 @@ from Dashboard.dashboard import dashboard_api
 from AccountManagement.account_management import account_api
 from Map.map import map_api
 
+from flask_apscheduler import APScheduler
+from flask_mail import Mail, Message
+import os
+
 # create the application object
 app = Flask(__name__)
 app.secret_key = "aD1R3s2"
@@ -17,7 +21,6 @@ app.register_blueprint(map_api, url_prefix='/map')
 API_KEY = "AIzaSyDc1Hx9zrh10qY4FSl-A0OwIVKRNTBkZGs"
 app.config['GOOGLEMAPS_KEY'] = API_KEY
 GoogleMaps(app, key=API_KEY)
-
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -47,6 +50,42 @@ def __verify_login(username, password, role):
             return True
     return False
 
+
+class Config(object):
+    JOBS = [
+        {
+            'id': 'job1',
+            'func': 'Dashboard.report:send_report',
+            'args': None,
+            'trigger': 'interval',
+            'seconds': 10
+        }
+    ]
+
+    SCHEDULER_API_ENABLED = True
+
+
+app.config.update(dict(
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=587,
+    MAIL_USE_TLS=True,
+    MAIL_USE_SSL=False,
+    MAIL_USERNAME='giligili.cms@gmail.com',
+    MAIL_PASSWORD='giligili3002',
+))
+
+
+mail = Mail(app)
+
 # start the server with the 'run()' method
 if __name__ == '__main__':
-    app.run(debug=True)
+    # scheduler
+
+    app.config.from_object(Config())
+
+    scheduler = APScheduler()
+    scheduler.api_enabled = True
+    scheduler.init_app(app)
+    scheduler.start()
+
+    app.run(debug=True, use_reloader=False)

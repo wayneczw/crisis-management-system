@@ -1,5 +1,6 @@
 from flask import session, flash, url_for, redirect
 from functools import wraps
+from threading import Thread
 
 # login required decorator
 def login_required(f):
@@ -11,3 +12,10 @@ def login_required(f):
             flash('You need to login first.')
             return redirect(url_for('login'))
     return wrap
+
+
+def async(f):
+    def wrapper(*args, **kwargs):
+        thr = Thread(target=f, args=args, kwargs=kwargs)
+        thr.start()
+    return wrapper
