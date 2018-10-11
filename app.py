@@ -58,21 +58,11 @@ class Config(object):
             'func': 'Dashboard.report:send_report',
             'args': None,
             'trigger': 'interval',
-            'seconds': 10
+            'seconds': 60*30
         }
     ]
 
     SCHEDULER_API_ENABLED = True
-
-
-app.config.update(dict(
-    MAIL_SERVER='smtp.gmail.com',
-    MAIL_PORT=587,
-    MAIL_USE_TLS=True,
-    MAIL_USE_SSL=False,
-    MAIL_USERNAME='giligili.cms@gmail.com',
-    MAIL_PASSWORD='giligili3002',
-))
 
 
 mail = Mail(app)
@@ -88,4 +78,5 @@ if __name__ == '__main__':
     scheduler.init_app(app)
     scheduler.start()
 
+    # turn off use reloader to prevent sending two duplicate emails
     app.run(debug=True, use_reloader=False)
