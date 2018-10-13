@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from flask import Flask, redirect, render_template, request, session
-from CallCenter_Model import *
+from CallCenter.CallCenter_Model import *
 
 
 
@@ -164,11 +164,6 @@ def incident_report_update_completion_page():
                 report_status = report_status,
                 is_first_such_incident = is_first_such_incident
                             )
-
-
-
-
-
 
 
 # First Page of Deleting an Incident Report
@@ -360,12 +355,6 @@ def incident_report_sent_completion_page():
                 priority_for_presence_of_nearby_help = priority_for_presence_of_nearby_help,
                 report_status = report_status
                             )
-
-
-
-
-
-
 
 
 @app.route("/submit_new_incident_report", methods = ['GET', 'POST'])

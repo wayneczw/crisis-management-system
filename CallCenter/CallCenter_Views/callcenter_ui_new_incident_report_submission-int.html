@@ -1,0 +1,137 @@
+{% extends "dashboard-base.html" %}
+{% block content %}
+
+    <!-- some header -->
+    <div class="breadcrumbs">
+        <div class="col-sm-4">
+            <div class="page-header float-left">
+                <div class="page-title">
+                    <h1>Submit New Incident</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- some header -->
+
+    <!-- some content -->
+        <div class="content mt-3">
+            <div class="col-sm-12">
+                <div class="card">
+                    <!-- action="/submit_new_incident_report" will bring the User to the Web Address that ends with "/submit_new_incident_report" after the User has POST/'submitted' -->
+                    <form method="POST" action="/callcenter/submit_new_incident_report" class="form-horizontal">
+                        <div class="card-header">
+                            <strong>New Incident Submission Form</strong>
+                        </div>
+                        <div class="card-body card-block">
+                          <div class="row form-group">
+                            <div class="col col-md-2"><label for="caller_name" class=" form-control-label">Caller's Full Name</label></div>
+                            <div class="col-12 col-md-10"><input type="text" id="caller_name" name="caller_name" class="form-control"></div>
+                          </div>
+
+                            <div class="row form-group">
+                            <div class="col col-md-2"><label for="caller_mobile_number" class=" form-control-label">Caller's Mobile Number</label></div>
+                            <div class="col-12 col-md-10"><input type="text" id="caller_mobile_number" name="caller_mobile_number" class="form-control"></div>
+                          </div>
+
+                            <div class="row form-group">
+                            <div class="col col-md-2"><label for="caller_location" class=" form-control-label">Caller's Location</label></div>
+                            <div class="col-12 col-md-10"><input type="text" id="caller_location" name="caller_location" class="form-control"></div>
+                          </div>
+
+                            <div class="row form-group">
+                                <div class="col col-md-2"><label for="select" class=" form-control-label">Type of Assistance required</label></div>
+                                <div class="col-12 col-md-10">
+                                  <select name="type_of_assistance" id="select" class="form-control">
+                                    <option value="0">NONE</option>
+                                    <option value="1">Emergency Ambulance [SCDF]</option>
+                                    <option value="2r">Rescue and Evacuation [SCDF]</option>
+                                    <option value="3">Gas Leak Control [Singapore Power]</option>
+                                  </select>
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                            <div class="col col-md-2"><label for="description" class=" form-control-label">Description of Incident</label></div>
+                            <div class="col-12 col-md-10"><input type="text" id="description" name="description" class="form-control"></div>
+                          </div>
+
+
+
+                            <h6><strong>Priority Evaluation Metrics</strong></h6>
+                            <br/>
+
+                            <div class="row form-group">
+                                <div class="col col-md-2"><label for="select" class=" form-control-label">Enter Priority for Severity of Injuries</label></div>
+                                <div class="col-12 col-md-10">
+                                  <select name="priority_for_severity_of_injuries" id="priority_for_severity_of_injuries" class="form-control">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                  </select>
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <div class="col col-md-2"><label for="select" class=" form-control-label">Enter Priority for Impending Dangers</label></div>
+                                <div class="col-12 col-md-10">
+                                  <select name="priority_for_impending_dangers" id="priority_for_impending_dangers" class="form-control">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                  </select>
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <div class="col col-md-2"><label for="select" class=" form-control-label">Enter Priority for Presence of Nearby Help</label></div>
+                                <div class="col-12 col-md-10">
+                                  <select name="priority_for_presence_of_nearby_help" id="priority_for_presence_of_nearby_help" class="form-control">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                  </select>
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <div class="col col-md-2"><label for="select" class=" form-control-label">Status of the Incident Report</label></div>
+                                <div class="col-12 col-md-10">
+                                  <select name="report_status" id="report_status" class="form-control">
+                                    <option value="1">REPORTED</option>
+                                    <option value="2">PENDING</option>
+                                      <option value="3">CLOSED</option>
+                                  </select>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <button type="submit" value="submit" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-dot-circle-o"></i> Submit
+                                </button>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+{% endblock %}

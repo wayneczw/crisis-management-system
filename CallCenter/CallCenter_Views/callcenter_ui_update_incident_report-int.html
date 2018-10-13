@@ -1,0 +1,121 @@
+<style>
+    tr:hover{
+     background-color:lightyellow;
+          }
+</style>
+
+{% extends "callcenter-base.html" %}
+
+    <!-- some header -->
+    {% block title %}
+        <h1>Update Incident Reports</h1>
+    {% endblock %}
+    <!-- some header -->
+
+    {% block callcenter %}
+        <div class="card-header">
+            <!--<strong class="card-title">Details of Incident Report sorted chronologically:</strong>-->
+            <strong class="card-title">Click on the incident you want to update.</strong>
+        </div>
+        <!--<h4>&nbsp; Details of Incident Report sorted chronologically:</h4>-->
+        <div class="card-body card-block">
+            <div class="row form-group">
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="search_name_keyword" onkeyup="search_by_name_Function()" placeholder="Search by names..">
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="search_mobile_no_keyword" onkeyup="search_by_mobile_no_Function()" placeholder="Search by mobile no..">
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" ype="text" id="search_location_keyword" onkeyup="search_by_location_Function()" placeholder="Search by location..">
+                </div>
+            </div>
+
+
+            <table id="incident_report_table" class="table ">
+                <thead>
+                    {%- for column in columns %}
+                <th>{{ column }}</th>
+                {%- endfor %}
+                </thead>
+
+                <tbody>
+                    {%- for row in items %}
+                    <tr hover {background: red;} onclick="window.location.href='{{ url_for('callcenter.row_detail_for_update', rowData=row) }}';">
+                        {%- for i in row %}
+                        <td>{{ i }}</td>
+                        {%- endfor %}
+                    </tr>
+                    {%- endfor %}
+                </tbody>
+            </table>
+
+            <script>
+            function search_by_name_Function() {
+              var input, filter, table, tr, td, i;
+              input = document.getElementById("search_name_keyword");
+              filter = input.value.toUpperCase();
+              table = document.getElementById("incident_report_table");
+              tr = table.getElementsByTagName("tr");
+              for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[2];
+                if (td) {
+                  if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                  } else {
+                    tr[i].style.display = "none";
+                  }
+                }
+              }
+            }
+
+            function search_by_mobile_no_Function() {
+              var input, filter, table, tr, td, i;
+              input = document.getElementById("search_mobile_no_keyword");
+              filter = input.value.toUpperCase();
+              table = document.getElementById("incident_report_table");
+              tr = table.getElementsByTagName("tr");
+              for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[3];
+                if (td) {
+                  if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                  } else {
+                    tr[i].style.display = "none";
+                  }
+                }
+              }
+            }
+
+
+
+            function search_by_location_Function() {
+              var input, filter, table, tr, td, i;
+              input = document.getElementById("search_location_keyword");
+              filter = input.value.toUpperCase();
+              table = document.getElementById("incident_report_table");
+              tr = table.getElementsByTagName("tr");
+              for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[4];
+                if (td) {
+                  if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                  } else {
+                    tr[i].style.display = "none";
+                  }
+                }
+              }
+            }
+            </script>
+
+
+        <!--<form method="POST">-->
+
+            <!--<div>&nbsp;</div>-->
+            <!--&lt;!&ndash; "btn btn-primary" is a bootstrap class that we use to create a submit button &ndash;&gt;-->
+            <!--<input class="btn btn-primary" type="submit" value="Go Back" style="margin-left: 20px;">-->
+
+        <!--</form>-->
+
+        </div>
+{% endblock %}

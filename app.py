@@ -1,24 +1,29 @@
 # import the Flask class from the flask module
 from flask import Flask, render_template, redirect, url_for, request, session
 from flask_googlemaps import GoogleMaps
-
-from Dashboard.dashboard import dashboard_api
-from AccountManagement.account_management import account_api
-from Map.map import map_api
-
-from flask_apscheduler import APScheduler
-from flask_mail import Mail, Message
-import os
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 # create the application object
 app = Flask(__name__)
 app.secret_key = "aD1R3s2"
+# db part
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+from Dashboard.dashboard import dashboard_api
+from AccountManagement.account_management import account_api
+from Map.map import map_api
+from CallCenter.CallCenter_Controller import callcenter_api
+
+from flask_apscheduler import APScheduler
+from flask_mail import Mail, Message
+import os
+
 app.register_blueprint(dashboard_api)
 app.register_blueprint(account_api, url_prefix='/account')
 app.register_blueprint(map_api, url_prefix='/map')
+app.register_blueprint(callcenter_api, url_prefix='/callcenter')
 
 # for google maps blueprint. not sure if this is a good design
 API_KEY = "AIzaSyDc1Hx9zrh10qY4FSl-A0OwIVKRNTBkZGs"
@@ -48,10 +53,6 @@ class Config(object):
 
 app.config.from_object(Config)
 
-# db part
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
 import model
 
 mail = Mail(app)
@@ -80,18 +81,18 @@ def logout():
 
 def __verify_login(username, password, role):
 
-    u = model.User().query.filter_by(username=username).first()
-
-    if u and u.password == password and model.Role.query.filter_by(id=u.role_id).first().name == role:
-        return True
-    return False
-
-    # string = '{},{},{}'.format(username, password, role)
-    # userlist = open('db/userlist.csv').readlines()
-    # for line in userlist:
-    #     if string in line:
-    #         return True
+    # u = model.User().query.filter_by(username=username).first()
+    #
+    # if u and u.password == password and model.Role.query.filter_by(id=u.role_id).first().name == role:
+    #     return True
     # return False
+
+    string = '{},{},{}'.format(username, password, role)
+    userlist = open('db/userlist.csv').readlines()
+    for line in userlist:
+        if string in line:
+            return True
+    return False
 
 
 # start the server with the 'run()' method

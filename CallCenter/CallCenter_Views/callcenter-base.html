@@ -1,0 +1,26 @@
+{% extends "dashboard-base.html" %}
+{% block content %}
+
+    <!-- some header -->
+    <div class="breadcrumbs">
+        <div class="col-sm-4">
+            <div class="page-header float-left">
+                <div class="page-title">
+                    {% block title %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- some header -->
+
+    <!-- some content -->
+    <div class="content mt-3">
+        <div class="col-sm-12">
+            <div class="card">
+                <!-- callcenter -->
+                {% block callcenter %}{% endblock %}
+                <!-- callcenter -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

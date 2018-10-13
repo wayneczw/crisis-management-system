@@ -73,13 +73,19 @@
                     <li>
                         <a href="{{ url_for('account.deregister') }}"> <i class="menu-icon fa fa-sign-out"></i>Deregister</a>
                     </li>
-                    <h3 class="menu-title">Call Operator</h3><!-- /.menu-title -->
+                    <h3 class="menu-title">Incident Reporting</h3><!-- /.menu-title -->
                     <li class="menu-item-has-children dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-glass"></i>Incident Report</a>
                         <ul class="sub-menu children dropdown-menu">
-                            <li><i class="fa fa-puzzle-piece"></i><a href="#">Submit</a></li>
-                            <li><i class="fa fa-id-badge"></i><a href="#">Modify</a></li>
-                            <li><i class="fa fa-id-badge"></i><a href="#">Delete</a></li>
+                            <li><i class="fa fa-puzzle-piece"></i>
+                                <a href="{{ url_for('callcenter.submit_new_incident_report') }}">Submit</a>
+                            </li>
+                            <li><i class="fa fa-id-badge"></i>
+                                <a href="{{ url_for('callcenter.update_incident_report') }}">Update</a>
+                            </li>
+                            <li><i class="fa fa-id-badge"></i>
+                                <a href="{{ url_for('callcenter.delete_incident_report') }}">Delete</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>

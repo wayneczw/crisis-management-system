@@ -1,0 +1,159 @@
+<!--<style>-->
+    <!--thead,-->
+    <!--tfoot {-->
+        <!--background-color: #3f87a6;-->
+        <!--color: #fff;-->
+    <!--}-->
+
+    <!--tbody {-->
+        <!--background-color: #e4f0f5;-->
+    <!--}-->
+
+    <!--caption {-->
+        <!--padding: 10px;-->
+        <!--caption-side: bottom;-->
+    <!--}-->
+
+    <!--table {-->
+        <!--border-collapse: collapse;-->
+        <!--border: 2px solid rgb(200, 200, 200);-->
+        <!--letter-spacing: 1px;-->
+        <!--font-family: sans-serif;-->
+        <!--font-size: 1.0rem;-->
+    <!--}-->
+
+    <!--td,-->
+    <!--th {-->
+        <!--border: 1px solid rgb(190, 190, 190);-->
+        <!--padding: 5px 10px;-->
+    <!--}-->
+
+    <!--td {-->
+        <!--text-align: center;-->
+    <!--}-->
+<style>
+    tr:hover{
+     background-color:lightyellow;
+          }
+</style>
+
+{% extends "callcenter-base.html" %}
+
+
+    <!-- The {{ argument_name }} is used below. When we call this html file from the Python file, the Python file pass in an argument that this html file would use. -->
+
+    <!-- some header -->
+    {% block title %}
+        <h1>Delete Incident Reports</h1>
+    {% endblock %}
+    <!-- some header -->
+
+    {% block callcenter %}
+        <div class="card-header">
+            <!--<strong class="card-title">Details of Incident Report sorted chronologically:</strong>-->
+            <strong class="card-title">Click on the incident you want to delete.</strong>
+        </div>
+        <div class="card-body card-block">
+            <div class="row form-group">
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="search_name_keyword" onkeyup="search_by_name_Function()" placeholder="Search by names..">
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="search_mobile_no_keyword" onkeyup="search_by_mobile_no_Function()" placeholder="Search by mobile no..">
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" ype="text" id="search_location_keyword" onkeyup="search_by_location_Function()" placeholder="Search by location..">
+                </div>
+                <!--<div class="col-12 col-md-10"><input type="text" id="hf-username" name="hf-username" value="{{request.form.new_username}}" placeholder="Enter Username..." class="form-control"></div>-->
+            </div>
+
+            <!--<div class="container">-->
+            <table id="incident_report_table" class="table ">
+                <thead>
+                    {%- for column in columns %}
+                <th>{{ column }}</th>
+                {%- endfor %}
+                </thead>
+
+                <tbody>
+                    {%- for row in items %}
+                    <tr onclick="window.location.href='{{ url_for('callcenter.row_detail_for_delete', rowData=row) }}';">
+                        {%- for i in row %}
+                        <td>{{ i }}</td>
+                        {%- endfor %}
+                    </tr>
+                    {%- endfor %}
+                </tbody>
+            </table>
+            <!--</div>-->
+
+            <script>
+            function search_by_name_Function() {
+              var input, filter, table, tr, td, i;
+              input = document.getElementById("search_name_keyword");
+              filter = input.value.toUpperCase();
+              table = document.getElementById("incident_report_table");
+              tr = table.getElementsByTagName("tr");
+              for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[2];
+                if (td) {
+                  if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                  } else {
+                    tr[i].style.display = "none";
+                  }
+                }
+              }
+            }
+
+            function search_by_mobile_no_Function() {
+              var input, filter, table, tr, td, i;
+              input = document.getElementById("search_mobile_no_keyword");
+              filter = input.value.toUpperCase();
+              table = document.getElementById("incident_report_table");
+              tr = table.getElementsByTagName("tr");
+              for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[3];
+                if (td) {
+                  if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                  } else {
+                    tr[i].style.display = "none";
+                  }
+                }
+              }
+            }
+
+
+
+            function search_by_location_Function() {
+              var input, filter, table, tr, td, i;
+              input = document.getElementById("search_location_keyword");
+              filter = input.value.toUpperCase();
+              table = document.getElementById("incident_report_table");
+              tr = table.getElementsByTagName("tr");
+              for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[4];
+                if (td) {
+                  if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                  } else {
+                    tr[i].style.display = "none";
+                  }
+                }
+              }
+            }
+            </script>
+
+            <!--<form method="POST">-->
+
+            <!-- Haohao: we don't really need this go back button in dashboard -->
+
+                <!--<div>&nbsp;</div>-->
+                <!--&lt;!&ndash; "btn btn-primary" is a bootstrap class that we use to create a submit button &ndash;&gt;-->
+                <!--<input class="btn btn-primary" type="submit" value="Go Back" style="margin-left: 20px;">-->
+
+            <!--</form>-->
+        </div>
+
+    {% endblock %}

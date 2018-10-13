@@ -8,9 +8,9 @@ from flask import g, Flask
 # from CallCenter import app
 
 
-PATH = os.path.abspath('')
+PATH = '/'.join(os.path.relpath(__file__).split('/')[:-1])
 DATABASE = os.path.join(PATH, 'database.db')
-# print(DATABASE)
+print(DATABASE)
 
 app = Flask(__name__, template_folder = "templates")
 
@@ -23,6 +23,7 @@ def get_db():
     if db is None:
         db = g._database = sqlite3.connect(
             DATABASE)  # sqlite3.connect(DATABASE) will create the Database if that Database does not yet exist.
+    print("DB", db)
     return db
 
 
@@ -254,6 +255,8 @@ def retrieve_all_incident_reports():
                 '''
         )
 
+        print("a:" + str(all_incident_reports))
+
         # Some Formatting of the results from the Database
         assistance_required_dict = {0: 'No Assistance needed', 1: 'Emergency Ambulance', 2: 'Rescue and Evaluate',
                                     3: 'Gas Leak Control'}  # a Dict to convert assistance_required from int to string
@@ -275,6 +278,7 @@ def retrieve_all_incident_reports():
 
         db.commit()  # Confirm the changes made to the DB
 
+        print(list_all_incident_reports)
         return list_all_incident_reports
 
 

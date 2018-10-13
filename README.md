@@ -23,7 +23,7 @@ pip install -r requirements.txt
 ``` 
 - Run login.py to start the server
 ```
-python login.py
+python app.py
 ``` 
 - Open `localhost:5000` in your browser to view the login page.
 
