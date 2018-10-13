@@ -82,7 +82,7 @@ def __verify_login(username, password, role):
 
     u = model.User().query.filter_by(username=username).first()
 
-    if u.password == password and model.Role.query.filter_by(id=u.role_id).first().name == role:
+    if u and u.password == password and model.Role.query.filter_by(id=u.role_id).first().name == role:
         return True
     return False
 
