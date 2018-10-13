@@ -1,6 +1,9 @@
 from model import *
 from app import db
 
+import os.path
+if not os.path.exists('./app.db'):
+    db.create_all()
 
 admin = Role(name='Admin')
 call = Role(name='Call Operator')
