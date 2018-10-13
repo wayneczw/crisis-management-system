@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Below is asking to use Bootstrap - We use Bootstrap for its HTML design templates E.g. See the Bootstrap classes below -->
+        <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body background="https://crazyblessedlife.files.wordpress.com/2014/01/latest-blue-vintage-background-background-patterns-others.jpg">
+        <h3 align="left" style ="margin-left:500px;">&nbsp;&nbsp; New Incident Submission Form</h3>
+        <div>&nbsp;</div>
+        <!-- action="/submit_new_incident_report" will bring the User to the Web Address that ends with "/submit_new_incident_report" after the User has POST/'submitted' -->
+        <form method="POST" action="/submit_new_incident_report">
+
+            <p align="left" style ="margin-left:500px;"> <b> &nbsp;&nbsp;&nbsp;&nbsp;  Caller's Full Name</b> </p
+
+            <!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="margin-left: 520px;">
+                <input type="text" name="caller_name" >
+            </div>
+
+            <div>&nbsp;</div>
+            <p align="left" style ="margin-left:500px;"><b>&nbsp;&nbsp;&nbsp;&nbsp;  Caller's Mobile Number</b></p><!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="margin-left: 520px;">
+                <input type="text" name="caller_mobile_number">
+            </div>
+
+            <div>&nbsp;</div>
+            <p align="left" style ="margin-left:500px;"><b>&nbsp;&nbsp;&nbsp;&nbsp;  Caller's Location</b></p><!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="margin-left: 520px;">
+                <input type="text" name="caller_location">
+            </div>
+
+
+            <div>&nbsp;</div>
+            <p align="left" style ="margin-left:500px;"><b>&nbsp;&nbsp;&nbsp;&nbsp;  Type of Assistance required</b>
+
+            <select name="type_of_assistance" style="margin-left: 20px;">
+                <option value="0">NONE</option>
+                <option value="1">Emergency Ambulance [SCDF]</option>
+                <option value="2">Rescue and Evacuation [SCDF]</option>
+                <option value="3">Gas Leak Control [Singapore Power]</option>
+            </select></p>
+
+
+
+            <div>&nbsp;</div>
+            <p align="left" style ="margin-left:500px;"><b>&nbsp;&nbsp;&nbsp;&nbsp;  Description of Incident</b></p><!-- "form-group" is a bootstrap class that we use to create a text input box; We name that text input box as "caller_name" -->
+            <div class=form-group" style="width: 400px; height:50px;margin-left: 520px" >
+                <input class=form-control input-lgg" type="text" name="description">
+            </div>
+
+
+            <div>&nbsp;</div>
+            <p align="left" style ="margin-left:500px;"><b>&nbsp;&nbsp;&nbsp;&nbsp;  Priority Evaluation Metrics</b>
+
+            <p align="left" style ="margin-left:500px;">&nbsp;&nbsp;&nbsp;&nbsp;  1. Enter Priority for Severity of Injuries
+            <select name="priority_for_severity_of_injuries" style="margin-left: 20px;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select></p>
+
+            <p align="left" style ="margin-left:500px;">&nbsp;&nbsp;&nbsp;&nbsp;  2. Enter Priority for Impending Dangers
+            <select name="priority_for_impending_dangers" style="margin-left: 20px;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select></p>
+
+            <p align="left" style ="margin-left:500px;">&nbsp;&nbsp;&nbsp;&nbsp;  3. Enter Priority for Presence of Nearby Help
+            <select name="priority_for_presence_of_nearby_help" style="margin-left: 20px;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select></p>
+
+
+            <div>&nbsp;</div>
+            <p align="left" style ="margin-left:500px;"><b>&nbsp;&nbsp;&nbsp;&nbsp;  Status of the Incident Report </b>
+            <select name="report_status" style="margin-left: 20px;">
+                <option value="1">REPORTED</option>
+                <option value="2">PENDING</option>
+                <option value="3">CLOSED</option>
+            </select></p>
+
+
+            <div>&nbsp;</div>
+            <!-- "btn btn-primary" is a bootstrap class that we use to create a submit button -->
+            <input class="btn btn-primary" type="submit" value="submit" align="left" style ="margin-left:900px;">
+        </form>
+
+    </body>
+</html>

@@ -18,7 +18,6 @@ def register():
         flash('User - {} of role - {} is successfully created.'.format(new_username, new_role))
     return render_template('register.html')  # render a template
 
-
 @account_api.route('/deregister', methods=['GET', 'POST'])
 @login_required
 def deregister():

@@ -98,6 +98,7 @@ def __verify_login(username, password, role):
 if __name__ == '__main__':
 
     # scheduler
+
     scheduler = APScheduler()
     scheduler.api_enabled = True
     scheduler.init_app(app)
