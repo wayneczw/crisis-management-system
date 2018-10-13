@@ -95,6 +95,10 @@ def __verify_login(username, password, role):
     # return False
 
 
+@app.shell_context_processor
+def make_shell_context():
+    return {'db': db, 'User': User, 'Role': Role}
+
 # start the server with the 'run()' method
 if __name__ == '__main__':
 
