@@ -6,7 +6,7 @@ from utils import login_required
 account_api = Blueprint('account', __name__, template_folder='templates')
 
 from app import db
-from model import User, Role
+from model import *
 
 
 @account_api.route('/register', methods=['GET', 'POST'])
@@ -46,6 +46,6 @@ def __deregister_user(username):
     #         userlist.remove(line)
     #         break
     # open('db/userlist.csv', 'w+').writelines(userlist)
-    u = User.query.filter_by(username=username)
+    u = User.query.filter_by(username=username).first()
     db.session.delete(u)
     db.session.commit()

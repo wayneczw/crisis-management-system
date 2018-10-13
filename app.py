@@ -53,7 +53,6 @@ class Config(object):
 
 app.config.from_object(Config)
 
-import model
 
 mail = Mail(app)
 
@@ -78,21 +77,22 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
+from model import *
 
 def __verify_login(username, password, role):
 
-    # u = model.User().query.filter_by(username=username).first()
-    #
-    # if u and u.password == password and model.Role.query.filter_by(id=u.role_id).first().name == role:
-    #     return True
-    # return False
+    u = User().query.filter_by(username=username).first()
 
-    string = '{},{},{}'.format(username, password, role)
-    userlist = open('db/userlist.csv').readlines()
-    for line in userlist:
-        if string in line:
-            return True
+    if u and u.password == password and Role.query.filter_by(id=u.role_id).first().name == role:
+        return True
     return False
+
+    # string = '{},{},{}'.format(username, password, role)
+    # userlist = open('db/userlist.csv').readlines()
+    # for line in userlist:
+    #     if string in line:
+    #         return True
+    # return False
 
 
 # start the server with the 'run()' method
