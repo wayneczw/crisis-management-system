@@ -94,8 +94,13 @@ def get_weather_report():
     for i in range(length):
         items.append('<tr>')
         for k in keys:
-            if k == 'weather' and weather_dict[k][i] == 'Moderate Rain':
-                items.append('<td><font color="blue">%s</font></td>' % weather_dict[k][i])
+            if k == 'weather':
+                if weather_dict[k][i] == 'Moderate Rain':
+                    items.append('<td><font color="blue">%s</font></td>' % weather_dict[k][i])
+                elif 'Heavy' in weather_dict[k][i] or 'Thundery' in weather_dict[k][i]:
+                    items.append('<td><font color="red">%s</font></td>' % weather_dict[k][i])
+                else:
+                    items.append('<td>%s</td>' % weather_dict[k][i])
             else:
                 items.append('<td>%s</td>' % weather_dict[k][i])
         items.append('</tr>')

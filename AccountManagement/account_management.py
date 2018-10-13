@@ -5,6 +5,10 @@ from utils import login_required
 
 account_api = Blueprint('account', __name__, template_folder='templates')
 
+from app import db
+from model import User, Role
+
+
 @account_api.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
@@ -13,6 +17,7 @@ def register():
         __register_user(new_username, new_password, new_role)
         flash('User - {} of role - {} is successfully created.'.format(new_username, new_role))
     return render_template('register.html')  # render a template
+
 
 @account_api.route('/deregister', methods=['GET', 'POST'])
 @login_required
@@ -28,13 +33,20 @@ def deregister():
 
 
 def __register_user(new_username, new_password, new_role):
-    open('db/userlist.csv', 'a+').write("{},{},{}\n".format(new_username, new_password, new_role))
+    # open('db/userlist.csv', 'a+').write("{},{},{}\n".format(new_username, new_password, new_role))
+    u = User(username=new_username, password=new_password,
+             role_id=Role.query.filter_by(name=new_role).first().id)
+    db.session.add(u)
+    db.session.commit()
 
 
 def __deregister_user(username):
-    userlist = open('db/userlist.csv').readlines()
-    for line in userlist:
-        if username in line:
-            userlist.remove(line)
-            break
-    open('db/userlist.csv', 'w+').writelines(userlist)
+    # userlist = open('db/userlist.csv').readlines()
+    # for line in userlist:
+    #     if username in line:
+    #         userlist.remove(line)
+    #         break
+    # open('db/userlist.csv', 'w+').writelines(userlist)
+    u = User.query.filter_by(username=username)
+    db.session.delete(u)
+    db.session.commit()

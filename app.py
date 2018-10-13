@@ -10,6 +10,9 @@ from flask_apscheduler import APScheduler
 from flask_mail import Mail, Message
 import os
 
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
 # create the application object
 app = Flask(__name__)
 app.secret_key = "aD1R3s2"
@@ -22,33 +25,7 @@ API_KEY = "AIzaSyDc1Hx9zrh10qY4FSl-A0OwIVKRNTBkZGs"
 app.config['GOOGLEMAPS_KEY'] = API_KEY
 GoogleMaps(app, key=API_KEY)
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if not __verify_login(request.form['username'], request.form['password'], request.form['role']):
-            error = 'Invalid Credentials. Please try again.'
-        else:
-            session["logged_in"] = True
-            session["username"] = request.form['username']
-            return redirect(url_for('dashboard.dashboard'))
-    return render_template('login-new.html', error=error)
-
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    session.pop('username', None)
-    return redirect(url_for('login'))
-
-
-def __verify_login(username, password, role):
-    string = '{},{},{}'.format(username, password, role)
-    userlist = open('db/userlist.csv').readlines()
-    for line in userlist:
-        if string in line:
-            return True
-    return False
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
@@ -64,15 +41,63 @@ class Config(object):
 
     SCHEDULER_API_ENABLED = True
 
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+                              'sqlite:///' + os.path.join(basedir, 'app.db')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+app.config.from_object(Config)
+
+# db part
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+import model
 
 mail = Mail(app)
 
+
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if not __verify_login(request.form['username'], request.form['password'], request.form['role']):
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            session["logged_in"] = True
+            session["username"] = request.form['username']
+            return redirect(url_for('dashboard.dashboard'))
+    return render_template('login-new.html', error=error)
+
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    session.pop('username', None)
+    return redirect(url_for('login'))
+
+
+def __verify_login(username, password, role):
+
+    u = model.User().query.filter_by(username=username).first()
+
+    if u.password == password and model.Role.query.filter_by(id=u.role_id).first().name == role:
+        return True
+    return False
+
+    # string = '{},{},{}'.format(username, password, role)
+    # userlist = open('db/userlist.csv').readlines()
+    # for line in userlist:
+    #     if string in line:
+    #         return True
+    # return False
+
+
 # start the server with the 'run()' method
 if __name__ == '__main__':
+
     # scheduler
-
-    app.config.from_object(Config())
-
     scheduler = APScheduler()
     scheduler.api_enabled = True
     scheduler.init_app(app)
