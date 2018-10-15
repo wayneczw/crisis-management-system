@@ -22,7 +22,7 @@ def get_db():
                  None)  # g is a global/object that would last for only 1 request/response cycle [data in g does not persist, unlike a database]
     if db is None:
         db = g._database = sqlite3.connect(
-            DATABASE)  # sqlite3.connect(DATABASE) will create the Database if that Database does not yet exist.
+                DATABASE)  # sqlite3.connect(DATABASE) will create the Database if that Database does not yet exist.
     return db
 
 
@@ -49,6 +49,86 @@ def query_db(query, args = ()):
     rv = cur.fetchall()  # retrieve the results from the Cursor object
     cur.close()  # close the cursor
     return rv
+
+
+'''
+Checks if the name is legal. If not a ValueError would be raised
+'''
+
+
+def __check_name(name):
+    if len(name) == 0:
+        raise ValueError('name cannot be empty')
+    for it in name:
+        if 'A' <= it <= 'Z' or 'a' <= it <= 'z' or it == '.' or it == ' ' or it == ',' or it == '-':
+            continue
+        raise ValueError('Illegal character ' + it + ' in name')
+
+
+'''
+Checks if the mobile number is legal
+The legal ones are defined as: [country code][' '|'-'][number]
+Country code is either started by a '+' and followed by 1-3 digits or 4 digits
+Number is defined as 8 to 13 digits.
+'''
+
+
+def __check_mobile_no(no):
+    if len(no) == 0:
+        raise ValueError('mobile number cannot be empty')
+
+    no = no.split()
+    if len(no) == 1:
+        no = no[0].split('-')
+
+    if len(no) > 2:
+        raise ValueError('Too many spaces or hyphens :(')
+
+    if len(no) == 1:
+        if len(no[0]) < 7 or len(no[0]) > 14:
+            raise ValueError('The number is either too short or too long')
+        for it in no[0]:
+            if it < '0' or it > '9':
+                raise ValueError('The number should be numerical')
+    else:
+        if len(no[0]) > 4 or len(no[0]) == 0:
+            raise ValueError('Illegal country code')
+        if no[0][0] == '+':
+            if len(no[0]) > 4 or len(no[0]) < 2:
+                raise ValueError('Illegal country code')
+            for i in range(1, len(no[0])):
+                if no[0][i] < '0' or no[0][i] > '9':
+                    raise ValueError('Illegal country code')
+        else:
+            if len(no[0]) != 4:
+                raise ValueError('Illegal country code')
+
+        if len(no[1]) < 7 or len(no[1]) > 14:
+            raise ValueError('The number is either too short or too long')
+        for it in no[1]:
+            if it < '0' or it > '9':
+                raise ValueError('The number should be numerical')
+
+
+'''
+Check if the location is empty.
+'''
+
+
+def __check_loc(loc):
+    loc = str(loc)
+    if len(loc) == 0:
+        raise ValueError('location cannot be empty')
+
+
+'''
+Check if the description is empty
+'''
+
+
+def __check_description(description):
+    if len(description) == 0:
+        raise ValueError('description cannot be empty')
 
 
 '''
@@ -154,6 +234,11 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
 
 def insert_report(name, mobile_number, location, assistance_required, description, priority_injuries, priority_dangers,
                   priority_help, report_status):
+    __check_name(name)
+    __check_mobile_no(mobile_number)
+    __check_loc(location)
+    __check_description(description)
+
     # assistance_required is an int: 0 = No Assistance required; 1 = Emergency Ambulance; 2 = Rescue and Evacuation; 3 = Gas Leak Control
     # report_status is an int: 1 = REPORTED [No assistance required]; 2 = PENDING [Waiting for Assistance but Assistance has not reached the victim yet]; 3 = CLOSED [Assistance has reached the victim already]
 
@@ -164,6 +249,12 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
     priority_help = int(priority_help)
     report_status = int(report_status)
 
+    if report_status == 1 and assistance_required != 0:
+        raise ValueError('Inconsistent report type and assistance type')
+
+    if report_status != 1 and assistance_required == 0:
+        raise ValueError('Inconsistent report type and assistance type')
+
     # Checking the validity of the Data:
     assert -1 < assistance_required < 4
     assert 0 < priority_injuries < 11
@@ -172,6 +263,33 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
     assert 0 < report_status < 4
 
     report_time = datetime.now()
+    with app.app_context():
+        db = get_db()
+        duplicates = query_db(
+                '''
+                    SELECT * FROM INCIDENT_REPORT WHERE
+                    first_reported > ? AND 
+                    location = ? AND 
+                    mobile_number = ? AND 
+                    assistance_required = ? AND 
+                    priority_injuries = ? AND 
+                    priority_dangers = ? AND 
+                    priority_help = ? AND 
+                    report_status = ?
+                ''',
+                [
+                    report_time - timedelta(minutes = 5),
+                    location,
+                    mobile_number,
+                    assistance_required,
+                    priority_injuries,
+                    priority_dangers,
+                    priority_help,
+                    report_status
+                ]
+        )
+        if duplicates:
+            raise PermissionError('Insertion forbidden.')
 
     incident_report_id = __insert_incident(name, mobile_number, location, assistance_required, description,
                                            priority_injuries, priority_dangers, priority_help, report_status,
@@ -205,6 +323,16 @@ def update_report(id_of_incident_report, caller_name, caller_mobile_number, call
     # assistance_required is an int: 0 = No Assistance required; 1 = Emergency Ambulance; 2 = Rescue and Evacuation; 3 = Gas Leak Control
     # report_status is an int: 1 = REPORTED [No assistance required]; 2 = PENDING [Waiting for Assistance but Assistance has not reached the victim yet]; 3 = CLOSED [Assistance has reached the victim already]
 
+    __check_name(caller_name)
+    __check_mobile_no(caller_mobile_number)
+    __check_loc(caller_location)
+    __check_description(description)
+
+    if report_status == 1 and type_of_assistance != 0:
+        raise ValueError('Inconsistent report type and assistance type')
+
+    if report_status != 1 and type_of_assistance == 0:
+        raise ValueError('Inconsistent report type and assistance type')
 
     with app.app_context():  # Within the Application Context:
         db = get_db()  # call our private method to retreive the DB
