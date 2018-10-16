@@ -237,6 +237,7 @@ Raises:
     No exception
 '''
 
+
 def __insert_incident(name, mobile_number, location, assistance_required, description, priority_injuries,
                       priority_dangers, priority_help, report_status,
                       report_time):
@@ -329,6 +330,7 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
         db.commit()  # Confirm the changes made to the DB
 
         return _id  # Return the id of the Newly inserted Incident Report
+
 
 '''
 Function:
@@ -520,7 +522,6 @@ def update_report(id_of_incident_report, caller_name, caller_mobile_number, call
     return 0
 
 
-
 '''
 Function:
     retrieve_all_incident_reports
@@ -565,7 +566,6 @@ def retrieve_all_incident_reports():
         db.commit()  # Confirm the changes made to the DB
 
         return list_all_incident_reports
-
 
 
 '''
