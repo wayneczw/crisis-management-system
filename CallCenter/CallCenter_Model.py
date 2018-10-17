@@ -3,6 +3,7 @@ import sqlite3
 import json
 from datetime import datetime, timedelta
 from flask import g, Flask
+from Map.map_api import address_to_latlng
 
 
 # from CallCenter import app
@@ -61,7 +62,7 @@ The current assumption is the first reported case would always report the earlie
 
 def __insert_incident(name, mobile_number, location, assistance_required, description, priority_injuries,
                       priority_dangers, priority_help, report_status,
-                      report_time):
+                      report_time, latitude, longitude):
     # creating a time interval that another new incident report would be classified as being about the same incident as this current incident report.
     earliest_time = report_time - timedelta(minutes = 5)
 
@@ -109,8 +110,10 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
                   mobile_number,
                   description,
                   report_status,
-                  is_first_such_incident
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                  is_first_such_incident,
+                  latitude,
+                  longitude
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
                 ''',
                 [
                     name,
@@ -123,7 +126,9 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
                     mobile_number,
                     description,
                     report_status,
-                    is_first_such_incident
+                    is_first_such_incident,
+                    latitude,
+                    longitude
                 ]
         )
 
@@ -174,9 +179,14 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
 
     report_time = datetime.now()
 
+    _dict =  address_to_latlng(location)
+    latitude = _dict['lat']
+    longitude = _dict['lng']
+    
+
     incident_report_id = __insert_incident(name, mobile_number, location, assistance_required, description,
                                            priority_injuries, priority_dangers, priority_help, report_status,
-                                           report_time)
+                                           report_time,latitude,longitude)
 
     print(incident_report_id)
 
@@ -274,11 +284,12 @@ def retrieve_all_incident_reports():
             report[10] = report_status_dict[report[10]]  # Convert report_status from int to string
             report[11] = is_first_such_incident_dict[report[11]]  # Convert is_first_such_incident from int to string
 
+            report = report[:12] # Remove information on Latitude and Longitude as they are not needed
             list_all_incident_reports.append(report)
 
         db.commit()  # Confirm the changes made to the DB
 
-        print(list_all_incident_reports)
+        
         return list_all_incident_reports
 
 

@@ -25,17 +25,17 @@
                         <div class="card-body card-block">
                           <div class="row form-group">
                             <div class="col col-md-2"><label for="caller_name" class=" form-control-label">Caller's Full Name</label></div>
-                            <div class="col-12 col-md-10"><input type="text" id="caller_name" name="caller_name" class="form-control"></div>
+                            <div class="col-12 col-md-10"><input type="text" id="caller_name" name="caller_name" class="form-control" pattern="[A-Za-z ]+" required></div>
                           </div>
 
                             <div class="row form-group">
                             <div class="col col-md-2"><label for="caller_mobile_number" class=" form-control-label">Caller's Mobile Number</label></div>
-                            <div class="col-12 col-md-10"><input type="text" id="caller_mobile_number" name="caller_mobile_number" class="form-control"></div>
+                            <div class="col-12 col-md-10"><input type="text" id="caller_mobile_number" name="caller_mobile_number" class="form-control" pattern="[0-9]{8}" required></div>
                           </div>
 
                             <div class="row form-group">
                             <div class="col col-md-2"><label for="caller_location" class=" form-control-label">Caller's Location</label></div>
-                            <div class="col-12 col-md-10"><input type="text" id="caller_location" name="caller_location" class="form-control"></div>
+                            <div class="col-12 col-md-10"><input type="text" id="caller_location" name="caller_location" class="form-control" required></div>
                           </div>
 
                             <div class="row form-group">
@@ -44,7 +44,7 @@
                                   <select name="type_of_assistance" id="select" class="form-control">
                                     <option value="0">NONE</option>
                                     <option value="1">Emergency Ambulance [SCDF]</option>
-                                    <option value="2r">Rescue and Evacuation [SCDF]</option>
+                                    <option value="2">Rescue and Evacuation [SCDF]</option>
                                     <option value="3">Gas Leak Control [Singapore Power]</option>
                                   </select>
                                 </div>
@@ -52,7 +52,7 @@
 
                             <div class="row form-group">
                             <div class="col col-md-2"><label for="description" class=" form-control-label">Description of Incident</label></div>
-                            <div class="col-12 col-md-10"><input type="text" id="description" name="description" class="form-control"></div>
+                            <div class="col-12 col-md-10"><input type="text" id="description" name="description" class="form-control" required></div>
                           </div>
 
 
