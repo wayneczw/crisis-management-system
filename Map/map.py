@@ -1,9 +1,14 @@
 # coding: utf-8
-
+__all__ = ['periodic_psi_check']
+from datetime import datetime
 from flask import Flask, render_template, Blueprint
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map, icons
 from .map_api import get_psi, get_dengue_clusters, get_weather, get_shelter, address_to_latlng
+from SocialMedia.model import CrisisReport
+from SocialMedia.controller import alert_public_test, post_facebook_test
+import time, threading
+
 
 map_api = Blueprint('map', __name__, template_folder='templates', )
 
@@ -197,6 +202,28 @@ def incidentsmapview(incidents_list):
 
     return render_template('incidentsmap.html', incidentsmap=incidentsmap)
 
+def periodic_psi_check():
+    def _check_threshold(psi):
+        if psi > 200:
+            return True
+        return False
+    def _alert(info_dict, area):
+        date = str(datetime.now().date())
+        time = str(datetime.time(datetime.now()))
+        report = CrisisReport(identifier=1, name=area, address=area, category='Haze', description=info_dict['status'], date=date, time=time, advisory='Avoid out door activity')
+
+        alert_public_test(report)
+        post_facebook_test(report)
+ 
+    east_info, west_info, south_info, north_info, central_info = get_psi()
+
+    if _check_threshold(east_info['psi']): _alert(east_info, 'east')
+    if _check_threshold(west_info['psi']): _alert(west_info, 'west')
+    if _check_threshold(south_info['psi']): _alert(south_info, 'south')
+    if _check_threshold(north_info['psi']): _alert(north_info, 'north')
+    if _check_threshold(central_info['psi']): _alert(central_info, 'central')
+
+    threading.Timer(600, periodic_psi_check).start()
 
 
 # if __name__ == "__main__":

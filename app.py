@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, url_for, request, session
 from flask_googlemaps import GoogleMaps
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from Map.map import periodic_psi_check
 
 # create the application object
 app = Flask(__name__)
@@ -108,6 +109,8 @@ if __name__ == '__main__':
     scheduler.api_enabled = True
     scheduler.init_app(app)
     scheduler.start()
+    print('uo')
+    periodic_psi_check()
 
     # turn off use reloader to prevent sending two duplicate emails
     app.run(debug=True, use_reloader=False)
