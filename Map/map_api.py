@@ -134,7 +134,7 @@ def get_shelter():
 def address_to_latlng(address):
     '''
         :parameter:
-            address(str) : The address need to be converted
+            address(str) : The address need to be converted to geo coordinates
 
         :return:
             dict: a dictionary of latitude and longitude of the address
