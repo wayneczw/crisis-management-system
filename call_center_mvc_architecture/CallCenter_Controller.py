@@ -19,6 +19,19 @@ that ends with "/submit_new_incident_report"
 
 
 # First Page of Updating an Incident Report
+
+'''
+Function:
+    update_incident_report
+Args:
+    No arguments
+Returns:
+    the html page enabling searching incident report to be updated
+Raises:
+    No exception
+'''
+
+
 @app.route("/update_incident_report_page", methods = ['GET', 'POST'])
 def update_incident_report():
     all_incident_reports = retrieve_all_incident_reports() # Call a Method from Model to retrieve all the Incident Reports
@@ -27,6 +40,21 @@ def update_incident_report():
 
 
 # Update Information about one particular Incident Report into the DB based on which incident the Call Operator has selected
+
+
+'''
+Function:
+    row_detail_for_update
+Args:
+    rowData : a particular incident report in database
+Returns:
+    return the html page enabling updating incident information
+    if'submit'button is pressed, return the updated information of the particular incident selected
+Raises:
+    No exception
+'''
+
+
 @app.route('/row_detail_for_update/<rowData>', methods = ['GET', 'POST'])
 def row_detail_for_update(rowData):
 
@@ -117,6 +145,20 @@ def row_detail_for_update(rowData):
 
 
 # Show the Completion Page after Updating an Incident Report
+
+'''
+Function:
+    incident_report_update_completion_page
+Args:
+    no arguments
+Returns:
+    return the html page for the updated incident information of the particular incident selected
+    if'go back'button is pressed, return the html page enabling updating incident
+Raises:
+    No exception
+'''
+
+
 @app.route("/incident_report_update_completion_page", methods = ['GET', 'POST'])
 def incident_report_update_completion_page():
 
@@ -166,12 +208,21 @@ def incident_report_update_completion_page():
                             )
 
 
-
-
-
-
-
 # First Page of Deleting an Incident Report
+
+'''
+Function:
+    delete_incident_report
+Args:
+    no arguments
+Returns:
+    return the html page for incident information of the all incident reports for Call Operator to select
+    if a particular record is selected for deletion, return the html page for the details of the incident to be deleted
+Raises:
+    No exception
+'''
+
+
 @app.route("/delete_incident_report_page", methods = ['GET', 'POST'])
 def delete_incident_report():
     all_incident_reports = retrieve_all_incident_reports()
@@ -182,6 +233,21 @@ def delete_incident_report():
 
 
 # Delete Information about one particular Incident Report into the DB based on which incident the Call Operator has selected
+
+'''
+Function:
+    row_detail_for_delete
+Args:
+    rowData : a particular incident report in database
+Returns:
+    return the incident information of a particular incident selected by Call Operator for deletion
+    if 'delete' button is pressed, return the html page for incident report delete completion
+
+Raises:
+    No exception
+'''
+
+
 @app.route('/row_detail_for_delete/<rowData>', methods = ['GET', 'POST'])
 def row_detail_for_delete(rowData):
 
@@ -271,6 +337,20 @@ def row_detail_for_delete(rowData):
 
 
 # Show the Completion Page after Deleting an Incident Report
+
+'''
+Function:
+    incident_report_sent_completion_page
+Args:
+    no arguments
+Returns:
+    return html page for the information of the deleted incident
+    if 'go back' button is pressed, return the html page enabling deleting incident report
+Raises:
+    No exception
+'''
+
+
 @app.route("/incident_report_delete_completion_page", methods = ['GET', 'POST'])
 def incident_report_delete_completion_page():
 
@@ -323,6 +403,21 @@ def incident_report_delete_completion_page():
 
 
 # Show the Completion Page after sending an Incident Report
+
+
+'''
+Function:
+    incident_report_sent_completion_page
+Args:
+    no arguments
+Returns:
+    return html page for the information of the new incident submitted
+    if 'go back' button is pressed, return the html page enabling submitting new incident record
+Raises:
+    No exception
+'''
+
+
 @app.route("/incident_report_sent_completion_page", methods = ['GET', 'POST'])
 def incident_report_sent_completion_page():
 
@@ -363,9 +458,17 @@ def incident_report_sent_completion_page():
 
 
 
-
-
-
+'''
+Function:
+    submit_new_incident_report
+Args:
+    no arguments
+Returns:
+    return html page enabling submitting a new incident record
+    if 'submit' button is pressed, return the html page for information of the new incident submitted
+Raises:
+    No exception
+'''
 
 
 @app.route("/submit_new_incident_report", methods = ['GET', 'POST'])

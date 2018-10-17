@@ -1,5 +1,6 @@
 from CallCenter_Model import *
 from unittest import TestCase, main
+from time import sleep
 
 
 # This function should be and only be used in this file
@@ -127,6 +128,145 @@ class TestIncidentReport(TestCase):
             raise AssertionError('name cannot be empty')
         except ValueError:
             pass
+
+        try:
+            insert_report(
+                    name = 'Jiayun',
+                    mobile_number = 'Jiayun',
+                    location = 'hall 6',
+                    assistance_required = 0,
+                    description = 'description',
+                    priority_injuries = 1,
+                    priority_dangers = 1,
+                    priority_help = 1,
+                    report_status = 1
+            )
+            raise AssertionError('mobile number cannot contain letters')
+        except ValueError:
+            pass
+
+        try:
+            insert_report(
+                    name = 'Jiayun',
+                    mobile_number = '',
+                    location = 'hall 6',
+                    assistance_required = 0,
+                    description = 'description',
+                    priority_injuries = 1,
+                    priority_dangers = 1,
+                    priority_help = 1,
+                    report_status = 1
+            )
+            raise AssertionError('mobile number cannot be empty')
+        except ValueError:
+            pass
+
+        try:
+            insert_report(
+                    name = 'Jiayun',
+                    mobile_number = '12345678',
+                    location = '',
+                    assistance_required = 0,
+                    description = 'description',
+                    priority_injuries = 1,
+                    priority_dangers = 1,
+                    priority_help = 1,
+                    report_status = 1
+            )
+            raise AssertionError('location cannot be empty')
+        except ValueError:
+            pass
+
+        try:
+            insert_report(
+                    name = 'Jiayun',
+                    mobile_number = '12345678',
+                    location = 'hall 6',
+                    assistance_required = 0,
+                    description = '',
+                    priority_injuries = 1,
+                    priority_dangers = 1,
+                    priority_help = 1,
+                    report_status = 1
+            )
+            raise AssertionError('description cannot be empty')
+        except ValueError:
+            pass
+
+        try:
+            insert_report(
+                    name = 'Jiayun',
+                    mobile_number = '12345678',
+                    location = 'hall 6',
+                    assistance_required = 1,
+                    description = '',
+                    priority_injuries = 1,
+                    priority_dangers = 1,
+                    priority_help = 1,
+                    report_status = 1
+            )
+            raise AssertionError('Inconsistent report type and assistance type')
+        except ValueError:
+            pass
+
+        try:
+            insert_report(
+                    name = 'Jiayun',
+                    mobile_number = '12345678',
+                    location = 'hall 6',
+                    assistance_required = 0,
+                    description = '',
+                    priority_injuries = 1,
+                    priority_dangers = 1,
+                    priority_help = 1,
+                    report_status = 0
+            )
+            raise AssertionError('Inconsistent report type and assistance type')
+        except ValueError:
+            pass
+
+        try:
+            insert_report(
+                    name = 'Jiayun',
+                    mobile_number = '12345678',
+                    location = 'hall 6',
+                    assistance_required = 0,
+                    description = 'description',
+                    priority_injuries = 1,
+                    priority_dangers = 1,
+                    priority_help = 1,
+                    report_status = 1
+            )
+            raise AssertionError('Duplicates!!!')
+        except PermissionError:
+            pass
+
+        insert_report(
+                    name = 'abc',
+                    mobile_number = '87654321',
+                    location = 'hall 6',
+                    assistance_required = 0,
+                    description = 'description',
+                    priority_injuries = 1,
+                    priority_dangers = 1,
+                    priority_help = 1,
+                    report_status = 1
+            )
+
+        sleep(5)
+        update_report(
+                    id_of_incident_report = 1,
+                    caller_name = 'Jiayunnnnn',
+                    caller_mobile_number = '12345678',
+                    caller_location = 'hall 6',
+                    type_of_assistance = 0,
+                    description = 'description',
+                    priority_for_severity_of_injuries = 1,
+                    priority_for_impending_dangers = 1,
+                    priority_for_presence_of_nearby_help = 1,
+                    report_status = 1,
+                    is_first_such_incident = 1
+            )
 
 
 if __name__ == '__main__':
