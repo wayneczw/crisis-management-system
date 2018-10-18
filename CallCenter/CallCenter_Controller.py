@@ -20,6 +20,7 @@ that ends with "/submit_new_incident_report"
 @callcenter_api.route("/update_incident_report_page", methods = ['GET', 'POST'])
 def update_incident_report():
     all_incident_reports = retrieve_all_incident_reports() # Call a Method from Model to retrieve all the Incident Reports
+    all_incident_reports.reverse()
     # Render the html page that corresponds to this method [And we give the html file some arguments]:
     return render_template('callcenter_ui_update_incident_report-int.html', columns=['ID', 'First reported time', 'Name', 'Mobile no.' , 'Location', 'Assistance requested', 'Description' , 'Priority on injuries', 'Priority on dangers', 'Priority on help', 'Report status', 'Is first such incident'], items=all_incident_reports)
 
@@ -168,6 +169,8 @@ def incident_report_update_completion_page():
 @callcenter_api.route("/delete_incident_report_page", methods = ['GET', 'POST'])
 def delete_incident_report():
     all_incident_reports = retrieve_all_incident_reports()
+    all_incident_reports.reverse()
+
     if request.method == 'POST':
         return redirect('/dashboard')
     return render_template('callcenter_ui_delete_incident_report-int.html', columns=['ID', 'First reported time', 'Name', 'Mobile no.' , 'Location', 'Assistance requested', 'Description' , 'Priority on injuries', 'Priority on dangers', 'Priority on help', 'Report status', 'Is first such incident'], items=all_incident_reports)

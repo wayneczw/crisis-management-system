@@ -1,6 +1,4 @@
-import model
-import renderer
-import connector
+from SocialMedia import model, renderer, connector
 
 ALERT_AUTHORITY_SPEC = """
 Crisis Management System
@@ -93,14 +91,18 @@ def alert_authorities_test():
                                  model.Contact.AUTHORITY_POLICE)
 
 
-def alert_public_test():
+def alert_public_test(report):
     controller = SocialMedia()
-    controller.alert_public(model.CrisisReport())
+    assert type(report) == model.CrisisReport
+    print('hi')
+    # controller.alert_public(report)
 
 
-def post_facebook_test():
+def post_facebook_test(report):
     controller = SocialMedia()
-    controller.post_facebook(model.CrisisReport())
+    assert type(report) == model.CrisisReport
+    print('hi')
+    # controller.post_facebook(report)
 
 
 if __name__ == "__main__":

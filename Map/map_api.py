@@ -6,7 +6,6 @@ import urllib.request
 from urllib.request import Request, urlopen
 import bs4
 
-
 API_KEY = "AIzaSyDc1Hx9zrh10qY4FSl-A0OwIVKRNTBkZGs"
 
 PSI_URL = 'https://api.data.gov.sg/v1/environment/psi'
@@ -21,18 +20,6 @@ REGION_LAT_LNG = dict(east=dict(lat=1.3413, lng=103.9638),
                 central=dict(lat=1.36, lng=103.8))
 
 def get_psi():
-    def _get_psi_info(region, psi_json_dict_list):
-        return dict(lat=REGION_LAT_LNG[region], lng=REGION_LAT_LNG[region], psi=psi_json_dict_list[0]['items'][0]['readings']['pm25_twenty_four_hourly'][region])
-    #end def
-
-    def _check_status(info_dict):
-        if info_dict['psi'] <= 50: return ('Healthy', 'green')
-        elif info_dict['psi'] <= 100: return ('Moderate', 'blue')
-        elif info_dict['psi'] <= 200: return ('Unhealthy', 'yellow')
-        elif info_dict['psi'] <= 300: return ('Very Unhealthy', 'orange')
-        else: return ('Hazardous', 'red')
-    #end def
-
     '''
     :return: 4 dictionaries of the same formats
         {'status': 'Healthy',
@@ -42,6 +29,15 @@ def get_psi():
         'lng': 128.12
         }
     '''
+    def _get_psi_info(region, psi_json_dict_list):
+        return dict(lat=REGION_LAT_LNG[region], lng=REGION_LAT_LNG[region], psi=psi_json_dict_list[0]['items'][0]['readings']['pm25_twenty_four_hourly'][region])
+
+    def _check_status(info_dict):
+        if info_dict['psi'] <= 50: return ('Healthy', 'green')
+        elif info_dict['psi'] <= 100: return ('Moderate', 'blue')
+        elif info_dict['psi'] <= 200: return ('Unhealthy', 'yellow')
+        elif info_dict['psi'] <= 300: return ('Very Unhealthy', 'orange')
+        else: return ('Hazardous', 'red')
 
     psi_response = urllib.request.urlopen(PSI_URL, timeout=5)
     psi = [line.decode('utf-8') for line in psi_response]
@@ -60,7 +56,7 @@ def get_psi():
     central_info['status'], central_info['color'] = _check_status(central_info)
 
     return east_info, west_info, south_info, north_info, central_info
-#end def
+
 
 def get_dengue_clusters():
     '''
@@ -82,10 +78,9 @@ def get_dengue_clusters():
         cases_sincestart = l.find_next('td').find_next('td')
         locality = l.find_next('td').find_next('td').find_next('td')
         results.append({'locality': locality.text, 'cluster': cluster.text, 'num_last2weeks':int(cases_last2weeks.text), 'num_all':int(cases_sincestart.text)})
-    #end for
 
     return results
-#end def
+
 
 
 def get_weather():
@@ -104,10 +99,10 @@ def get_weather():
 
     for item in weather_json_dict_list[0]['items'][0]['forecasts']:
         weather_dict[item['area']]['forecast'] = item['forecast']
-    #end for
+
 
     return weather_dict
-#end def
+
 
 
 def get_shelter():
@@ -132,13 +127,18 @@ def get_shelter():
         tmp_dict.update(address_to_latlng(item['address']))
 
         shelters_dict[item['name']] = tmp_dict
-    #end for
 
     return shelters_dict
-#end def
 
 
 def address_to_latlng(address):
+    '''
+        :parameter:
+            address(str) : The address need to be converted to geo coordinates
+
+        :return:
+            dict: a dictionary of latitude and longitude of the address
+    '''
     geo_api_response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}'.format(address.replace(" ", "+"), API_KEY))
     geo_api_response_dict = geo_api_response.json()
     if geo_api_response_dict['status'] == 'OK':
@@ -147,7 +147,5 @@ def address_to_latlng(address):
     else:
         lat = 0
         lng = 0
-    #end if
 
     return dict(lat=lat, lng=lng)
-#end def

@@ -1,5 +1,5 @@
 -- drop statements are only for testing purpose:
--- DROP TABLE IF EXISTS `INCIDENT_REPORT`;
+DROP TABLE IF EXISTS `INCIDENT_REPORT`;
 
 
 
@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS INCIDENT_REPORT (
   `priority_dangers`  INTEGER NOT NULL CHECK(`priority_dangers` > 0 AND `priority_dangers` < 11),
   `priority_help` INTEGER NOT NULL CHECK(`priority_help` > 0 AND `priority_help` < 11),
   `report_status`  INTEGER NOT NULL CHECK(`report_status` > 0 AND `report_status` < 4),
-  `is_first_such_incident`  INTEGER NOT NULL DEFAULT(1)
+  `is_first_such_incident`  INTEGER NOT NULL DEFAULT(1),
+  `latitude`  REAL,
+  `longitude`  REAL
 );
 

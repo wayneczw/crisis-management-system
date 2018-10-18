@@ -1,5 +1,4 @@
-import model
-
+from SocialMedia import model
 
 class MessageRenderer:
 
