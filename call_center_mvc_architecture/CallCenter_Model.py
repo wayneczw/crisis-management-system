@@ -3,6 +3,7 @@ import sqlite3
 import json
 from datetime import datetime, timedelta
 from flask import g, Flask
+from Map.map_api import address_to_latlng
 
 
 # from CallCenter import app
@@ -36,7 +37,6 @@ def get_db():
                 DATABASE)  # sqlite3.connect(DATABASE) will create the Database if that Database does not yet exist.
     return db
 
-
 '''
 Function:
     close_connection
@@ -54,7 +54,6 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
-
 
 '''
 Function:
@@ -77,7 +76,6 @@ def init_db():
             # Cursor is an object that allow us to fetch multiple results from the database and keep track of which result is which.
             db.cursor().executescript(f.read())  # executescript allow us to execute "multiple SQL statements at once".
         db.commit()  # Tell the Database to confirm/finalise the changes made to it. No Changes to DB can be reverted back after commit() is called.
-
 
 '''
 Function:
@@ -141,7 +139,6 @@ Returns:
 Raises:
     ValueError if the mobile number is illegal
 '''
-
 
 def __check_mobile_no(no):
     if len(no) == 0:
@@ -244,7 +241,7 @@ Raises:
 
 def __insert_incident(name, mobile_number, location, assistance_required, description, priority_injuries,
                       priority_dangers, priority_help, report_status,
-                      report_time):
+                      report_time, latitude, longitude):
     # creating a time interval that another new incident report would be classified as being about the same incident as this current incident report.
     earliest_time = report_time - timedelta(minutes = 5)
 
@@ -292,8 +289,10 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
                   mobile_number,
                   description,
                   report_status,
-                  is_first_such_incident
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  is_first_such_incident,
+                  latitude,
+                  longitude
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
                 ''',
                 [
                     name,
@@ -306,8 +305,9 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
                     mobile_number,
                     description,
                     report_status,
-                    is_first_such_incident
-                ]
+                    is_first_such_incident,
+                    latitude,
+                    longitude]
         )
 
         # Retrieve the id of the Incident Report that we have just inserted into the DB [The id is set by the DB]
@@ -387,6 +387,11 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
     assert 0 < report_status < 4
 
     report_time = datetime.now()
+
+    _dict = address_to_latlng(location)
+    latitude = _dict['lat']
+    longitude = _dict['lng']
+
     with app.app_context():
         db = get_db()
         duplicates = query_db(
@@ -417,7 +422,7 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
 
     incident_report_id = __insert_incident(name, mobile_number, location, assistance_required, description,
                                            priority_injuries, priority_dangers, priority_help, report_status,
-                                           report_time)
+                                           report_time, latitude, longitude)
 
     print(incident_report_id)
 
@@ -565,6 +570,7 @@ def retrieve_all_incident_reports():
             report[10] = report_status_dict[report[10]]  # Convert report_status from int to string
             report[11] = is_first_such_incident_dict[report[11]]  # Convert is_first_such_incident from int to string
 
+            report = report[:12]  # Remove information on Latitude and Longitude as they are not needed
             list_all_incident_reports.append(report)
 
         db.commit()  # Confirm the changes made to the DB
@@ -591,7 +597,7 @@ def retrieve_active_incident_reports():
         all_incident_reports = query_db(
                 '''
                 SELECT * FROM INCIDENT_REPORT WHERE
-                report_status = 2
+                report_status <= 2
                 '''
         )
 
