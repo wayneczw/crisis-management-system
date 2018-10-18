@@ -4,6 +4,77 @@ from email.mime.text import MIMEText
 from datetime import datetime, timezone
 import os
 import sqlite3
+from bs4 import BeautifulSoup
+
+SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__))
+FOLDER_PATH = os.path.join(SCRIPT_PATH, 'report_history')
+
+SENDER = 'giligili.cms@gmail.com'
+PASSWORD = 'giligili3002'
+RECEIVERS = ['cms3002@googlegroups.com']
+
+SUBJECT = "Status Report @ {0}"
+TEMPLATE = '''\
+       <html>
+         <head></head>
+         <body>
+            <p>Dear Prime Minister,</p>
+            <br>
+            <p>The key indicators and trends at {0} are shown below:</p>
+            <p><font color="red">{1}</font></p>
+            <p>Please feel free to contact us if you need any further information.</p>
+            <br>
+            <p>Sincerely,</p>
+            <p>Crisis Management System - Team Giligili</p>
+            <p><i><small>Note: This is an automatically generated email.</small></i></p>
+
+         </body>
+       </html>
+       '''
+TABLE_CSS = """
+            <style>
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 40%;
+            }
+
+            td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+            </style>
+        """
+
+# set up email server
+server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+server.ehlo()
+server.login(SENDER, PASSWORD)
+
+DENGUE_SHORT_THRESHOLD = 3
+DENGUE_LONG_THRESHOLD = 8
+
+
+def get_latest_report(num=1):
+    return [os.path.join(FOLDER_PATH, i) for i in sorted(os.listdir(FOLDER_PATH))[-num:]]
+
+
+def parse_table(html_path, id):
+
+    with open(html_path, 'r') as f:
+        html = f.read()
+
+    soup = BeautifulSoup(html, 'html.parser')
+    bs = soup.find('table', id=id)
+
+    results = {}
+    for row in bs.findAll('tr')[1:]:
+        aux = row.findAll('td')
+        # remove (new), (+1), (-5)
+        results[aux[0].get_text().replace('(new)', '')] = [aux[1].get_text().split('(')[0], aux[2].get_text().split('(')[0]]
+    return results
+
 
 def get_psi_report():
     psi_dict = {'locality': [], 'psi': [], 'status': []}
@@ -16,7 +87,7 @@ def get_psi_report():
     keys = list(psi_dict.keys())
     length = len(psi_dict[keys[0]])
 
-    items = ['<table>', '<caption><h3>3. PSI Report</h3></caption>', '<tr>']
+    items = ['<table id="psi">', '<caption><h3>3. PSI Report</h3></caption>', '<tr>']
     for k in keys:
         items.append('<td><b>%s</b></td>' % k)
     items.append('</tr>')
@@ -44,31 +115,64 @@ def get_psi_report():
 
 
 def get_dengue_report():
-    dengue_dict = {'locality': [], 'Case with onset in last 2 weeks': [], 'Cases since start of cluster': []}
-    short_threshold = 3
-    long_threshold = 8
+
+    attrs = ['Case with onset in last 2 weeks', 'Cases since start of cluster']
+    dengue_dict = {'locality': [], attrs[0]: [], attrs[1]: []}
 
     for d in get_dengue_clusters():
         dengue_dict['locality'].append(d['locality'])
         dengue_dict['Case with onset in last 2 weeks'].append(d['num_last2weeks'])
         dengue_dict['Cases since start of cluster'].append(d['num_all'])
 
+    # get last report
+    last_dengue = get_latest_report(1)
+    last_dengue_dict = parse_table(last_dengue[0], id='dengue')
+
+    print(last_dengue_dict)
+
     keys = list(dengue_dict.keys())
     length = len(dengue_dict[keys[0]])
 
-    items = ['<table>', '<caption><h3>1. Dengue Report</h3></caption>', '<tr>']
+    # sort three list by first list order
+    dengue_dict['locality'], dengue_dict[attrs[0]], dengue_dict[attrs[1]] = \
+        zip(*sorted(zip(dengue_dict['locality'], dengue_dict[attrs[0]], dengue_dict[attrs[1]])))
+
+    items = ['<table id="dengue">', '<caption><h3>1. Dengue Report</h3></caption>', '<tr>']
     for k in keys:
         items.append('<td><b>%s</b></td>' % k)
     items.append('</tr>')
 
     for i in range(length):
         items.append('<tr>')
+        location = None
         for k in keys:
-            if k == 'Case with onset in last 2 weeks' and int(dengue_dict[k][i]) >= short_threshold or \
-                    k == 'Cases since start of cluster' and int(dengue_dict[k][i]) >= long_threshold:
-                items.append('<td><font color="red">%s</font></td>' % dengue_dict[k][i])
+            if k == attrs[0] and int(dengue_dict[k][i]) >= DENGUE_SHORT_THRESHOLD or \
+                    k == attrs[1] and int(dengue_dict[k][i]) >= DENGUE_LONG_THRESHOLD:
+                color = "red"
             else:
-                items.append('<td>%s</td>' % dengue_dict[k][i])
+                color = ""
+
+            change_text = ""
+            # if it appears in last report, show change
+            if location:
+                if k in attrs:
+                    diff = int(dengue_dict[k][i]) - int(last_dengue_dict[location][attrs.index(k)])
+                    # if decrease, show blue diff
+                    if diff < 0:
+                        change_text = '<font color="blue">({})</font>'.format(diff)
+                    # if increase, show red diff
+                    elif diff > 0:
+                        change_text = '<font color="red">(+{})</font>'.format(diff)
+
+            # if this is locality column
+            if k not in attrs:
+                if dengue_dict[k][i] in last_dengue_dict.keys():
+                    location = dengue_dict[k][i] # this location appear in last report
+                else:
+                    # new locality, add red "(new)" next to this locality name
+                    items.append('<td>{}<font color="red">(new)</font></td>'.format(dengue_dict[k][i]))
+                    continue
+            items.append('<td><font color="{}">{}</font>{}</td>'.format(color, dengue_dict[k][i], change_text))
         items.append('</tr>')
 
     items.append('</table>')
@@ -87,7 +191,7 @@ def get_weather_report():
     keys = list(weather_dict.keys())
     length = len(weather_dict[keys[0]])
 
-    items = ['<table>', '<caption><h3>2. Weather Report</h3></caption>', '<tr>']
+    items = ['<table id="weather">', '<caption><h3>2. Weather Report</h3></caption>', '<tr>']
     for k in keys:
         items.append('<td><b>%s</b></td>' % k)
     items.append('</tr>')
@@ -139,7 +243,6 @@ def retrieve_active_incident_reports():
         report = report[:12]  # Remove information on Latitude and Longitude as they are not needed
         list_all_incident_reports.append(report)
 
-
     return list_all_incident_reports
 
 
@@ -164,7 +267,7 @@ def get_incident_report():
 
     length = len(incident_dict[keys[0]])
 
-    items = ['<table>', '<caption><h3>4. Incident Report</h3></caption>', '<tr>']
+    items = ['<table id="incident">', '<caption><h3>4. Incident Report</h3></caption>', '<tr>']
     for k in keys:
         items.append('<td><b>%s</b></td>' % k)
     items.append('</tr>')
@@ -179,49 +282,6 @@ def get_incident_report():
 
     incident_report = '\n'.join(items)
     return incident_report
-
-SENDER = 'giligili.cms@gmail.com'
-PASSWORD = 'giligili3002'
-RECEIVERS = ['cms3002@googlegroups.com']
-
-SUBJECT = "Status Report @ {0}"
-TEMPLATE = '''\
-       <html>
-         <head></head>
-         <body>
-            <p>Dear Prime Minister,</p>
-            <br>
-            <p>The key indicators and trends at {0} are shown below:</p>
-            <p><font color="red">{1}</font></p>
-            <p>Please feel free to contact us if you need any further information.</p>
-            <br>
-            <p>Sincerely,</p>
-            <p>Crisis Management System - Team Giligili</p>
-            <p><i><small>Note: This is an automatically generated email.</small></i></p>
-
-         </body>
-       </html>
-       '''
-TABLE_CSS = """
-            <style>
-            table {
-                font-family: arial, sans-serif;
-                border-collapse: collapse;
-                width: 40%;
-            }
-
-            td, th {
-                border: 1px solid #dddddd;
-                text-align: left;
-                padding: 8px;
-            }
-            </style>
-        """
-
-# set up email server
-server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-server.ehlo()
-server.login(SENDER, PASSWORD)
 
 
 def insert_db(name, timestamp, path):
@@ -260,11 +320,9 @@ def send_report(subject=SUBJECT):
     # print('Sent successfully!')
 
     # save to local
-    script_path = os.path.dirname(os.path.abspath(__file__))
-    folder_path = os.path.join(script_path, 'report_history')
-    if not os.path.isdir(folder_path):
-        os.makedirs(folder_path)
-    file_path = "{}/report_history/{}.html".format(script_path, subject)
+    if not os.path.isdir(FOLDER_PATH):
+        os.makedirs(FOLDER_PATH)
+    file_path = "{}/report_history/{}.html".format(SCRIPT_PATH, subject)
     with open(file_path, "w") as fp:
         fp.write(email_content)
     print('File saved successfully!')
@@ -275,5 +333,6 @@ def send_report(subject=SUBJECT):
 
 if __name__ == '__main__':
     send_report()
+
 
 
