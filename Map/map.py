@@ -8,6 +8,7 @@ from .map_api import get_psi, get_dengue_clusters, get_weather, get_shelter, add
 from SocialMedia.model import CrisisReport
 from SocialMedia.controller import alert_public_test, post_facebook_test
 import time, threading
+from CallCenter.CallCenter_Model import retrieve_active_incident_reports
 
 
 map_api = Blueprint('map', __name__, template_folder='templates', )
@@ -172,22 +173,23 @@ def denguemapview():
     return render_template('denguemap.html', denguemap=denguemap)
 
 @map_api.route("/incidents")
-def incidentsmapview(incidents_list):
+def incidentsmapview():
 
-
+    incidents_list = retrieve_active_incident_reports()
+    print("Incidents:")
+    print (incidents_list)
     # create markers
     markers_list = list()
-    for incident in incidents_list.items():
-        tmp_dict = dict(icon='http://maps.google.com/mapfiles/kml/pal2/icon10.png',
-                        lat=incident['lat'],
-                        lng=incident['lng'],
-                        infobox="<h4>Name: {}</h4> <h4>Report Date: {}</h4> <h4>Address: {}</h4> <h4>Description: {}</h4> <h4>Level: {}</h4> <h4>Assignee: {}</h4>".format(incident['name'],
-                                                                                                                                                                           incident['report_date'],
-                                                                                                                                                                           incident['address'],
-                                                                                                                                                                           incident['description'],
-                                                                                                                                                                           incident['level'],
-                                                                                                                                                                           incident['assignee']
-                                                                                                                                                                           ))
+    for incident in incidents_list:
+        info_string = "<h6>ID: {}</h6> <h6>Report Date: {}</h6> <h6>Reporter: {}</h6>" + "<h6>Reporter's HP: {}</h6> <h6>Location: {}</h6> <h6>Type of Assistance Need: {}</h6>" + "<h6>Description: {}</h6> <h6>Priority for Severity of Injuries: {}</h6> " + "<h6>Priority for Impending Dangers: {}</h6> <h6>Priority for Presence of Nearby Help: {}</h6> <h6>Status: {}</h6>"
+        if incident[10]=="REPORTED":
+            icon = "http://maps.google.com/mapfiles/kml/pal3/icon59.png"
+        else:
+            icon = "http://maps.google.com/mapfiles/kml/pal3/icon37.png"
+        tmp_dict = dict(icon=icon,
+                        lat=incident[12],
+                        lng=incident[13],
+                        infobox=info_string.format(incident[0],incident[1],incident[2],incident[3],incident[4],incident[5],incident[6],incident[7],incident[8],incident[9], incident[10]))
         markers_list.append(tmp_dict)
 
     incidentsmap = Map(

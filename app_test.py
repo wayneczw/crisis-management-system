@@ -24,5 +24,9 @@ class AppTestCase(unittest.TestCase):
         resp = self.APP.get('/map/dengue')
         self.assertEqual(resp.status, '200 OK')
 
+    def test_map_incidents(self):
+        resp = self.APP.get('/map/incidents')
+        self.assertEqual(resp.status, '200 OK')
+
 if __name__ == '__main__':
     unittest.main()

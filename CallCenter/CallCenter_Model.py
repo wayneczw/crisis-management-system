@@ -302,7 +302,7 @@ def retrieve_active_incident_reports():
         all_incident_reports = query_db(
                 '''
                 SELECT * FROM INCIDENT_REPORT WHERE
-                report_status = 2
+                report_status <= 2
                 '''
         )
 
