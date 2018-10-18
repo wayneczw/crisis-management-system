@@ -28,5 +28,23 @@ class AppTestCase(unittest.TestCase):
         resp = self.APP.get('/map/incidents')
         self.assertEqual(resp.status, '200 OK')
 
+    def test_account_management_functions(self):
+        resp = self.APP.get('/login')
+        self.assertEqual(resp.status, '200 OK')
+
+        resp = self.APP.get('/logout')
+        self.assertEqual(resp.status, '302 FOUND')
+
+        resp = self.APP.get('/account/register')
+        self.assertEqual(resp.status, '302 FOUND')
+
+        resp = self.APP.get('/account/deregister')
+        self.assertEqual(resp.status, '302 FOUND')
+
+    def test_dashboard(self):
+        resp = self.APP.get('/dashboard')
+        self.assertEqual(resp.status, '202 OK')
+
+
 if __name__ == '__main__':
     unittest.main()
