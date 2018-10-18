@@ -49,3 +49,8 @@ include/
 # one lib file is needed in this case #
 #######################################
 !Dashboard/static/assets/js/lib
+
+# test file #
+#############
+.pytest_cache/*
+

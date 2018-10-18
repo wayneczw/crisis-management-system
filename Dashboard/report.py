@@ -111,6 +111,8 @@ def get_weather_report():
     return weather_report
 
 
+FILE_DIR = './report_history/'
+
 SENDER = 'giligili.cms@gmail.com'
 PASSWORD = 'giligili3002'
 RECEIVERS = ['yue0068@gmail.com']
@@ -157,9 +159,20 @@ server.ehlo()
 server.login(SENDER, PASSWORD)
 
 
+def insert_db(name, timestamp, path):
+    import sqlite3
+    conn = sqlite3.connect('../app.db')
+    query = "INSERT INTO report (NAME, TIMESTAMP, HTML_PATH) VALUES ('{}', '{}', '{}')".format(name, timestamp, path)
+    print(query)
+    conn.execute(query)
+    conn.commit()
+    print('Db saved successfully!')
+
+
 def send_report(subject=SUBJECT, report_content=content):
 
-    now = datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%d %H:%M:%S")
+    now_time = datetime.now(timezone.utc).astimezone()
+    now = now_time.strftime("%Y-%m-%d %H:%M:%S")
     subject = subject.format(now)
 
     email_content = TEMPLATE.format(now, report_content)
@@ -174,8 +187,15 @@ def send_report(subject=SUBJECT, report_content=content):
     msg['From'] = SENDER
     msg['To'] = msg_to
 
-    server.sendmail(SENDER, RECEIVERS, msg.as_string())
-    print('Sent successfully!')
+    # server.sendmail(SENDER, RECEIVERS, msg.as_string())
+    # print('Sent successfully!')
+
+    file_path = "{}{}.html".format(FILE_DIR, subject)
+    with open(file_path, "w") as fp:
+        fp.write(email_content)
+    print('File saved successfully!')
+
+    insert_db(subject, now_time, file_path)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 from app import db
+from datetime import datetime
 
 
 class User(db.Model):
@@ -17,3 +18,13 @@ class Role(db.Model):
 
     def __repr__(self):
         return '<Role {}>'.format(self.name)
+
+
+class Report(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(32))
+    timestamp = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow)
+    html_path = db.Column(db.String(64))
+
+    def __repr__(self):
+        return '<Report {}>'.format(self.timestamp)
