@@ -53,4 +53,6 @@ include/
 # test file #
 #############
 .pytest_cache/*
+Dashboard/report_history/*
+
 
