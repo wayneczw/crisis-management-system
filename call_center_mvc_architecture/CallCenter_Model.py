@@ -36,6 +36,7 @@ def get_db():
                 DATABASE)  # sqlite3.connect(DATABASE) will create the Database if that Database does not yet exist.
     return db
 
+
 '''
 Function:
     close_connection
@@ -53,6 +54,7 @@ def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
+
 
 '''
 Function:
@@ -75,6 +77,7 @@ def init_db():
             # Cursor is an object that allow us to fetch multiple results from the database and keep track of which result is which.
             db.cursor().executescript(f.read())  # executescript allow us to execute "multiple SQL statements at once".
         db.commit()  # Tell the Database to confirm/finalise the changes made to it. No Changes to DB can be reverted back after commit() is called.
+
 
 '''
 Function:
@@ -138,6 +141,7 @@ Returns:
 Raises:
     ValueError if the mobile number is illegal
 '''
+
 
 def __check_mobile_no(no):
     if len(no) == 0:
