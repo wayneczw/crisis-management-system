@@ -1,0 +1,49 @@
+{% extends "dashboard-base.html" %}
+{% block content %}
+
+    <!-- some header -->
+    <div class="breadcrumbs">
+        <div class="col-sm-4">
+            <div class="page-header float-left">
+                <div class="page-title">
+                    {% block title %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- some header -->
+
+    <!-- some content -->
+    <div class="content mt-3">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="breadcrumbs">
+                 <div class="col-sm-4">
+                    <div class="page-header float-left">
+                    <div class="page-title">
+                    <h1>Status Report</h1>
+                    </div>
+                </div>
+                 </div>
+                </div>
+                <div class="content mt-3">
+            <div class="col-sm-12">
+                <div class="card">
+
+                    <ul class="list-group list-group-flush">
+                        {% for r in reports %}
+                        <li class="list-group-item">
+                            <a href="{{ url_for('dashboard.download', path=r.html_path)}}" download>
+                                {{r.name}}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                    <a href="{{ url_for('dashboard.send_now') }}" class="btn btn-primary btn-sm" role="button"><i class="fa fa-dot-circle-o"></i> Send Now</a>
+                </div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

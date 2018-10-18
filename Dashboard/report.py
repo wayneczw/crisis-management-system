@@ -2,10 +2,11 @@ from Map.map_api import get_weather, get_psi, get_dengue_clusters
 import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime, timezone
-
+import os
+from CallCenter.CallCenter_Model import retrieve_active_incident_reports
 
 def get_psi_report():
-    psi_dict = {'locality':[], 'psi':[], 'status': []}
+    psi_dict = {'locality': [], 'psi': [], 'status': []}
     direction_list = ['east', 'west', 'sourth', 'north', 'central']
     for i, p in enumerate(get_psi()):
         psi_dict['locality'].append(direction_list[i])
@@ -15,7 +16,7 @@ def get_psi_report():
     keys = list(psi_dict.keys())
     length = len(psi_dict[keys[0]])
 
-    items = ['<table>', '<caption><h3>3. PSI Report</h3></caption>','<tr>']
+    items = ['<table>', '<caption><h3>3. PSI Report</h3></caption>', '<tr>']
     for k in keys:
         items.append('<td><b>%s</b></td>' % k)
     items.append('</tr>')
@@ -45,7 +46,7 @@ def get_psi_report():
 def get_dengue_report():
     dengue_dict = {'locality': [], 'Case with onset in last 2 weeks': [], 'Cases since start of cluster': []}
     short_threshold = 3
-    long_threshold= 8
+    long_threshold = 8
 
     for d in get_dengue_clusters():
         dengue_dict['locality'].append(d['locality'])
@@ -55,7 +56,7 @@ def get_dengue_report():
     keys = list(dengue_dict.keys())
     length = len(dengue_dict[keys[0]])
 
-    items = ['<table>', '<caption><h3>1. Dengue Report</h3></caption>','<tr>']
+    items = ['<table>', '<caption><h3>1. Dengue Report</h3></caption>', '<tr>']
     for k in keys:
         items.append('<td><b>%s</b></td>' % k)
     items.append('</tr>')
@@ -77,7 +78,7 @@ def get_dengue_report():
 
 
 def get_weather_report():
-    weather_dict = {'locality': [], 'weather':[]}
+    weather_dict = {'locality': [], 'weather': []}
     weather = get_weather()
     for w in weather:
         weather_dict['locality'].append(w)
@@ -111,11 +112,46 @@ def get_weather_report():
     return weather_report
 
 
-FILE_DIR = './report_history/'
+def get_incident_report():
+
+    incident_list = retrieve_active_incident_reports()
+    print(incident_list)
+
+    incident_dict = {'id': [], 'report date': [], 'reporter': [],
+                     "report's HP": [], 'location': [],
+                     'tyoe of assistance need': [], 'description': [],
+                     'priority for severity of injuries': [],
+                     'priority for impending dangers': [],
+                     'priority for presence of nearyby help': [],
+                     'status': []}
+
+    keys = list(incident_dict.keys())
+
+    for inc in incident_list:
+        for i, attr in enumerate(inc[:11]):
+            incident_dict[keys[i]].append(attr)
+
+    length = len(incident_dict[keys[0]])
+
+    items = ['<table>', '<caption><h3>4. Incident Report</h3></caption>', '<tr>']
+    for k in keys:
+        items.append('<td><b>%s</b></td>' % k)
+    items.append('</tr>')
+
+    for i in range(length):
+        items.append('<tr>')
+        for k in keys:
+            items.append('<td>%s</td>' % incident_dict[k][i])
+        items.append('</tr>')
+
+    items.append('</table>')
+
+    incident_report = '\n'.join(items)
+    return incident_report
 
 SENDER = 'giligili.cms@gmail.com'
 PASSWORD = 'giligili3002'
-RECEIVERS = ['yue0068@gmail.com']
+RECEIVERS = ['cms3002@googlegroups.com']
 
 SUBJECT = "Status Report @ {0}"
 TEMPLATE = '''\
@@ -142,7 +178,7 @@ TABLE_CSS = """
                 border-collapse: collapse;
                 width: 40%;
             }
-            
+
             td, th {
                 border: 1px solid #dddddd;
                 text-align: left;
@@ -150,8 +186,6 @@ TABLE_CSS = """
             }
             </style>
         """
-
-content = '<br>'.join([TABLE_CSS, get_dengue_report(), get_weather_report(), get_psi_report()])
 
 # set up email server
 server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
@@ -161,21 +195,25 @@ server.login(SENDER, PASSWORD)
 
 def insert_db(name, timestamp, path):
     import sqlite3
-    conn = sqlite3.connect('../app.db')
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    db_path = '/'.join(script_path.split('/')[:-1])+'/app.db'
+    conn = sqlite3.connect(db_path)
+
     query = "INSERT INTO report (NAME, TIMESTAMP, HTML_PATH) VALUES ('{}', '{}', '{}')".format(name, timestamp, path)
-    print(query)
     conn.execute(query)
     conn.commit()
     print('Db saved successfully!')
 
 
-def send_report(subject=SUBJECT, report_content=content):
+def send_report(subject=SUBJECT):
 
     now_time = datetime.now(timezone.utc).astimezone()
     now = now_time.strftime("%Y-%m-%d %H:%M:%S")
     subject = subject.format(now)
 
-    email_content = TEMPLATE.format(now, report_content)
+    content = '<br>'.join([TABLE_CSS, get_dengue_report(), get_weather_report(), get_psi_report(), get_incident_report()])
+
+    email_content = TEMPLATE.format(now, content)
 
     msg_to = ""
     for person in RECEIVERS:
@@ -190,15 +228,16 @@ def send_report(subject=SUBJECT, report_content=content):
     # server.sendmail(SENDER, RECEIVERS, msg.as_string())
     # print('Sent successfully!')
 
-    file_path = "{}{}.html".format(FILE_DIR, subject)
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = "{}/report_history/{}.html".format(script_path, subject)
     with open(file_path, "w") as fp:
         fp.write(email_content)
     print('File saved successfully!')
 
-    insert_db(subject, now_time, file_path)
+    insert_db(subject, now_time, file_path.split('/')[-1])
 
 
 if __name__ == '__main__':
-    send_report(report_content=content)
+    send_report()
 
 
