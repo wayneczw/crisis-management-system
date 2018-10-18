@@ -1,6 +1,6 @@
-## Crisis Management System - Giligili
+# Crisis Management System - Giligili
 
-Updated: 14.10.2018 by HaoHao
+Updated: 18.10.2018 by HaoHao
 
 ## Setup steps:
 
@@ -9,7 +9,14 @@ Updated: 14.10.2018 by HaoHao
 pip install -r requirements.txt
 ``` 
 - Delete `app.db` and `database.db` in root folder if there is any.
-- Initialize database:
+- Delete `migrations/` folder if there is any.
+- Run the following to initailize databases:
+```
+flask db init
+flask db migrate
+flask db upgrade
+```
+- Populate the database with some dummy accounts:
 ```
 python db_test.py
 ```

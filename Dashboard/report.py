@@ -236,41 +236,46 @@ def insert_db(name, timestamp, path):
 
 
 def send_report(subject=SUBJECT):
+    try:
+        now_time = datetime.now(timezone.utc).astimezone()
+        now = now_time.strftime("%Y-%m-%d %H:%M:%S")
+        subject = subject.format(now)
 
-    now_time = datetime.now(timezone.utc).astimezone()
-    now = now_time.strftime("%Y-%m-%d %H:%M:%S")
-    subject = subject.format(now)
+        content = '<br>'.join([TABLE_CSS, get_dengue_report(), get_weather_report(), get_psi_report(), get_incident_report()])
 
-    content = '<br>'.join([TABLE_CSS, get_dengue_report(), get_weather_report(), get_psi_report(), get_incident_report()])
+        email_content = TEMPLATE.format(now, content)
 
-    email_content = TEMPLATE.format(now, content)
+        msg_to = ""
+        for person in RECEIVERS:
+            msg_to += "{0} ".format(person)
 
-    msg_to = ""
-    for person in RECEIVERS:
-        msg_to += "{0} ".format(person)
+        msg = MIMEText(email_content, 'html')
 
-    msg = MIMEText(email_content, 'html')
+        msg['Subject'] = subject
+        msg['From'] = SENDER
+        msg['To'] = msg_to
 
-    msg['Subject'] = subject
-    msg['From'] = SENDER
-    msg['To'] = msg_to
+        # send email
+        # server.sendmail(SENDER, RECEIVERS, msg.as_string())
+        # print('Sent successfully!')
 
-    # send email
-    # server.sendmail(SENDER, RECEIVERS, msg.as_string())
-    # print('Sent successfully!')
+        # save to local
+        script_path = os.path.dirname(os.path.abspath(__file__))
+        folder_path = os.path.join(script_path, 'report_history')
+        if not os.path.isdir(folder_path):
+            os.makedirs(folder_path)
+        file_path = "{}/report_history/{}.html".format(script_path, subject)
+        with open(file_path, "w") as fp:
+            fp.write(email_content)
+        print('File saved successfully!')
 
-    # save to local
-    script_path = os.path.dirname(os.path.abspath(__file__))
-    folder_path = os.path.join(script_path, 'report_history')
-    if not os.path.isdir(folder_path):
-        os.makedirs(folder_path)
-    file_path = "{}/report_history/{}.html".format(script_path, subject)
-    with open(file_path, "w") as fp:
-        fp.write(email_content)
-    print('File saved successfully!')
+        # insert to db
+        insert_db(subject, now_time, file_path.split('/')[-1])
+        return True
 
-    # insert to db
-    insert_db(subject, now_time, file_path.split('/')[-1])
+    except Exception as e:
+        print(e.with_traceback())
+        return False
 
 
 if __name__ == '__main__':

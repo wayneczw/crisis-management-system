@@ -28,7 +28,7 @@ class AppTestCase(unittest.TestCase):
         resp = self.APP.get('/map/incidents')
         self.assertEqual(resp.status, '200 OK')
 
-    def test_account_management_functions(self):
+    def test_account_management(self):
         resp = self.APP.get('/login')
         self.assertEqual(resp.status, '200 OK')
 
@@ -41,9 +41,15 @@ class AppTestCase(unittest.TestCase):
         resp = self.APP.get('/account/deregister')
         self.assertEqual(resp.status, '302 FOUND')
 
-    def test_dashboard(self):
+    def test_dashboard_and_report(self):
         resp = self.APP.get('/dashboard')
-        self.assertEqual(resp.status, '202 OK')
+        self.assertEqual(resp.status, '302 FOUND')
+
+        resp = self.APP.get('/report')
+        self.assertEqual(resp.status, '302 FOUND')
+
+        resp = self.APP.get('/send_now')
+        self.assertEqual(resp.status, '302 FOUND')
 
 
 if __name__ == '__main__':
