@@ -29,4 +29,5 @@ def download(path=None):
 @login_required
 def send_now():
     send_report()
+    flash("Sent successfully!")
     return redirect(url_for('dashboard.report'))

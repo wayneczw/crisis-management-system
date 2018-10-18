@@ -3,7 +3,7 @@ import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime, timezone
 import os
-from CallCenter.CallCenter_Model import retrieve_active_incident_reports
+import sqlite3
 
 def get_psi_report():
     psi_dict = {'locality': [], 'psi': [], 'status': []}
@@ -112,6 +112,37 @@ def get_weather_report():
     return weather_report
 
 
+def retrieve_active_incident_reports():
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    db_path = '/'.join(script_path.split('/')[:-1]) + '/CallCenter/database.db'
+    print(db_path)
+    conn = sqlite3.connect(db_path)
+
+    all_incident_reports = conn.execute("SELECT * FROM INCIDENT_REPORT")
+
+    assistance_required_dict = {0: 'No Assistance needed', 1: 'Emergency Ambulance', 2: 'Rescue and Evaluate',
+                                3: 'Gas Leak Control'}  # a Dict to convert assistance_required from int to string
+    report_status_dict = {1: 'REPORTED', 2: 'PENDING',
+                          3: 'CLOSED'}  # a Dict to convert report_status required from int to string
+    is_first_such_incident_dict = {0: 'FALSE',
+                                   1: 'TRUE'}  # a Dict to convert is_first_such_incident from int to string
+
+    list_all_incident_reports = []
+    for report in all_incident_reports:
+        report = list(report)  # Convert Tuple [1 Incident Report] into a list as list is easier to manipulate
+        report[1] = report[1][
+                    :-7]  # Remove the last 7 chars of the timestamp for "First reported time" as they are too precise.
+        report[5] = assistance_required_dict[report[5]]  # Convert asssistance_required from int to string
+        report[10] = report_status_dict[report[10]]  # Convert report_status from int to string
+        report[11] = is_first_such_incident_dict[report[11]]  # Convert is_first_such_incident from int to string
+
+        report = report[:12]  # Remove information on Latitude and Longitude as they are not needed
+        list_all_incident_reports.append(report)
+
+
+    return list_all_incident_reports
+
+
 def get_incident_report():
 
     incident_list = retrieve_active_incident_reports()
@@ -194,7 +225,6 @@ server.login(SENDER, PASSWORD)
 
 
 def insert_db(name, timestamp, path):
-    import sqlite3
     script_path = os.path.dirname(os.path.abspath(__file__))
     db_path = '/'.join(script_path.split('/')[:-1])+'/app.db'
     conn = sqlite3.connect(db_path)
