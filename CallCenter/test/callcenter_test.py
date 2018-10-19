@@ -1,7 +1,6 @@
-from CallCenter_Model import *
 from unittest import TestCase, main
 from time import sleep
-
+from CallCenter.CallCenter_Model import *
 
 # This function should be and only be used in this file
 def __drop_database():
@@ -10,76 +9,6 @@ def __drop_database():
         with app.open_resource('testing.sql', mode = 'r') as f:
             db.cursor().executescript(f.read())
         db.commit()
-
-
-# __drop_database()
-# init_db()
-
-# If id is important in the implementation, then it should be returned instead of printed
-# Also all non_inserting functions require id to call, which may be a bit complicated
-# insert_report(name = "report This", mobile_number = "12421313", location = "qweqeq", assistance_required = 2,
-#               description = "Des", priority_injuries = 1, priority_dangers = 1, priority_help = 2, report_status = 2)
-
-# test duplicates
-# assumption is if duplicates are found, the functions should raise some exceptions other than AssertionError
-
-# try:
-#     insert_report(name = "report This", mobile_number = "12421313", location = "qweqeq", assistance_required = 2,
-#                   description = "Des", priority_injuries = 1, priority_dangers = 1, priority_help = 2,
-#                   report_status = 2)
-#     assert False
-# except PermissionError as e:
-#     print(e, end = '**\n')
-
-
-# insert_report(name = "report This", mobile_number = "12421313", location = "qweqeq", assistance_required = 2,
-#               description = "Des", priority_injuries = 1, priority_dangers = 1, priority_help = 2,
-#               report_status = 3)
-#
-# ret = retrieve_all_incident_reports()
-#
-# assert len(ret) == 2
-#
-# assert ret[0][-1] == 'TRUE'
-# assert ret[1][-1] == 'FALSE'
-#
-# ret = retrieve_active_incident_reports()
-# assert len(ret) == 1
-#
-# try:
-#     update_report(id_of_incident_report = 1, caller_name = 'This is-a proper name', caller_mobile_number = '23452345', caller_location = 124,
-#                   type_of_assistance = 2, description = 'd', priority_for_severity_of_injuries = 1,
-#                   priority_for_impending_dangers = 2, priority_for_presence_of_nearby_help = 10000, report_status = 2,
-#                   is_first_such_incident = False)
-# except sqlite3.IntegrityError:
-#     pass
-#
-#
-# try:
-#     update_report(id_of_incident_report = 1, caller_name = 'This is-a proper name', caller_mobile_number = '23452345', caller_location = 124,
-#                   type_of_assistance = 2, description = '', priority_for_severity_of_injuries = 1,
-#                   priority_for_impending_dangers = 2, priority_for_presence_of_nearby_help = 5, report_status = 2,
-#                   is_first_such_incident = False)
-#     raise RuntimeError('null string to not null field')
-#     # print('null string is to not null field')
-# except ValueError as e:
-#     print(e, end = '**\n')
-#
-# delete_report(1)
-#
-# ret = retrieve_active_incident_reports()
-# assert len(ret) == 0
-#
-# delete_report(2)
-#
-# insert_report(name = "report This", mobile_number = "12421313", location = "qweqeq", assistance_required = 2,
-#               description = "Des", priority_injuries = 1, priority_dangers = 1, priority_help = 2,
-#               report_status = 2)
-#
-# ret = retrieve_active_incident_reports()
-# assert len(ret) == 1
-# The current inserted col considered not first time inserted
-# assert ret[0][-1] == 'TRUE'
 
 
 class TestIncidentReport(TestCase):
@@ -267,6 +196,57 @@ class TestIncidentReport(TestCase):
                     report_status = 1,
                     is_first_such_incident = 1
             )
+
+    def test_retrieve_incident_report(self):
+
+        insert_report(
+                name = 'Jia Yun',
+                mobile_number = '+65 12345678',
+                location = 'hall 14',
+                assistance_required = 1,
+                description = 'description',
+                priority_injuries = 1,
+                priority_dangers = 1,
+                priority_help = 1,
+                report_status = 2
+        )
+
+        now = retrieve_all_incident_reports()
+        assert len(now) == 3
+        now = retrieve_active_incident_reports()
+        assert len(now) == 3
+        # The name is unique so we can make assertion on it
+        assert now[-1][2] == 'Jia Yun'
+
+        now = retrieve_all_incident_reports()
+        tmp = now[1]        # Retrieve the id of the incident report
+        cur = retrieve_selected_incident_report(tmp[0])[:-2]
+        assert tmp == cur
+
+    def test_delete_incident_report(self):
+
+        now = retrieve_active_incident_reports()
+        if not len(now):
+            insert_report(
+                    name = 'Jia Yun',
+                    mobile_number = '+65 12345678',
+                    location = 'hall 14',
+                    assistance_required = 1,
+                    description = 'description',
+                    priority_injuries = 1,
+                    priority_dangers = 1,
+                    priority_help = 1,
+                    report_status = 2
+            )
+
+        now = retrieve_active_incident_reports()
+        assert len(now)
+
+        removed_item = now[0]
+        delete_report(now[0][0])
+
+        now = retrieve_active_incident_reports()
+        assert removed_item not in now
 
 
 if __name__ == '__main__':

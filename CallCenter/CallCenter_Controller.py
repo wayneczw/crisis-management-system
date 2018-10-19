@@ -1,7 +1,8 @@
 # coding: utf-8
 
-from flask import Flask, redirect, render_template, request, session, Blueprint
+from flask import Flask, flash, redirect, render_template, request, session, Blueprint
 from CallCenter.CallCenter_Model import *
+from time import sleep
 
 
 callcenter_api = Blueprint('callcenter', __name__, template_folder='CallCenter_Views', )
@@ -10,28 +11,55 @@ init_db()  # Initialise database
 
 
 '''
-@app.route() will indicate the web address that we need to type into our Web Browser. 
-E.g. For the below, the function "submit_new_incident_report()" will be called whenever the user goes to an Web Address 
+@app.route() will indicate the web address that we need to type into our Web Browser.
+E.g. For the below, the function "submit_new_incident_report()" will be called whenever the user goes to an Web Address
 that ends with "/submit_new_incident_report"
 '''
 
 
 # First Page of Updating an Incident Report
+
+'''
+Function:
+    update_incident_report
+Args:
+    No arguments
+Returns:
+    the html page enabling searching incident report to be updated
+Raises:
+    No exception
+'''
+
+
 @callcenter_api.route("/update_incident_report_page", methods = ['GET', 'POST'])
 def update_incident_report():
     all_incident_reports = retrieve_all_incident_reports() # Call a Method from Model to retrieve all the Incident Reports
-    all_incident_reports.reverse()
     # Render the html page that corresponds to this method [And we give the html file some arguments]:
     return render_template('callcenter_ui_update_incident_report-int.html', columns=['ID', 'First reported time', 'Name', 'Mobile no.' , 'Location', 'Assistance requested', 'Description' , 'Priority on injuries', 'Priority on dangers', 'Priority on help', 'Report status', 'Is first such incident'], items=all_incident_reports)
 
 
 # Update Information about one particular Incident Report into the DB based on which incident the Call Operator has selected
+
+
+'''
+Function:
+    row_detail_for_update
+Args:
+    rowData : a particular incident report in database
+Returns:
+    return the html page enabling updating incident information
+    if'submit'button is pressed, return the updated information of the particular incident selected
+Raises:
+    No exception
+'''
+
+
 @callcenter_api.route('/row_detail_for_update/<rowData>', methods = ['GET', 'POST'])
 def row_detail_for_update(rowData):
 
 
     if request.method == 'POST':  # i.e. Once "Submit" Button is pressed
-        id_of_incident_report = request.form['id_of_incident_report'] 
+        id_of_incident_report = request.form['id_of_incident_report']
         first_reported = request.form['first_reported']  # Get the "caller_name" from the form that the User has submitted
         first_reported = first_reported + "0000000"   # add back the last 7 digits when we storing the timestamp in database.
         caller_name = request.form['caller_name']  # Get the "caller_name" from the form that the User has submitted
@@ -67,7 +95,7 @@ def row_detail_for_update(rowData):
 
         # Move to the Confirmation Page now:
         return redirect('/callcenter/incident_report_update_completion_page')
-   
+
     else: # i.e. "Submit" Button has not been pressed
 
         # Getting an Integer [id_of_incident_report] from the String[rowData]
@@ -81,7 +109,7 @@ def row_detail_for_update(rowData):
                 if start == False:
                     break
 
-        # Call a method from the Model to retrieve that Incident Report from DB    
+        # Call a method from the Model to retrieve that Incident Report from DB
         report = retrieve_selected_incident_report(id_of_incident_report)
 
         # Break down the incident report that has been retrieved from the DB into dif parts:
@@ -98,7 +126,7 @@ def row_detail_for_update(rowData):
         report_status = report[10]
         is_first_such_incident = report[11]
 
-        # Render a html file and provide that html file with some arguments           
+        # Render a html file and provide that html file with some arguments
         return render_template('callcenter_ui_row_detail_for_update.html',
                     id_of_incident_report=id_of_incident_report,
                     first_reported = first_reported,
@@ -116,15 +144,29 @@ def row_detail_for_update(rowData):
 
 
 # Show the Completion Page after Updating an Incident Report
+
+'''
+Function:
+    incident_report_update_completion_page
+Args:
+    no arguments
+Returns:
+    return the html page for the updated incident information of the particular incident selected
+    if'go back'button is pressed, return the html page enabling updating incident
+Raises:
+    No exception
+'''
+
+
 @callcenter_api.route("/incident_report_update_completion_page", methods = ['GET', 'POST'])
 def incident_report_update_completion_page():
 
-    
+
     if request.method == 'POST':  # i.e. "Submit" Button has been pressed
         return redirect('/callcenter/update_incident_report_page')
 
     # Retrieve Data that has been stored in the Session:
-    id_of_incident_report = session['id_of_incident_report'] 
+    id_of_incident_report = session['id_of_incident_report']
     first_reported = session['first_reported']
     caller_name = session['caller_name']
     caller_mobile_number = session['caller_mobile_number']
@@ -135,7 +177,7 @@ def incident_report_update_completion_page():
     priority_for_impending_dangers = session['priority_for_impending_dangers']
     priority_for_presence_of_nearby_help = session['priority_for_presence_of_nearby_help']
     report_status = session['report_status']
-    is_first_such_incident = session['is_first_such_incident'] 
+    is_first_such_incident = session['is_first_such_incident']
 
     # Some formatting before displaying the data:
     assistance_required_dict = {0:'No Assistance needed', 1:'Emergency Ambulance', 2:'Rescue and Evaluate', 3:'Gas Leak Control'} # a Dict to convert assistance_required from int to string
@@ -145,9 +187,9 @@ def incident_report_update_completion_page():
 
     type_of_assistance = assistance_required_dict[int(type_of_assistance)]
     report_status = report_status_dict[int(report_status)]
-    is_first_such_incident = is_first_such_incident_dict[int(is_first_such_incident)]  
-    
-    
+    is_first_such_incident = is_first_such_incident_dict[int(is_first_such_incident)]
+
+
     return render_template(
                 'callcenter_ui_new_incident_report_update_completion.html',
                 id_of_incident_report = id_of_incident_report,
@@ -166,11 +208,23 @@ def incident_report_update_completion_page():
 
 
 # First Page of Deleting an Incident Report
+
+'''
+Function:
+    delete_incident_report
+Args:
+    no arguments
+Returns:
+    return the html page for incident information of the all incident reports for Call Operator to select
+    if a particular record is selected for deletion, return the html page for the details of the incident to be deleted
+Raises:
+    No exception
+'''
+
+
 @callcenter_api.route("/delete_incident_report_page", methods = ['GET', 'POST'])
 def delete_incident_report():
     all_incident_reports = retrieve_all_incident_reports()
-    all_incident_reports.reverse()
-
     if request.method == 'POST':
         return redirect('/dashboard')
     return render_template('callcenter_ui_delete_incident_report-int.html', columns=['ID', 'First reported time', 'Name', 'Mobile no.' , 'Location', 'Assistance requested', 'Description' , 'Priority on injuries', 'Priority on dangers', 'Priority on help', 'Report status', 'Is first such incident'], items=all_incident_reports)
@@ -178,6 +232,23 @@ def delete_incident_report():
 
 
 # Delete Information about one particular Incident Report into the DB based on which incident the Call Operator has selected
+
+
+
+'''
+Function:
+    row_detail_for_delete
+Args:
+    rowData : a particular incident report in database
+Returns:
+    return the incident information of a particular incident selected by Call Operator for deletion
+    if 'delete' button is pressed, return the html page for incident report delete completion
+
+Raises:
+    No exception
+'''
+
+
 @callcenter_api.route('/row_detail_for_delete/<rowData>', methods = ['GET', 'POST'])
 def row_detail_for_delete(rowData):
 
@@ -217,7 +288,7 @@ def row_detail_for_delete(rowData):
         session['is_first_such_incident'] = is_first_such_incident
 
         return redirect('/callcenter/incident_report_delete_completion_page')
-        
+
     else:
 
         # Getting an Integer ID from the String[rowData]
@@ -230,10 +301,10 @@ def row_detail_for_delete(rowData):
             else:
                 if start == False:
                     break
-            
+
         report = retrieve_selected_incident_report(id_of_incident_report)
 
-        
+
         id_of_incident_report = report[0] # get the id of the incident report
         first_reported = report[1]  # timestamp of when the incident is being reported at
         caller_name = report[2]
@@ -247,8 +318,8 @@ def row_detail_for_delete(rowData):
         report_status = report[10]
         is_first_such_incident = report[11]
 
-       
-            
+
+
         return render_template('callcenter_ui_row_detail_for_delete.html',
                     id_of_incident_report=id_of_incident_report,
                     first_reported = first_reported,
@@ -267,14 +338,29 @@ def row_detail_for_delete(rowData):
 
 
 # Show the Completion Page after Deleting an Incident Report
+
+
+'''
+Function:
+    incident_report_sent_completion_page
+Args:
+    no arguments
+Returns:
+    return html page for the information of the deleted incident
+    if 'go back' button is pressed, return the html page enabling deleting incident report
+Raises:
+    No exception
+'''
+
+
 @callcenter_api.route("/incident_report_delete_completion_page", methods = ['GET', 'POST'])
 def incident_report_delete_completion_page():
 
 
     if request.method == 'POST':
         return redirect('/callcenter/delete_incident_report_page')
-    
-    id_of_incident_report = session['id_of_incident_report'] 
+
+    id_of_incident_report = session['id_of_incident_report']
     first_reported = session['first_reported']
     caller_name = session['caller_name']
     caller_mobile_number = session['caller_mobile_number']
@@ -285,7 +371,7 @@ def incident_report_delete_completion_page():
     priority_for_impending_dangers = session['priority_for_impending_dangers']
     priority_for_presence_of_nearby_help = session['priority_for_presence_of_nearby_help']
     report_status = session['report_status']
-    is_first_such_incident = session['is_first_such_incident'] 
+    is_first_such_incident = session['is_first_such_incident']
 
     # Some formatting before displaying the data:
     assistance_required_dict = {0:'No Assistance needed', 1:'Emergency Ambulance', 2:'Rescue and Evaluate', 3:'Gas Leak Control'} # a Dict to convert assistance_required from int to string
@@ -294,10 +380,10 @@ def incident_report_delete_completion_page():
 
     type_of_assistance = assistance_required_dict[int(type_of_assistance)]
     report_status = report_status_dict[int(report_status)]
-    is_first_such_incident = is_first_such_incident_dict[int(is_first_such_incident)]  
+    is_first_such_incident = is_first_such_incident_dict[int(is_first_such_incident)]
     first_reported = first_reported[:-7]   # remove last 7 chars [too precise]
 
-    
+
     return render_template(
                 'callcenter_ui_new_incident_report_delete_completion.html',
                 id_of_incident_report = id_of_incident_report,
@@ -319,6 +405,21 @@ def incident_report_delete_completion_page():
 
 
 # Show the Completion Page after sending an Incident Report
+
+
+'''
+Function:
+    incident_report_sent_completion_page
+Args:
+    no arguments
+Returns:
+    return html page for the information of the new incident submitted
+    if 'go back' button is pressed, return the html page enabling submitting new incident record
+Raises:
+    No exception
+'''
+
+
 @callcenter_api.route("/incident_report_sent_completion_page", methods = ['GET', 'POST'])
 def incident_report_sent_completion_page():
 
@@ -340,7 +441,7 @@ def incident_report_sent_completion_page():
 
     type_of_assistance = assistance_required_dict[int(type_of_assistance)]
     report_status = report_status_dict[int(report_status)]
-    
+
 
     if request.method == 'POST':
         return redirect('/callcenter/submit_new_incident_report')
@@ -356,6 +457,18 @@ def incident_report_sent_completion_page():
                 priority_for_presence_of_nearby_help = priority_for_presence_of_nearby_help,
                 report_status = report_status
                             )
+
+'''
+Function:
+    submit_new_incident_report
+Args:
+    no arguments
+Returns:
+    return html page enabling submitting a new incident record
+    if 'submit' button is pressed, return the html page for information of the new incident submitted
+Raises:
+    No exception
+'''
 
 
 @callcenter_api.route("/submit_new_incident_report", methods = ['GET', 'POST'])
@@ -378,8 +491,14 @@ def submit_new_incident_report():
         report_status = request.form['report_status']
 
         # Insert the Report into our Database by calling this method of our Model:
-        insert_report(caller_name, caller_mobile_number , caller_location, type_of_assistance, description , priority_for_severity_of_injuries, priority_for_impending_dangers, priority_for_presence_of_nearby_help, report_status)
-
+        try:
+            insert_report(caller_name, caller_mobile_number , caller_location, type_of_assistance, description , priority_for_severity_of_injuries, priority_for_impending_dangers, priority_for_presence_of_nearby_help, report_status)
+        except ValueError as e:
+            flash(str(e))
+            sleep(5)
+        except PermissionError as e:
+            flash(str(e))
+            sleep(5)
 
         # Show the Confirmation Page; Note that paramters such as "caller_name" is sent to the html file as an argument.
 
@@ -397,6 +516,3 @@ def submit_new_incident_report():
 
     # If User has not sent anything, we will show him/her the Form to submit a New Incident Report.
     return render_template('callcenter_ui_new_incident_report_submission-int.html')
-
-
-
