@@ -9,9 +9,9 @@ from bs4 import BeautifulSoup
 SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__))
 FOLDER_PATH = os.path.join(SCRIPT_PATH, 'report_history')
 
-SENDER = 'giligili.cms@gmail.com'
-PASSWORD = 'giligili3002'
-RECEIVERS = ['cms3002@googlegroups.com']
+SENDER = '809955765@qq.com'
+PASSWORD = 'uruirwekuirkbejf'
+RECEIVERS = ['yue0068@gmail.com']
 
 SUBJECT = "Status Report @ {0}"
 TEMPLATE = '''\
@@ -48,7 +48,7 @@ TABLE_CSS = """
         """
 
 # set up email server
-server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+server = smtplib.SMTP_SSL('smtp.qq.com', 465)
 server.ehlo()
 server.login(SENDER, PASSWORD)
 
@@ -57,6 +57,8 @@ DENGUE_LONG_THRESHOLD = 8
 
 
 def get_latest_report(num=1):
+    if not os.path.isdir(FOLDER_PATH):
+        os.makedirs(FOLDER_PATH)
     return [os.path.join(FOLDER_PATH, i) for i in sorted(os.listdir(FOLDER_PATH))[-num:]]
 
 
@@ -126,9 +128,10 @@ def get_dengue_report():
 
     # get last report
     last_dengue = get_latest_report(1)
-    last_dengue_dict = parse_table(last_dengue[0], id='dengue')
-
-    print(last_dengue_dict)
+    # if last report exists
+    if len(last_dengue) > 0:
+        last_dengue_dict = parse_table(last_dengue[0], id='dengue')
+        print(last_dengue_dict)
 
     keys = list(dengue_dict.keys())
     length = len(dengue_dict[keys[0]])
@@ -153,25 +156,28 @@ def get_dengue_report():
                 color = ""
 
             change_text = ""
-            # if it appears in last report, show change
-            if location:
-                if k in attrs:
-                    diff = int(dengue_dict[k][i]) - int(last_dengue_dict[location][attrs.index(k)])
-                    # if decrease, show blue diff
-                    if diff < 0:
-                        change_text = '<font color="blue">({})</font>'.format(diff)
-                    # if increase, show red diff
-                    elif diff > 0:
-                        change_text = '<font color="red">(+{})</font>'.format(diff)
 
-            # if this is locality column
-            if k not in attrs:
-                if dengue_dict[k][i] in last_dengue_dict.keys():
-                    location = dengue_dict[k][i] # this location appear in last report
-                else:
-                    # new locality, add red "(new)" next to this locality name
-                    items.append('<td>{}<font color="red">(new)</font></td>'.format(dengue_dict[k][i]))
-                    continue
+            # if last dengue exits
+            if len(last_dengue) > 0:
+                # if it appears in last report, show change
+                if location:
+                    if k in attrs:
+                        diff = int(dengue_dict[k][i]) - int(last_dengue_dict[location][attrs.index(k)])
+                        # if decrease, show blue diff
+                        if diff < 0:
+                            change_text = '<font color="blue">({})</font>'.format(diff)
+                        # if increase, show red diff
+                        elif diff > 0:
+                            change_text = '<font color="red">(+{})</font>'.format(diff)
+
+                # if this is locality column
+                if k not in attrs:
+                    if dengue_dict[k][i] in last_dengue_dict.keys():
+                        location = dengue_dict[k][i] # this location appear in last report
+                    else:
+                        # new locality, add red "(new)" next to this locality name
+                        items.append('<td>{}<font color="red">(new)</font></td>'.format(dengue_dict[k][i]))
+                        continue
             items.append('<td><font color="{}">{}</font>{}</td>'.format(color, dengue_dict[k][i], change_text))
         items.append('</tr>')
 
@@ -317,8 +323,8 @@ def send_report(subject=SUBJECT):
         msg['To'] = msg_to
 
         # send email
-        # server.sendmail(SENDER, RECEIVERS, msg.as_string())
-        # print('Sent successfully!')
+        server.sendmail(SENDER, RECEIVERS, msg.as_string())
+        print('Sent successfully!')
 
         # save to local
         if not os.path.isdir(FOLDER_PATH):
@@ -332,7 +338,7 @@ def send_report(subject=SUBJECT):
         insert_db(subject, now_time, file_path.split('/')[-1])
 
     except Exception as e:
-        print(e.with_traceback())
+        print(e)
         return False
 
 
