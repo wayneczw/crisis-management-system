@@ -214,15 +214,15 @@ class TestIncidentReport(TestCase):
 
         now = retrieve_all_incident_reports()
         assert len(now) == 3
-
         now = retrieve_active_incident_reports()
-        assert len(now) == 1
+        assert len(now) == 3
         # The name is unique so we can make assertion on it
-        assert now[0][2] == 'Jia Yun'
+        assert now[-1][2] == 'Jia Yun'
 
         now = retrieve_all_incident_reports()
         tmp = now[1]        # Retrieve the id of the incident report
-        assert tmp == retrieve_selected_incident_report(tmp[0])
+        cur = retrieve_selected_incident_report(tmp[0])[:-2]
+        assert tmp == cur
 
     def test_delete_incident_report(self):
 

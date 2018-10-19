@@ -1,0 +1,6 @@
+[
+  "app_test.py::AppTestCase::test_map_dengue",
+  "app_test.py::AppTestCase::test_map_psi",
+  "app_test.py::AppTestCase::test_map_shelters",
+  "app_test.py::AppTestCase::test_map_weather"
+]
