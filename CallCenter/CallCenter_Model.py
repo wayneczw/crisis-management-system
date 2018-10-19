@@ -9,11 +9,22 @@ from Map.map_api import address_to_latlng
 # from CallCenter import app
 
 
-PATH = '/'.join(os.path.relpath(__file__).split('/')[:-1])
+PATH = os.path.abspath('')
 DATABASE = os.path.join(PATH, 'database.db')
-print(DATABASE)
+# print(DATABASE)
 
 app = Flask(__name__, template_folder = "templates")
+
+'''
+Function:
+    get_db
+Args:
+    No arguments
+Returns:
+    db: A reference to database
+Raises:
+    No exception
+'''
 
 
 def get_db():
@@ -23,9 +34,19 @@ def get_db():
                  None)  # g is a global/object that would last for only 1 request/response cycle [data in g does not persist, unlike a database]
     if db is None:
         db = g._database = sqlite3.connect(
-            DATABASE)  # sqlite3.connect(DATABASE) will create the Database if that Database does not yet exist.
-    print("DB", db)
+                DATABASE)  # sqlite3.connect(DATABASE) will create the Database if that Database does not yet exist.
     return db
+
+'''
+Function:
+    close_connection
+Args:
+    exception: the exception forces the disconnetion of controller and database
+Returns:
+    No return value
+Raises:
+    No exception
+'''
 
 
 @app.teardown_appcontext
@@ -34,16 +55,39 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
+'''
+Function:
+    init_db
+Args:
+    No arguments
+Returns:
+    No return value
+Raises:
+    FileNotFoundError
+'''
+
 
 def init_db():
     with app.app_context():  # Within flask's application context
-        db = get_db()  # call our private method
+        db = get_db()
 
         # Opens a resource from the application’s resource folder:
         with app.open_resource('schema.sql', mode = 'r') as f:
             # Cursor is an object that allow us to fetch multiple results from the database and keep track of which result is which.
             db.cursor().executescript(f.read())  # executescript allow us to execute "multiple SQL statements at once".
         db.commit()  # Tell the Database to confirm/finalise the changes made to it. No Changes to DB can be reverted back after commit() is called.
+
+'''
+Function:
+    query_db
+Args:
+    query: an SQL query template
+    args: a list of variables
+Returns:
+    return rv: the result of the exectued query
+Raises:
+    No
+'''
 
 
 def query_db(query, args = ()):
@@ -54,15 +98,150 @@ def query_db(query, args = ()):
 
 
 '''
+Checks if the name is legal. If not a ValueError would be raised
+'''
+
+'''
+Function:
+    __check_name
+Args:
+    name: the name of the reporter
+Returns:
+    No return value
+Raises:
+    ValueError if the name is illegal
+'''
+
+
+def __check_name(name):
+    if len(name) == 0:
+        raise ValueError('name cannot be empty')
+    for it in name:
+        if 'A' <= it <= 'Z' or 'a' <= it <= 'z' or it == '.' or it == ' ' or it == ',' or it == '-':
+            continue
+        raise ValueError('Illegal character ' + it + ' in name')
+
+
+'''
+Checks if the mobile number is legal
+The legal ones are defined as: [country code][' '|'-'][number]
+Country code is either started by a '+' and followed by 1-3 digits or 4 digits
+Number is defined as 8 to 13 digits.
+'''
+
+'''
+Function:
+    __check_mobile_no
+Args:
+    no : the phone number of the reporter
+Returns:
+    No return value
+Raises:
+    ValueError if the mobile number is illegal
+'''
+
+def __check_mobile_no(no):
+    if len(no) == 0:
+        raise ValueError('mobile number cannot be empty')
+
+    no = no.split()
+    if len(no) == 1:
+        no = no[0].split('-')
+
+    if len(no) > 2:
+        raise ValueError('Too many spaces or hyphens :(')
+
+    if len(no) == 1:
+        if len(no[0]) < 7 or len(no[0]) > 14:
+            raise ValueError('The number is either too short or too long')
+        for it in no[0]:
+            if it < '0' or it > '9':
+                raise ValueError('The number should be numerical')
+    else:
+        if len(no[0]) > 4 or len(no[0]) == 0:
+            raise ValueError('Illegal country code')
+        if no[0][0] == '+':
+            if len(no[0]) > 4 or len(no[0]) < 2:
+                raise ValueError('Illegal country code')
+            for i in range(1, len(no[0])):
+                if no[0][i] < '0' or no[0][i] > '9':
+                    raise ValueError('Illegal country code')
+        else:
+            if len(no[0]) != 4:
+                raise ValueError('Illegal country code')
+
+        if len(no[1]) < 7 or len(no[1]) > 14:
+            raise ValueError('The number is either too short or too long')
+        for it in no[1]:
+            if it < '0' or it > '9':
+                raise ValueError('The number should be numerical')
+
+
+'''
+Check if the location is empty.
+'''
+
+'''
+Function:
+    __check_loc
+Args:
+    loc : the location of the incident reported
+Returns:
+    No return value
+Raises:
+    ValueError if the location is empty
+'''
+
+
+def __check_loc(loc):
+    loc = str(loc)
+    if len(loc) == 0:
+        raise ValueError('location cannot be empty')
+
+
+'''
+Check if the description is empty
+'''
+
+'''
+Function:
+    __check_description
+Args:
+    description : the description of the incident reported
+Returns:
+    No return value
+Raises:
+    ValueError if the description is empty
+'''
+
+
+def __check_description(description):
+    if len(description) == 0:
+        raise ValueError('description cannot be empty')
+
+
+'''
 Private method
 The same report judgement is buggy and I have no idea how to fix it
 The current assumption is the first reported case would always report the earliest time...
 '''
 
+'''
+Function:
+    __insert_incident
+Args:
+    name, mobile_number, location, assistance_required, description, priority_injuries,
+    priority_dangers, priority_help, report_status,report_time: information of an incident kept in database
+Returns:
+    _id : the id of the newest inserted report
+Raises:
+    No exception
+'''
+
 
 def __insert_incident(name, mobile_number, location, assistance_required, description, priority_injuries,
                       priority_dangers, priority_help, report_status,
-                      report_time, latitude, longitude):
+                      report_time,latitude, longitude):
     # creating a time interval that another new incident report would be classified as being about the same incident as this current incident report.
     earliest_time = report_time - timedelta(minutes = 5)
 
@@ -72,7 +251,7 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
         # Checking if the Incident has already been reported before
         similar_incident_reports = query_db(
                 '''
-                SELECT id FROM INCIDENT_REPORT WHERE 
+                SELECT id FROM INCIDENT_REPORT WHERE
                 location = ? AND
                 priority_injuries = ? AND
                 priority_dangers = ? AND
@@ -113,7 +292,7 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
                   is_first_such_incident,
                   latitude,
                   longitude
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
                 ''',
                 [
                     name,
@@ -128,8 +307,7 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
                     report_status,
                     is_first_such_incident,
                     latitude,
-                    longitude
-                ]
+                    longitude                ]
         )
 
         # Retrieve the id of the Incident Report that we have just inserted into the DB [The id is set by the DB]
@@ -158,8 +336,33 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
         return _id  # Return the id of the Newly inserted Incident Report
 
 
+'''
+Function:
+    insert_report
+Args:
+    name, mobile_number, location, assistance_required, description, priority_injuries, priority_dangers,
+    priority_help, report_status: information of an incident to be kept in database
+Returns:
+    return 0
+Raises:
+        ValueError in __check_name raised if the name is illegal
+        ValueError in __check_mobile_no raised if the mobile number is illegal
+        ValueError in __check_loc raised if the location in empty
+        ValueError in __check_description raised if the description is empty
+        ValueError in insert_report raised if the report type and asssistance type are inconsistent
+        AssertionError raised if the data inserted is invalid
+        PermissionError raised if the reported incident is duplicated
+
+'''
+
+
 def insert_report(name, mobile_number, location, assistance_required, description, priority_injuries, priority_dangers,
                   priority_help, report_status):
+    __check_name(name)
+    __check_mobile_no(mobile_number)
+    __check_loc(location)
+    __check_description(description)
+
     # assistance_required is an int: 0 = No Assistance required; 1 = Emergency Ambulance; 2 = Rescue and Evacuation; 3 = Gas Leak Control
     # report_status is an int: 1 = REPORTED [No assistance required]; 2 = PENDING [Waiting for Assistance but Assistance has not reached the victim yet]; 3 = CLOSED [Assistance has reached the victim already]
 
@@ -169,6 +372,12 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
     priority_dangers = int(priority_dangers)
     priority_help = int(priority_help)
     report_status = int(report_status)
+
+    if report_status == 1 and assistance_required != 0:
+        raise ValueError('Inconsistent report type and assistance type')
+
+    if report_status != 1 and assistance_required == 0:
+        raise ValueError('Inconsistent report type and assistance type')
 
     # Checking the validity of the Data:
     assert -1 < assistance_required < 4
@@ -182,7 +391,35 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
     _dict =  address_to_latlng(location)
     latitude = _dict['lat']
     longitude = _dict['lng']
-    
+
+
+    with app.app_context():
+        db = get_db()
+        duplicates = query_db(
+                '''
+                    SELECT * FROM INCIDENT_REPORT WHERE
+                    first_reported > ? AND
+                    location = ? AND
+                    mobile_number = ? AND
+                    assistance_required = ? AND
+                    priority_injuries = ? AND
+                    priority_dangers = ? AND
+                    priority_help = ? AND
+                    report_status = ?
+                ''',
+                [
+                    report_time - timedelta(minutes = 5),
+                    location,
+                    mobile_number,
+                    assistance_required,
+                    priority_injuries,
+                    priority_dangers,
+                    priority_help,
+                    report_status
+                ]
+        )
+        if duplicates:
+            raise PermissionError('Insertion forbidden.')
 
     incident_report_id = __insert_incident(name, mobile_number, location, assistance_required, description,
                                            priority_injuries, priority_dangers, priority_help, report_status,
@@ -193,12 +430,24 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
     return 0
 
 
+'''
+Function:
+    delete_report
+Args:
+    id_of_incident_report : id of the incident report that would be deleted
+Returns:
+    return 0
+Raises:
+    No exception
+'''
+
+
 def delete_report(id_of_incident_report):
     with app.app_context():  # Within the Application Context:
         db = get_db()  # call our private method to retreive the DB
         query_db(
                 '''
-                DELETE FROM INCIDENT_REPORT WHERE 
+                DELETE FROM INCIDENT_REPORT WHERE
                 id = ?
                 ''',
                 [
@@ -210,12 +459,40 @@ def delete_report(id_of_incident_report):
     return 0
 
 
+'''
+Function:
+    update_report
+Args:
+    id_of_incident_report, caller_name, caller_mobile_number, caller_location, type_of_assistance,
+    description, priority_for_severity_of_injuries, priority_for_impending_dangers,
+    priority_for_presence_of_nearby_help, report_status, is_first_such_incident: information of an incident kept in database
+Returns:
+    return 0
+Raises:
+    ValueError in __check_name raised if the name is illegal
+    ValueError in __check_mobile_no raised if the mobile number is illegal
+    ValueError in __check_loc raised if the location in empty
+    ValueError in __check_description raised if the description is empty
+    ValueError in update_report raised if the report type and asssistance type are inconsistent
+'''
+
+
 def update_report(id_of_incident_report, caller_name, caller_mobile_number, caller_location, type_of_assistance,
                   description, priority_for_severity_of_injuries, priority_for_impending_dangers,
                   priority_for_presence_of_nearby_help, report_status, is_first_such_incident):
     # assistance_required is an int: 0 = No Assistance required; 1 = Emergency Ambulance; 2 = Rescue and Evacuation; 3 = Gas Leak Control
     # report_status is an int: 1 = REPORTED [No assistance required]; 2 = PENDING [Waiting for Assistance but Assistance has not reached the victim yet]; 3 = CLOSED [Assistance has reached the victim already]
 
+    __check_name(caller_name)
+    __check_mobile_no(caller_mobile_number)
+    __check_loc(caller_location)
+    __check_description(description)
+
+    if report_status == 1 and type_of_assistance != 0:
+        raise ValueError('Inconsistent report type and assistance type')
+
+    if report_status != 1 and type_of_assistance == 0:
+        raise ValueError('Inconsistent report type and assistance type')
 
     with app.app_context():  # Within the Application Context:
         db = get_db()  # call our private method to retreive the DB
@@ -224,7 +501,7 @@ def update_report(id_of_incident_report, caller_name, caller_mobile_number, call
                 '''
                 UPDATE INCIDENT_REPORT SET
                   name = ?,
-                  location = ?, 
+                  location = ?,
                   priority_injuries = ?,
                   priority_dangers = ?,
                   priority_help = ?,
@@ -255,6 +532,18 @@ def update_report(id_of_incident_report, caller_name, caller_mobile_number, call
     return 0
 
 
+'''
+Function:
+    retrieve_all_incident_reports
+Args:
+    no arguments
+Returns:
+    list_all_incident_reports : get all the incident reports
+Raises:
+    No exception
+'''
+
+
 def retrieve_all_incident_reports():
     with app.app_context():  # Within the Application Context:
         db = get_db()  # call our private method to retreive the DB
@@ -264,8 +553,6 @@ def retrieve_all_incident_reports():
                 SELECT * FROM INCIDENT_REPORT
                 '''
         )
-
-        print("a:" + str(all_incident_reports))
 
         # Some Formatting of the results from the Database
         assistance_required_dict = {0: 'No Assistance needed', 1: 'Emergency Ambulance', 2: 'Rescue and Evaluate',
@@ -289,11 +576,20 @@ def retrieve_all_incident_reports():
 
         db.commit()  # Confirm the changes made to the DB
 
-        
         return list_all_incident_reports
 
 
-    # Get all incident reports that are 'PENDING' i.e. awaiting assistance
+'''
+Function:
+    retrieve_active_incident_reports
+Args:
+    no arguments
+Returns:
+    list_all_active_incident_reports : get all the incident reports that are 'PENDING', i.e. awaiting assistance
+Raises:
+    No exception
+'''
+
 
 def retrieve_active_incident_reports():
     with app.app_context():  # Within the Application Context:
@@ -330,13 +626,25 @@ def retrieve_active_incident_reports():
         return list_all_active_incident_reports
 
 
+'''
+Function:
+    retrieve_selected_incident_reports
+Args:
+    id_of_incident_report : the id of the incident that is being searched
+Returns:
+    report : the report that is being searched
+Raises:
+    No exception
+'''
+
+
 def retrieve_selected_incident_report(id_of_incident_report):
     with app.app_context():  # Within the Application Context:
         db = get_db()  # call our private method to retreive the DB
 
         report = query_db(
                 '''
-                SELECT * FROM INCIDENT_REPORT WHERE 
+                SELECT * FROM INCIDENT_REPORT WHERE
                 id = ?
                 ''',
                 [id_of_incident_report]
@@ -368,6 +676,18 @@ This function is to be called by dashboard
 The two arguments are of datetime data type
 If omitted, the default query would be of interval [now - 30min, now]
 A list of json objects would be returned
+'''
+
+'''
+Function:
+    query_time_interval
+Args:
+    start : start time of the query
+    end : end time of the query
+Returns:
+    ret : a list of json objects
+Raises:
+    No exception
 '''
 
 
