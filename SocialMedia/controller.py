@@ -68,6 +68,7 @@ class SocialMedia:
     def __init__(self):
         self.alert_authority_renderer = renderer.MessageFormatRenderer(ALERT_AUTHORITY_SPEC)
         self.alert_public_renderer = renderer.MessageFormatRenderer(ALERT_PUBLIC_SPEC)
+        self.facebook_renderer = renderer.MessageFormatRenderer(ALERT_PUBLIC_SPEC)
 
         self.facebook_connector = connector.FacebookConnector()
         self.sms_connector = connector.SMSConnector()
@@ -91,7 +92,7 @@ class SocialMedia:
         :return: None
         """
 
-        public_members = model.Person.retrieve_nearby_residents(crisis.coordinate, max_distance_km)
+        public_members = model.Person.retrieve_nearby_residents(crisis.address.coordinates, max_distance_km)
         for member in public_members:
             self.sms_connector.send_message(self.alert_public_renderer.render_message(crisis), member.phone)
 
@@ -102,39 +103,4 @@ class SocialMedia:
         :return: None
         """
 
-        self.facebook_connector.send_message(self.renderer.render_message(crisis))
-
-
-def alert_authorities_test():
-    """Test case 1"""
-
-    controller = SocialMedia()
-    controller.alert_authorities(model.IncidentReport(0, "Incident 1",
-                                                      model.Address('101 Bukit Panjang Road', None, '679910',
-                                                                    model.GeoCoordinate(1.360320, 103.944397)),
-                                                      "+6591515341",
-                                                      "This is a description of the crisis",
-                                                      "5",
-                                                      "14-Jul-1993 09:30", "No assistance required",
-                                                      model.Priority(5, 3, 7)),
-                                 model.Contact.AUTHORITY_POLICE)
-
-
-def alert_public_test():
-    """Test case 2"""
-
-    controller = SocialMedia()
-    controller.alert_public(model.CrisisReport())
-
-
-def post_facebook_test():
-    """Test case 3"""
-
-    controller = SocialMedia()
-    controller.post_facebook(model.CrisisReport())
-
-
-if __name__ == "__main__":
-    alert_authorities_test()
-    # alert_public_test(incident_obj)
-    # post_facebook_test(incident_obj)
+        self.facebook_connector.send_message(self.facebook_renderer.render_message(crisis))

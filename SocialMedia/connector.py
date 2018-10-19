@@ -1,4 +1,5 @@
 from twilio.rest import Client
+from facebook import GraphAPI
 
 
 class APIConnector:
@@ -32,10 +33,20 @@ class SMSConnector(APIConnector):
 class FacebookConnector(APIConnector):
     """FacebookConnector is an APIConnector that performs communication with the Facebook API"""
 
+    def __init__(self):
+        self.page_id = '570688683390106'
+        self.access_token = 'EAACfoaUxqb8BAF5GzCrCWzHQ4RxYhZA7rZC' \
+                            'CtQkuRNpDZCXgsND54YZBgdMddztvPtZAqBymmh' \
+                            'Rf0ibsIrfUHMymH8kq2CT2JNZAVsrss43JHKlUAoS0v' \
+                            'qZBzaB8DVsuYNx1tqAZCXq3a9nyIvzcHFMZBR0PCIYePw3BbJEi' \
+                            'njawZAfCNWM0zf9RjavwfVfY9EZBuIGIuvMP72qcwZDZD'
+        self.client = GraphAPI(access_token=self.access_token)
+
     def send_message(self, message: str):
         """
         Sends a message to the Facebook API
         :param message: A text string message to be sent to the Facebook API
         :return: None
         """
-        raise NotImplementedError("send_message method is not implemented")
+
+        self.client.put_object(self.page_id, 'feed', message=message)
