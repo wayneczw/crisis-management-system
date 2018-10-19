@@ -1,5 +1,3 @@
-__all__ = ['Priority', 'Report', 'IncidentReport', 'CrisisReport', 'Contact', 'Person', 'Address', 'GeoCoordinate']
-
 from math import radians, cos, sin, asin, sqrt
 
 
@@ -71,6 +69,13 @@ class Person(Contact):
 
     @staticmethod
     def retrieve_nearby_residents(coordinate, max_distance):
+        """
+        Retrieve nearby residents
+        :param coordinate: The anchor point coordinate to search for nearby residents
+        :param max_distance: The maximum distance allowed from the anchor point
+        :return: A list of nearby residents
+        """
+
         person_list = [
             Person("Tan Ying Hao", '+6591515341', Person.GENDER_MALE,
                    Address('Blk 540 Jelepang Road', '20-36', '670540',
@@ -111,6 +116,12 @@ class GeoCoordinate:
         self.longitude = longitude
 
     def calculate_distance(self, destination):
+        """
+        Calculates the distance from the this coordinate to the specified destination
+        :param destination: The destination coordinate
+        :return: A float value indicating the distance between this coordinate and destination in kilometres
+        """
+
         lon1, lat1, lon2, lat2 = map(radians, [self.longitude, self.latitude,
                                                destination.longitude, destination.latitude])
 
