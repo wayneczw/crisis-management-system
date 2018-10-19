@@ -1,7 +1,8 @@
 # coding: utf-8
 
-from flask import Flask, redirect, render_template, request, session, Blueprint
+from flask import Flask, flash, redirect, render_template, request, session, Blueprint
 from CallCenter.CallCenter_Model import *
+from time import sleep
 
 
 callcenter_api = Blueprint('callcenter', __name__, template_folder='CallCenter_Views', )
@@ -468,7 +469,7 @@ Returns:
 Raises:
     No exception
 '''
-_
+
 
 @callcenter_api.route("/submit_new_incident_report", methods = ['GET', 'POST'])
 def submit_new_incident_report():
@@ -490,8 +491,14 @@ def submit_new_incident_report():
         report_status = request.form['report_status']
 
         # Insert the Report into our Database by calling this method of our Model:
-        insert_report(caller_name, caller_mobile_number , caller_location, type_of_assistance, description , priority_for_severity_of_injuries, priority_for_impending_dangers, priority_for_presence_of_nearby_help, report_status)
-
+        try:
+            insert_report(caller_name, caller_mobile_number , caller_location, type_of_assistance, description , priority_for_severity_of_injuries, priority_for_impending_dangers, priority_for_presence_of_nearby_help, report_status)
+        except ValueError as e:
+            flash(str(e))
+            sleep(5)
+        except PermissionError as e:
+            flash(str(e))
+            sleep(5)
 
         # Show the Confirmation Page; Note that paramters such as "caller_name" is sent to the html file as an argument.
 

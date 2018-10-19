@@ -1,5 +1,5 @@
 -- drop statements are only for testing purpose:
-DROP TABLE IF EXISTS `INCIDENT_REPORT`;
+-- DROP TABLE IF EXISTS `INCIDENT_REPORT`;
 
 
 

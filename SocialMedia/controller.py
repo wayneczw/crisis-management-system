@@ -1,6 +1,4 @@
-import model
-import renderer
-import connector
+from SocialMedia import model, renderer, connector
 
 ALERT_AUTHORITY_SPEC = """
 Crisis Management System

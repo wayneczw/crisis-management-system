@@ -1,3 +1,4 @@
+__all__ = ['insert_report']
 import os
 import sqlite3
 import json
