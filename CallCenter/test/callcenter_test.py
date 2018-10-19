@@ -1,6 +1,9 @@
 from unittest import TestCase, main
 from time import sleep
-from CallCenter.CallCenter_Model import *
+import sys
+# print(sys.path)
+# sys.path.append("..")
+from ..CallCenter_Model import *
 
 # This function should be and only be used in this file
 def __drop_database():
