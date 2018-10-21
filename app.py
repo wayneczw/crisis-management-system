@@ -68,6 +68,7 @@ def login():
         else:
             session["logged_in"] = True
             session["username"] = request.form['username']
+            session["role"] = request.form['role']
             return redirect(url_for('dashboard.dashboard'))
     return render_template('login-new.html', error=error)
 

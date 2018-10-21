@@ -58,7 +58,7 @@ function random (min, max) {
         myChart = new Chart( ctx, {
             type: 'line',
             data: {
-                labels: ["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"],
+                labels: generate_times(),
                 datasets: [
                 {
                   label: 'East',
@@ -176,7 +176,7 @@ function random (min, max) {
         myChart = new Chart( ctx2, {
             type: 'line',
             data: {
-                labels: ["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"],
+                labels: generate_times(),
                 datasets: [
                 {
                   label: 'Last 2 Weeks',
@@ -259,5 +259,30 @@ function random (min, max) {
     };
 
     drawPSIChart();
+    function generate_times(){
+        var current_time = new Date();
+        var current_hours = current_time.getHours();
+        var current_minutes = current_time.getMinutes();
+
+        var times = [];
+        if(0 <= current_minutes && current_minutes <= 9){
+            current_minutes = "0" + current_minutes.toString();
+        }
+        times.push(current_hours + ":" + current_minutes);
+
+        for(i=0; i<9; i++){
+            current_minutes -= 30;
+            if(current_minutes < 0){
+                current_hours -= 1;
+                current_minutes += 60;
+            }
+            if(0 <= current_minutes && current_minutes <= 9){
+                current_minutes = "0" + current_minutes.toString();
+            }
+            times.push(current_hours + ":" + current_minutes);
+        }
+
+        return times.reverse();
+    }
 
 //} )( jQuery );
