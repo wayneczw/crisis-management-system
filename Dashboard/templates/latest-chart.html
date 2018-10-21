@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Latest Trend Chart</title>
+    <!-- import plugin script -->
+    <script src='../static/Chart.min.js'></script>
+</head>
+<body>
+    <div class="chart-wrapper mt-4" id="chart-wrap">
+       <canvas id="trafficChart" style="height:100px;" height="100"></canvas>
+    </div>
+    <div class="report-hidden" hidden>
+        <input id="psi-trend" class="hidden" value="{{ psi }}">
+        <input id="dengue-trend" class="hidden" value="{{ dengue }}">
+    </div>
+</body>
+<script src='chart-generate.js'></script>
+</html>

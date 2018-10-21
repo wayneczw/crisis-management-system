@@ -34,17 +34,18 @@
                             </div>
                             <!--/.col-->
                             <div class="col-sm-8 hidden-sm-down">
-                                <button type="button" class="btn btn-primary float-right bg-flat-color-1"><i class="fa fa-cloud-download"></i></button>
+                                <button type="button" class="btn btn-primary float-right bg-flat-color-1">
+                                    <a id="chart-download" href="" download='filename.png'>
+                                        <i class="fa fa-cloud-download"></i>
+                                    </a>
+                                </button>
                                 <div class="btn-toolbar float-right" role="toolbar" aria-label="Toolbar with button groups">
                                     <div class="btn-group mr-3" data-toggle="buttons" aria-label="First group">
-                                        <label class="btn btn-outline-secondary">
-                                            <input type="radio" name="options" id="option1"> Day
+                                        <label id="psi-label" class="btn btn-outline-secondary active" onclick="drawPSIChart();">
+                                            <input type="radio" name="options" id="psi-show" checked=""> PSI
                                         </label>
-                                        <label class="btn btn-outline-secondary active">
-                                            <input type="radio" name="options" id="option2" checked=""> Month
-                                        </label>
-                                        <label class="btn btn-outline-secondary">
-                                            <input type="radio" name="options" id="option3"> Year
+                                        <label id="dengue-label" class="btn btn-outline-secondary" onclick="drawDengueChart();">
+                                            <input type="radio" name="options" id="dengue-show"> Dengue
                                         </label>
                                     </div>
                                 </div>
@@ -52,7 +53,7 @@
 
 
                         </div><!--/.row-->
-                        <div class="chart-wrapper mt-4" >
+                        <div class="chart-wrapper mt-4" id="chart-wrap">
                             <canvas id="trafficChart" style="height:100px;" height="100"></canvas>
                         </div>
 
@@ -228,18 +229,11 @@
                 </div>
             </div>
 
-        <!-- World map -->
-            <!--<div class="col-xl-6">-->
-                <!--<div class="card" >-->
-                    <!--<div class="card-header">-->
-                        <!--<h4>World</h4>-->
-                    <!--</div>-->
-                    <!--<div class="Vector-map-js">-->
-                        <!--<div id="vmap" class="vmap" style="height: 265px;"></div>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--&lt;!&ndash; /# card &ndash;&gt;-->
-            <!--</div>-->
+        <div class="report-hidden" hidden>
+            <input id="psi-trend" class="hidden" value="{{ psi }}">
+            <input id="dengue-trend" class="hidden" value="{{ dengue }}">
+        </div>
+
 
 
         </div>

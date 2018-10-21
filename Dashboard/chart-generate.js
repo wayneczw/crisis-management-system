@@ -1,7 +1,3 @@
-//( function ( $ ) {
-//    "use strict";
-
-
 const brandPrimary = '#6a1a09'
 const brandSuccess = '#4dbd74'
 const brandInfo = '#63c2de'
@@ -23,6 +19,7 @@ function random (min, max) {
 }
 
     var elements = 10
+    console.log(document.getElementById('psi-trend').value.replace(/'/g, "\""))
     var psi_values = JSON.parse(document.getElementById('psi-trend').value.replace(/'/g, "\""));
     // psi example: {'east': ['12', 'Healthy'], 'west': ['10', 'Healthy'], 'sourth': ['13', 'Healthy'],
     // 'north': ['10', 'Healthy'], 'central': ['11', 'Healthy']}
@@ -50,15 +47,13 @@ function random (min, max) {
     function drawPSIChart(){
         console.log('Drawing PSI Chart...');
 
-        document.getElementById("chart-wrap").innerHTML = "";
-        document.getElementById("chart-wrap").innerHTML = '<canvas id="trafficChart" style="height:100px;" height="100"></canvas>';
         var ctx = document.getElementById( "trafficChart" ).getContext("2d");
         ctx.height = 100;
-        ctx.width = 200;
+        ctx.width = 150;
         myChart = new Chart( ctx, {
             type: 'line',
             data: {
-                labels: ["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"],
+                labels: generate_times(),
                 datasets: [
                 {
                   label: 'East',
@@ -166,17 +161,15 @@ function random (min, max) {
     function drawDengueChart(){
         console.log('Drawing Dengue Chart...');
 
-        document.getElementById("chart-wrap").innerHTML = "";
-        document.getElementById("chart-wrap").innerHTML = '<canvas id="trafficChart" style="height:100px;" height="100"></canvas>';
-        var ctx2 = document.getElementById( "trafficChart" ).getContext("2d");
+        var ctx2 = document.getElementById( "dengueChart" ).getContext("2d");
         ctx2.height = 100;
-        ctx2.width = 200;
+        ctx2.width = 150;
         var myChart;
         var myChart;
         myChart = new Chart( ctx2, {
             type: 'line',
             data: {
-                labels: ["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"],
+                labels: generate_times(),
                 datasets: [
                 {
                   label: 'Last 2 Weeks',
@@ -259,5 +252,36 @@ function random (min, max) {
     };
 
     drawPSIChart();
+    drawDengueChart();
+    console.log(document.getElementById( "dengueChart" ).style.width );
+    document.getElementById( "trafficChart" ).style.width = "1050px";
+    document.getElementById( "trafficChart" ).style.height = "375px";
+    document.getElementById( "dengueChart" ).style.width = "1050px";
+    document.getElementById( "dengueChart" ).style.height = "375px";
+    console.log(document.getElementById( "dengueChart" ).style.width );
 
-//} )( jQuery );
+    function generate_times(){
+        var current_time = new Date();
+        var current_hours = current_time.getHours();
+        var current_minutes = current_time.getMinutes();
+
+        var times = [];
+        if(0 <= current_minutes && current_minutes <= 9){
+            current_minutes = "0" + current_minutes.toString();
+        }
+        times.push(current_hours + ":" + current_minutes);
+
+        for(i=0; i<9; i++){
+            current_minutes -= 30;
+            if(current_minutes < 0){
+                current_hours -= 1;
+                current_minutes += 60;
+            }
+            if(0 <= current_minutes && current_minutes <= 9){
+                current_minutes = "0" + current_minutes.toString();
+            }
+            times.push(current_hours + ":" + current_minutes);
+        }
+
+        return times.reverse();
+    }

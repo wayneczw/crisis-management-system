@@ -1,13 +1,15 @@
 from flask import render_template, redirect, url_for, request, session, flash, Blueprint, send_from_directory
 from utils import login_required
-from Dashboard.report import send_report
+from Dashboard.report import send_report, parse_table, get_latest_report, get_trend_values
 
 dashboard_api = Blueprint('dashboard', __name__, template_folder='templates')
+
 
 @dashboard_api.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')  # render a template
+    psi, dengue = get_trend_values()
+    return render_template('dashboard.html', psi=psi, dengue=dengue)  # render a template
 
 
 from model import *

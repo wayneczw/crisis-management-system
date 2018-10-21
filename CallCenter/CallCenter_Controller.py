@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from flask import Flask, flash, redirect, render_template, request, session, Blueprint
-from CallCenter.CallCenter_Model import *
+from CallCenter.CallCenter_Model import init_db, retrieve_all_incident_reports, update_report, retrieve_selected_incident_report, delete_report, insert_report
 from time import sleep
 
 
