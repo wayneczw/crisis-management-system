@@ -494,11 +494,11 @@ def submit_new_incident_report():
         try:
             insert_report(caller_name, caller_mobile_number , caller_location, type_of_assistance, description , priority_for_severity_of_injuries, priority_for_impending_dangers, priority_for_presence_of_nearby_help, report_status)
         except ValueError as e:
-            flash(str(e))
-            sleep(5)
+            flash(str(e)+". Please try again!")
+            return redirect('/callcenter/submit_new_incident_report') # stay on the same page
         except PermissionError as e:
-            flash(str(e))
-            sleep(5)
+            flash(str(e)+". Please try again!")
+            return redirect('/callcenter/submit_new_incident_report')
 
         # Show the Confirmation Page; Note that paramters such as "caller_name" is sent to the html file as an argument.
 

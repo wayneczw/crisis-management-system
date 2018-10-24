@@ -5,7 +5,8 @@ import json
 from datetime import datetime, timedelta
 from flask import g, Flask
 from Map.map_api import address_to_latlng
-
+from SocialMedia.model import CrisisReport, IncidentReport
+from SocialMedia.controller import SocialMedia
 
 # from CallCenter import app
 
@@ -420,13 +421,32 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
                 ]
         )
         if duplicates:
-            raise PermissionError('Insertion forbidden.')
+            raise PermissionError('Duplicate Report detected')
 
     incident_report_id = __insert_incident(name, mobile_number, location, assistance_required, description,
                                            priority_injuries, priority_dangers, priority_help, report_status,
                                            report_time,latitude,longitude)
 
     print(incident_report_id)
+
+    # Alerting Authorities
+    priority = priority_injuries + priority_dangers + priority_help
+    assistance_required_dict = {0: 'No Assistance needed', 1: 'Emergency Ambulance', 2: 'Rescue and Evaluate',
+                            3: 'Gas Leak Control'}  # a Dict to convert assistance_required from int to string
+    report_status_dict = {1: 'REPORTED', 2: 'PENDING',
+                      3: 'CLOSED'}
+    assistance_required_string = assistance_required_dict[assistance_required]  # Convert asssistance_required from int to string
+    report_status_string = report_status_dict[report_status]  # Convert report_status from int to string
+    incident_report = IncidentReport(identifier=1, name=name, address=location, phone=mobile_number, description=description, status=report_status_string, reported_time=report_time, assistance_required=assistance_required_string,
+                 priority=priority)
+    social_media = SocialMedia()
+    social_media.alert_authorities(incident_report, authority=assistance_required) # According to the value of "assistnace_required [1,2,or 3]", different authority will be alerted
+
+    if "fire" in description.lower():   
+        crisis_report = CrisisReport(identifier=1, name=name, address=location, category='Fire', description=description, date=report_time, time=report_time, advisory='Move to open areas immediately')
+        social_media.alert_public(crisis_report)
+        social_media.post_facebook(crisis_report)
+
 
     return 0
 
