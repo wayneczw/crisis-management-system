@@ -6,7 +6,7 @@ from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map, icons
 from .map_api import get_psi, get_dengue_clusters, get_weather, get_shelter, address_to_latlng
 from SocialMedia.model import CrisisReport
-from SocialMedia.controller import alert_public_test, post_facebook_test
+from SocialMedia.controller import SocialMedia
 import time, threading
 from CallCenter.CallCenter_Model import retrieve_active_incident_reports
 
@@ -213,9 +213,10 @@ def periodic_psi_check():
         date = str(datetime.now().date())
         time = str(datetime.time(datetime.now()))
         report = CrisisReport(identifier=1, name=area, address=area, category='Haze', description=info_dict['status'], date=date, time=time, advisory='Avoid out door activity')
+        social_media = SocialMedia()
 
-        alert_public_test(report)
-        post_facebook_test(report)
+        social_media.alert_public(report)
+        social_media.post_facebook(report)
  
     east_info, west_info, south_info, north_info, central_info = get_psi()
 

@@ -4,7 +4,7 @@
 To install:
 pip3 install locustio
 
-To run:
+To run load test:
 
 1) first, run the main app [get the system running first]
 
@@ -17,6 +17,16 @@ go to http://127.0.0.1:8089/
 4) Set the number of users, and hatch rate
 
 5) Look at the statistics - No "# fails" means that our system is coping well.
+
+To run performance test:
+
+1) first, run the main app [get the system running first]
+
+2) in a separate terminal: ["localhost" below refers to where you are running the main app/our system]
+locust -f load_test_locust.py --no-web -c 1 -r 1 -t 60s --host=http://localhost
+
+3) Then, wait for the command to complete and at the end there is a log on the performance for the response time
+for each test case
 """
 
 
@@ -76,5 +86,5 @@ class UserBehavior(TaskSet):
 
 class WebsiteUser(HttpLocust):
     task_set = UserBehavior
-    min_wait = 2000
+    min_wait = 0
     max_wait = 3000
