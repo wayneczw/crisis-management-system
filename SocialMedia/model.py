@@ -45,6 +45,9 @@ class CrisisReport(Report):
 
 class Contact:
     AUTHORITY_POLICE = 0
+    AUTHORITY_SCDF_Ambulance = 1
+    AUTHORITY_SCDF_Rescue = 2
+    AUTHORITY_SingaporePower_GasLeak = 3
 
     def __init__(self, name, phone):
         self.name = name
@@ -54,6 +57,12 @@ class Contact:
     def retrieve_authority_contact(authority):
         if authority == Contact.AUTHORITY_POLICE:
             return Contact('Police', '+6591515341')
+        elif authority == Contact.AUTHORITY_SCDF_Ambulance:
+            return Contact('SCDF_Ambulance', '+6591515341')
+        elif authority == Contact.AUTHORITY_SCDF_Rescue:
+            return Contact('SCDF_Rescue', '+6591515341')
+        elif authority == Contact.AUTHORITY_SingaporePower_GasLeak:
+            return Contact('SingaporePower', '+6591515341')
         else:
             raise ValueError("Authority is undefined")
 
