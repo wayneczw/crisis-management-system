@@ -89,7 +89,7 @@ class Person(Contact):
             Person("Tan Ying Hao", '+6591515341', Person.GENDER_MALE,
                    Address('Blk 540 Jelepang Road', '20-36', '670540',
                            GeoCoordinate(1.384860, 103.766550))),
-            Person("Lim Xuan Yin", '+6591116528', Person.GENDER_MALE,
+            Person("Lim Xuan Yin", '+6590290589', Person.GENDER_MALE,
                    Address('Blk 487 Tampines Street Avenue 4', '03-99', '520487',
                            GeoCoordinate(1.360320, 103.944397)))
         ]
