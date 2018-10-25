@@ -528,11 +528,14 @@ def generate_trend_chart():
     '''
     psi, dengue = get_trend_values()
 
+    start_x = 10 - len(dengue['overall total'])
+    print('len', start_x)
+
     linestyles = ['-', '--', '-.', ':', '-']
     for i in range(len(list(psi.keys()))):
         key = list(psi.keys())[i]
-        plt.plot(range(len(psi[key])), psi[key], linestyle=linestyles[i], label=key)
-        plt.scatter(range(len(psi[key])), psi[key])
+        plt.plot([start_x + i for i in range(len(psi[key]))], psi[key], linestyle=linestyles[i], label=key)
+        plt.scatter([start_x + i for i in range(len(psi[key]))], psi[key])
     time_ticks = generate_time_ticks()
     plt.xticks(range(len(time_ticks)), time_ticks)
     plt.legend()
@@ -542,8 +545,8 @@ def generate_trend_chart():
 
     for key in dengue.keys():
         print(dengue[key])
-        plt.plot(range(len(dengue[key])), dengue[key], label=key)
-        plt.scatter(range(len(dengue[key])), dengue[key])
+        plt.plot([start_x + i for i in range(len(dengue[key]))], dengue[key], label=key)
+        plt.scatter([start_x + i for i in range(len(dengue[key]))], dengue[key])
     plt.xticks(range(len(time_ticks)), time_ticks)
     plt.legend()
     plt.title('Dengue cases trend for the past 5 hours')
