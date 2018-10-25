@@ -1,11 +1,14 @@
 from Map.map_api import get_weather, get_psi, get_dengue_clusters
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timezone
 import os
 import sqlite3
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
+import email
 
 SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__))
 FOLDER_PATH = os.path.join(SCRIPT_PATH, 'report_history')
@@ -22,7 +25,7 @@ TEMPLATE = '''\
             <p>Dear Prime Minister,</p>
             <br>
             <p>The key indicators and trends at {0} are shown below:</p>
-            <p><font color="red">{1}</font></p>
+            <p>{1}</p>
             <p>Please feel free to contact us if you need any further information.</p>
             <br>
             <p>Sincerely,</p>
@@ -409,34 +412,58 @@ def send_report(subject=SUBJECT):
     """
 
     try:
+        # Prepare subject
         now_time = datetime.now(timezone.utc).astimezone()
         now = now_time.strftime("%Y-%m-%d %H:%M:%S")
         subject = subject.format(now)
 
-        content = '<br>'.join([TABLE_CSS, get_dengue_report(), get_weather_report(), get_psi_report(), get_incident_report()])
-
+        # Prepare html content
+        image_html = '<h3>5. Dengue Trend Graph</h3><img src="cid:image1"><br><h3>5. PSI Trend Graph</h3><img src="cid:image2"><br>'
+        content = '<br>'.join([TABLE_CSS, get_dengue_report(), get_weather_report(), get_psi_report(), get_incident_report(), image_html])
         email_content = TEMPLATE.format(now, content)
+        # print(email_content)
 
+        # Prepare trend graph
+        generate_trend_chart()
+
+        # Create the root message and fill in the from, to, and subject headers
+        msg_root = MIMEMultipart('related')
+        msg_root['Subject'] = subject
+        msg_root['From'] = SENDER
         msg_to = ""
         for person in RECEIVERS:
             msg_to += "{0} ".format(person)
+        msg_root['To'] = msg_to
+        msg_root.preamble = 'This is a multi-part message in MIME format.'
 
-        msg = MIMEText(email_content, 'html')
+        # Encapsulate the plain and HTML versions of the message body in an
+        # 'alternative' part, so message agents can decide which they want to display.
+        msg_alternative = MIMEMultipart('alternative')
+        msg_root.attach(msg_alternative)
 
-        msg['Subject'] = subject
-        msg['From'] = SENDER
-        msg['To'] = msg_to
+        msg_text = MIMEText(email_content, 'html')
+        msg_alternative.attach(msg_text)
 
-        # send email
-        server.sendmail(SENDER, RECEIVERS, msg.as_string())
+        for i, p in enumerate(['report_history/Dengue trend.png', 'report_history/PSI trend.png']):
+
+            fp = open(p, 'rb')
+            msg_image = MIMEImage(fp.read())
+            fp.close()
+
+            # Define the image's ID as referenced above
+            msg_image.add_header('Content-ID', '<image{}>'.format(i+1))
+            msg_root.attach(msg_image)
+
+        server.sendmail(SENDER, RECEIVERS, msg_root.as_string())
         print('Sent successfully!')
 
         # save to local
         if not os.path.isdir(FOLDER_PATH):
             os.makedirs(FOLDER_PATH)
-        file_path = "{}/report_history/{}.html".format(SCRIPT_PATH, subject)
+        file_path = "{}/report_history/{}.eml".format(SCRIPT_PATH, subject)
         with open(file_path, "w") as fp:
-            fp.write(email_content)
+            gen = email.generator.Generator(fp)
+            gen.flatten(msg_root)
         print('File saved successfully!')
 
         # insert to db
@@ -549,5 +576,5 @@ def generate_time_ticks():
 if __name__ == '__main__':
     # for i in range(10):
     #     send_report()
-    generate_trend_chart()
-
+    # generate_trend_chart()
+    send_report()
