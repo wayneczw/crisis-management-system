@@ -75,7 +75,7 @@ def get_latest_report(num=1):
 
     if not os.path.isdir(FOLDER_PATH):
         os.makedirs(FOLDER_PATH)
-    return [os.path.join(FOLDER_PATH, i) for i in sorted(os.listdir(FOLDER_PATH))[-num:]]
+    return [os.path.join(FOLDER_PATH, i) for i in sorted(os.listdir(FOLDER_PATH))[-num:] if 'eml' in i]
 
 
 def parse_table(html_path, id):
@@ -92,7 +92,7 @@ def parse_table(html_path, id):
 
     """
 
-    with open(html_path, 'r') as f:
+    with open(html_path, 'r', encoding='utf-8') as f:
         html = f.read()
 
     soup = BeautifulSoup(html, 'html.parser')
@@ -423,9 +423,6 @@ def send_report(subject=SUBJECT):
         email_content = TEMPLATE.format(now, content)
         # print(email_content)
 
-        # Prepare trend graph
-        generate_trend_chart()
-
         # Create the root message and fill in the from, to, and subject headers
         msg_root = MIMEMultipart('related')
         msg_root['Subject'] = subject
@@ -444,7 +441,20 @@ def send_report(subject=SUBJECT):
         msg_text = MIMEText(email_content, 'html')
         msg_alternative.attach(msg_text)
 
-        for i, p in enumerate(['report_history/Dengue trend.png', 'report_history/PSI trend.png']):
+        # first save, save a file without trend graph to let generate_trend_chart to extract current value
+        # save to local
+        if not os.path.isdir(FOLDER_PATH):
+            os.makedirs(FOLDER_PATH)
+        file_path = "{}/report_history/{}.eml".format(SCRIPT_PATH, subject)
+        with open(file_path, "w") as fp:
+            gen = email.generator.Generator(fp)
+            gen.flatten(msg_root)
+
+        # Prepare trend graph
+        generate_trend_chart()
+
+        for i, p in enumerate(['{}/report_history/Dengue trend.png'.format(SCRIPT_PATH),
+                               '{}/report_history/PSI trend.png'.format(SCRIPT_PATH)]):
 
             fp = open(p, 'rb')
             msg_image = MIMEImage(fp.read())
@@ -457,6 +467,7 @@ def send_report(subject=SUBJECT):
         server.sendmail(SENDER, RECEIVERS, msg_root.as_string())
         print('Sent successfully!')
 
+        # overwrite previous without trend graph version
         # save to local
         if not os.path.isdir(FOLDER_PATH):
             os.makedirs(FOLDER_PATH)
@@ -516,26 +527,27 @@ def generate_trend_chart():
     :return: chart - a chart image name
     '''
     psi, dengue = get_trend_values()
+
     linestyles = ['-', '--', '-.', ':', '-']
     for i in range(len(list(psi.keys()))):
         key = list(psi.keys())[i]
         plt.plot(range(len(psi[key])), psi[key], linestyle=linestyles[i], label=key)
         plt.scatter(range(len(psi[key])), psi[key])
-        time_ticks = generate_time_ticks()
-        plt.xticks(range(len(time_ticks)), time_ticks)
-        plt.legend()
-        plt.title('PSI trend for the past 5 hours')
-    plt.savefig('report_history/PSI trend.png'.format(datetime.now()))
+    time_ticks = generate_time_ticks()
+    plt.xticks(range(len(time_ticks)), time_ticks)
+    plt.legend()
+    plt.title('PSI trend for the past 5 hours')
+    plt.savefig('{}/report_history/PSI trend.png'.format(SCRIPT_PATH, datetime.now()))
     plt.close()
 
     for key in dengue.keys():
         print(dengue[key])
         plt.plot(range(len(dengue[key])), dengue[key], label=key)
         plt.scatter(range(len(dengue[key])), dengue[key])
-        plt.xticks(range(len(time_ticks)), time_ticks)
-        plt.legend()
-        plt.title('Dengue cases trend for the past 5 hours')
-    plt.savefig('report_history/Dengue trend.png'.format(datetime.now()))
+    plt.xticks(range(len(time_ticks)), time_ticks)
+    plt.legend()
+    plt.title('Dengue cases trend for the past 5 hours')
+    plt.savefig('{}/report_history/Dengue trend.png'.format(SCRIPT_PATH, datetime.now()))
     plt.close()
 
 
