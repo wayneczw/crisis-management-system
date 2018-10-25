@@ -1,11 +1,11 @@
-__all__ = ['insert_report']
+social__all__ = ['insert_report']
 import os
 import sqlite3
 import json
 from datetime import datetime, timedelta
 from flask import g, Flask
 from Map.map_api import address_to_latlng
-from SocialMedia.model import CrisisReport, IncidentReport
+from SocialMedia.model import CrisisReport, IncidentReport, Address, GeoCoordinate
 from SocialMedia.controller import SocialMedia
 
 # from CallCenter import app
@@ -437,8 +437,13 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
                       3: 'CLOSED'}
     assistance_required_string = assistance_required_dict[assistance_required]  # Convert asssistance_required from int to string
     report_status_string = report_status_dict[report_status]  # Convert report_status from int to string
-    incident_report = IncidentReport(identifier=1, name=name, address=location, phone=mobile_number, description=description, status=report_status_string, reported_time=report_time, assistance_required=assistance_required_string,
-                 priority=priority)
+    coord = GeoCoordinate(latitude=latitude, longitude=longitude)
+    address = Address(street_name=location, unit_number=None, postal_code=None, coordinates=coord)
+
+    incident_report = IncidentReport(identifier=1, name=name, address=address, 
+                phone=mobile_number, description=description, status=report_status_string, 
+                reported_time=report_time, assistance_required=assistance_required_string,
+                priority=priority)
     social_media = SocialMedia()
     social_media.alert_authorities(incident_report, authority=assistance_required) # According to the value of "assistnace_required [1,2,or 3]", different authority will be alerted
 
