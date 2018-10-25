@@ -1,10 +1,14 @@
 from Map.map_api import get_weather, get_psi, get_dengue_clusters
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timezone
 import os
 import sqlite3
 from bs4 import BeautifulSoup
+import matplotlib.pyplot as plt
+import email
 
 SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__))
 FOLDER_PATH = os.path.join(SCRIPT_PATH, 'report_history')
@@ -21,7 +25,7 @@ TEMPLATE = '''\
             <p>Dear Prime Minister,</p>
             <br>
             <p>The key indicators and trends at {0} are shown below:</p>
-            <p><font color="red">{1}</font></p>
+            <p>{1}</p>
             <p>Please feel free to contact us if you need any further information.</p>
             <br>
             <p>Sincerely,</p>
@@ -57,14 +61,38 @@ DENGUE_LONG_THRESHOLD = 8
 
 
 def get_latest_report(num=1):
+    """
+
+    Fetches latest n report from local directory. [crisis-management-system/Dashboard/report_history]
+
+    Args:
+        num: the number of report need to be fetched, default is 1
+
+    Returns:
+        report_path_list: a list of selected report absolute path
+
+    """
+
     if not os.path.isdir(FOLDER_PATH):
         os.makedirs(FOLDER_PATH)
-    return [os.path.join(FOLDER_PATH, i) for i in sorted(os.listdir(FOLDER_PATH))[-num:]]
+    return [os.path.join(FOLDER_PATH, i) for i in sorted(os.listdir(FOLDER_PATH))[-num:] if 'eml' in i]
 
 
 def parse_table(html_path, id):
+    """
 
-    with open(html_path, 'r') as f:
+    Get selected table section from a html file.
+
+    Args:
+        html_path: path to html file
+        id: id of table   ['psi', 'dengue', 'weather', 'incident']
+
+    Returns:
+        A string of selected table section
+
+    """
+
+    with open(html_path, 'r', encoding='utf-8') as f:
         html = f.read()
 
     soup = BeautifulSoup(html, 'html.parser')
@@ -79,6 +107,16 @@ def parse_table(html_path, id):
 
 
 def get_psi_report():
+    """
+
+    Generate psi html table report by calling psi API from map_api.py
+
+    Args:
+
+    Returns:
+        psi_report: A string of psi html table report.
+
+    """
     psi_dict = {'locality': [], 'psi': [], 'status': []}
     direction_list = ['east', 'west', 'sourth', 'north', 'central']
     for i, p in enumerate(get_psi()):
@@ -117,6 +155,16 @@ def get_psi_report():
 
 
 def get_dengue_report():
+    """
+
+    Generate dengue html table report by calling psi API from map_api.py
+
+    Args:
+
+    Returns:
+        dengue_report: A string of dengue html table report.
+
+    """
 
     attrs = ['Case with onset in last 2 weeks', 'Cases since start of cluster']
     dengue_dict = {'locality': [], attrs[0]: [], attrs[1]: []}
@@ -188,6 +236,16 @@ def get_dengue_report():
 
 
 def get_weather_report():
+    """
+
+    Generate weather html table report by calling psi API from map_api.py
+
+    Args:
+
+    Returns:
+        weather_report: A string of weather html table report.
+
+    """
     weather_dict = {'locality': [], 'weather': []}
     weather = get_weather()
     for w in weather:
@@ -223,6 +281,16 @@ def get_weather_report():
 
 
 def retrieve_active_incident_reports():
+    """
+
+    Retrieve active incident report from /CallCenter/database.db
+
+    Args:
+
+    Returns:
+        list_all_incident_reports: A list of all incident reports.
+
+    """
     script_path = os.path.dirname(os.path.abspath(__file__))
     db_path = '/'.join(script_path.split('/')[:-1]) + '/CallCenter/database.db'
     print(db_path)
@@ -253,6 +321,16 @@ def retrieve_active_incident_reports():
 
 
 def get_incident_report():
+    """
+
+    Generate incident html table report by calling psi API from map_api.py
+
+    Args:
+
+    Returns:
+        incident_report: A string of incident html table report.
+
+    """
 
     incident_list = retrieve_active_incident_reports()
     print(incident_list)
@@ -291,6 +369,19 @@ def get_incident_report():
 
 
 def insert_db(name, timestamp, path):
+    """
+
+    Insert status report into app.db.
+
+    Args:
+        name: name of  the status report
+        timastamp: timastamp of the status report
+        path: path of the status report
+
+    Returns:
+        Print after successful add.
+
+    """
     script_path = os.path.dirname(os.path.abspath(__file__))
     db_path = '/'.join(script_path.split('/')[:-1])+'/app.db'
     conn = sqlite3.connect(db_path)
@@ -303,35 +394,87 @@ def insert_db(name, timestamp, path):
 
 def send_report(subject=SUBJECT):
 
+    """
+
+    0. Generate status report.
+    1. Send status report to target email.
+    2. Save status report to local directory.
+    3. Insert status report into app.db.
+
+    Args:
+        subject: subject of the email
+
+    Returns:
+        Print after successful sending email / saving file / inserting database.
+
+    Raises:
+        Exception: An error occured in sending email / save local file / insert database.
+    """
+
     try:
+        # Prepare subject
         now_time = datetime.now(timezone.utc).astimezone()
         now = now_time.strftime("%Y-%m-%d %H:%M:%S")
         subject = subject.format(now)
 
-        content = '<br>'.join([TABLE_CSS, get_dengue_report(), get_weather_report(), get_psi_report(), get_incident_report()])
-
+        # Prepare html content
+        image_html = '<h3>5. Dengue Trend Graph</h3><img src="cid:image1"><br><h3>5. PSI Trend Graph</h3><img src="cid:image2"><br>'
+        content = '<br>'.join([TABLE_CSS, get_dengue_report(), get_weather_report(), get_psi_report(), get_incident_report(), image_html])
         email_content = TEMPLATE.format(now, content)
+        # print(email_content)
 
+        # Create the root message and fill in the from, to, and subject headers
+        msg_root = MIMEMultipart('related')
+        msg_root['Subject'] = subject
+        msg_root['From'] = SENDER
         msg_to = ""
         for person in RECEIVERS:
             msg_to += "{0} ".format(person)
+        msg_root['To'] = msg_to
+        msg_root.preamble = 'This is a multi-part message in MIME format.'
 
-        msg = MIMEText(email_content, 'html')
+        # Encapsulate the plain and HTML versions of the message body in an
+        # 'alternative' part, so message agents can decide which they want to display.
+        msg_alternative = MIMEMultipart('alternative')
+        msg_root.attach(msg_alternative)
 
-        msg['Subject'] = subject
-        msg['From'] = SENDER
-        msg['To'] = msg_to
+        msg_text = MIMEText(email_content, 'html')
+        msg_alternative.attach(msg_text)
 
-        # send email
-        server.sendmail(SENDER, RECEIVERS, msg.as_string())
-        print('Sent successfully!')
-
+        # first save, save a file without trend graph to let generate_trend_chart to extract current value
         # save to local
         if not os.path.isdir(FOLDER_PATH):
             os.makedirs(FOLDER_PATH)
-        file_path = "{}/report_history/{}.html".format(SCRIPT_PATH, subject)
+        file_path = "{}/report_history/{}.eml".format(SCRIPT_PATH, subject)
         with open(file_path, "w") as fp:
-            fp.write(email_content)
+            gen = email.generator.Generator(fp)
+            gen.flatten(msg_root)
+
+        # Prepare trend graph
+        generate_trend_chart()
+
+        for i, p in enumerate(['{}/report_history/Dengue trend.png'.format(SCRIPT_PATH),
+                               '{}/report_history/PSI trend.png'.format(SCRIPT_PATH)]):
+
+            fp = open(p, 'rb')
+            msg_image = MIMEImage(fp.read())
+            fp.close()
+
+            # Define the image's ID as referenced above
+            msg_image.add_header('Content-ID', '<image{}>'.format(i+1))
+            msg_root.attach(msg_image)
+
+        server.sendmail(SENDER, RECEIVERS, msg_root.as_string())
+        print('Sent successfully!')
+
+        # overwrite previous without trend graph version
+        # save to local
+        if not os.path.isdir(FOLDER_PATH):
+            os.makedirs(FOLDER_PATH)
+        file_path = "{}/report_history/{}.eml".format(SCRIPT_PATH, subject)
+        with open(file_path, "w") as fp:
+            gen = email.generator.Generator(fp)
+            gen.flatten(msg_root)
         print('File saved successfully!')
 
         # insert to db
@@ -378,40 +521,75 @@ def get_trend_values():
     return psi_trend, dengue_trend
 
 
-def generate_report():
+def generate_trend_chart():
     '''
     Generate chart using the latest 10 reports.
-    Caution: chartjs.min.js and chart-generate.js must be in the same directory with the html report.
-    :return: chart_html - the html string showing the chart generated by chart.js
+    :return: chart - a chart image name
     '''
-
     psi, dengue = get_trend_values()
-    chart_html = '''
-        <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>Latest Trend Chart</title>
-        <!-- import plugin script -->
-        <script src='chartjs.min.js'></script>
-    </head>
-    <body>
-        <div class="chart-wrapper mt-4" id="chart-wrap">
-           <canvas id="trafficChart" style="height:100px;" height="100"></canvas>
-           <canvas id="dengueChart" style="height:100px;" height="100"></canvas>
-        </div>
-        <div class="report-hidden" hidden>
-            <input id="psi-trend" class="hidden" value="***psi-value***">
-            <input id="dengue-trend" class="hidden" value="***dengue-value***">
-        </div>
-    </body>
-    <script src='chart-generate.js' type='text/javascript'></script>
-    </html>'''
 
-    chart_html = chart_html.replace('***psi-value***', str(psi)).replace('***dengue-value***', str(dengue))
-    # print(chart_html)
-    # open('latest-chart.html', 'w+').write(chart_html)
-    return chart_html
+    start_x = 10 - len(dengue['overall total'])
+    print('len', start_x)
 
+    linestyles = ['-', '--', '-.', ':', '-']
+    for i in range(len(list(psi.keys()))):
+        key = list(psi.keys())[i]
+        plt.plot([start_x + i for i in range(len(psi[key]))], psi[key], linestyle=linestyles[i], label=key)
+        plt.scatter([start_x + i for i in range(len(psi[key]))], psi[key])
+    time_ticks = generate_time_ticks()
+    plt.xticks(range(len(time_ticks)), time_ticks)
+    plt.legend()
+    plt.title('PSI trend for the past 5 hours')
+    plt.savefig('{}/report_history/PSI trend.png'.format(SCRIPT_PATH, datetime.now()))
+    plt.close()
+
+    for key in dengue.keys():
+        print(dengue[key])
+        plt.plot([start_x + i for i in range(len(dengue[key]))], dengue[key], label=key)
+        plt.scatter([start_x + i for i in range(len(dengue[key]))], dengue[key])
+    plt.xticks(range(len(time_ticks)), time_ticks)
+    plt.legend()
+    plt.title('Dengue cases trend for the past 5 hours')
+    plt.savefig('{}/report_history/Dengue trend.png'.format(SCRIPT_PATH, datetime.now()))
+    plt.close()
 
 
+def generate_time_ticks():
+    '''
+    Generate 10 time ticks.
+    :return: list of 10 time ticks.
+    '''
+    current_time = datetime.now()
+    current_hours = current_time.hour
+    current_minutes = current_time.minute
+
+    times = [];
+    if 0 <= current_minutes <= 9:
+        current_minutes = "0" + str(current_minutes)
+    times.append(str(current_hours) + ":" + str(current_minutes))
+
+    current_minutes = int(current_minutes)
+
+    for i in range(9):
+        current_minutes -= 30
+        if current_minutes < 0:
+            current_hours -= 1
+            if current_hours < 0:
+                current_hours += 24
+            current_minutes += 60
+
+        if 0 <= current_minutes <= 9:
+            current_minutes = "0" + str(current_minutes)
+
+        times.append(str(current_hours) + ":" + str(current_minutes))
+        current_minutes = int(current_minutes)
+
+    times.reverse()
+    return times
+
+
+if __name__ == '__main__':
+    # for i in range(10):
+    #     send_report()
+    # generate_trend_chart()
+    send_report()
