@@ -110,7 +110,6 @@ if __name__ == '__main__':
     scheduler.api_enabled = True
     scheduler.init_app(app)
     scheduler.start()
-    print('uo')
     periodic_psi_check()
 
     # turn off use reloader to prevent sending two duplicate emails

@@ -35,11 +35,16 @@ class FacebookConnector(APIConnector):
 
     def __init__(self):
         self.page_id = '570688683390106'
-        self.access_token = 'EAACfoaUxqb8BAF5GzCrCWzHQ4RxYhZA7rZC' \
-                            'CtQkuRNpDZCXgsND54YZBgdMddztvPtZAqBymmh' \
-                            'Rf0ibsIrfUHMymH8kq2CT2JNZAVsrss43JHKlUAoS0v' \
-                            'qZBzaB8DVsuYNx1tqAZCXq3a9nyIvzcHFMZBR0PCIYePw3BbJEi' \
-                            'njawZAfCNWM0zf9RjavwfVfY9EZBuIGIuvMP72qcwZDZD'
+        self.access_token = 'EAACfoaUxqb8BAGM8c39Nh' \
+                    'WHUXREdmf210WhzVCXr3CJ' \
+                    'BFGQUu1EtyHihOcKuwYgM4' \
+                    '3Vd98TTlctN2ZBFJmU9uqo' \
+                    '5iQZBXIZB3TH9RdZC9luy2' \
+                    'skvxabhajpA694D6uJvl6t' \
+                    'c4EK7Mp4levQW5UDnwj1bg' \
+                    'EBXsplkAZBZCXk8mqebJYT' \
+                    'pQAvTLNmxP68f449wOoKKP' \
+                    '3On2bYQZDZD'
         self.client = GraphAPI(access_token=self.access_token)
 
     def send_message(self, message: str):
