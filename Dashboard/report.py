@@ -57,12 +57,36 @@ DENGUE_LONG_THRESHOLD = 8
 
 
 def get_latest_report(num=1):
+    """
+
+    Fetches latest n report from local directory. [crisis-management-system/Dashboard/report_history]
+
+    Args:
+        num: the number of report need to be fetched, default is 1
+
+    Returns:
+        report_path_list: a list of selected report absolute path
+
+    """
+
     if not os.path.isdir(FOLDER_PATH):
         os.makedirs(FOLDER_PATH)
     return [os.path.join(FOLDER_PATH, i) for i in sorted(os.listdir(FOLDER_PATH))[-num:]]
 
 
 def parse_table(html_path, id):
+    """
+
+    Get selected table section from a html file.
+
+    Args:
+        html_path: path to html file
+        id: id of table   ['psi', 'dengue', 'weather', 'incident']
+
+    Returns:
+        A string of selected table section
+
+    """
 
     with open(html_path, 'r') as f:
         html = f.read()
@@ -79,6 +103,16 @@ def parse_table(html_path, id):
 
 
 def get_psi_report():
+    """
+
+    Generate psi html table report by calling psi API from map_api.py
+
+    Args:
+
+    Returns:
+        psi_report: A string of psi html table report.
+
+    """
     psi_dict = {'locality': [], 'psi': [], 'status': []}
     direction_list = ['east', 'west', 'sourth', 'north', 'central']
     for i, p in enumerate(get_psi()):
@@ -117,6 +151,16 @@ def get_psi_report():
 
 
 def get_dengue_report():
+    """
+
+    Generate dengue html table report by calling psi API from map_api.py
+
+    Args:
+
+    Returns:
+        dengue_report: A string of dengue html table report.
+
+    """
 
     attrs = ['Case with onset in last 2 weeks', 'Cases since start of cluster']
     dengue_dict = {'locality': [], attrs[0]: [], attrs[1]: []}
@@ -188,6 +232,16 @@ def get_dengue_report():
 
 
 def get_weather_report():
+    """
+
+    Generate weather html table report by calling psi API from map_api.py
+
+    Args:
+
+    Returns:
+        weather_report: A string of weather html table report.
+
+    """
     weather_dict = {'locality': [], 'weather': []}
     weather = get_weather()
     for w in weather:
@@ -223,6 +277,16 @@ def get_weather_report():
 
 
 def retrieve_active_incident_reports():
+    """
+
+    Retrieve active incident report from /CallCenter/database.db
+
+    Args:
+
+    Returns:
+        list_all_incident_reports: A list of all incident reports.
+
+    """
     script_path = os.path.dirname(os.path.abspath(__file__))
     db_path = '/'.join(script_path.split('/')[:-1]) + '/CallCenter/database.db'
     print(db_path)
@@ -253,6 +317,16 @@ def retrieve_active_incident_reports():
 
 
 def get_incident_report():
+    """
+
+    Generate incident html table report by calling psi API from map_api.py
+
+    Args:
+
+    Returns:
+        incident_report: A string of incident html table report.
+
+    """
 
     incident_list = retrieve_active_incident_reports()
     print(incident_list)
@@ -291,6 +365,19 @@ def get_incident_report():
 
 
 def insert_db(name, timestamp, path):
+    """
+
+    Insert status report into app.db.
+
+    Args:
+        name: name of  the status report
+        timastamp: timastamp of the status report
+        path: path of the status report
+
+    Returns:
+        Print after successful add.
+
+    """
     script_path = os.path.dirname(os.path.abspath(__file__))
     db_path = '/'.join(script_path.split('/')[:-1])+'/app.db'
     conn = sqlite3.connect(db_path)
@@ -302,6 +389,23 @@ def insert_db(name, timestamp, path):
 
 
 def send_report(subject=SUBJECT):
+
+    """
+
+    0. Generate status report.
+    1. Send status report to target email.
+    2. Save status report to local directory.
+    3. Insert status report into app.db.
+
+    Args:
+        subject: subject of the email
+
+    Returns:
+        Print after successful sending email / saving file / inserting database.
+
+    Raises:
+        Exception: An error occured in sending email / save local file / insert database.
+    """
 
     try:
         now_time = datetime.now(timezone.utc).astimezone()
@@ -413,5 +517,8 @@ def generate_report():
     # open('latest-chart.html', 'w+').write(chart_html)
     return chart_html
 
+
+if __name__ == '__main__':
+    send_report()
 
 
