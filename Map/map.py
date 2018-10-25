@@ -5,7 +5,7 @@ from flask import Flask, render_template, Blueprint
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map, icons
 from .map_api import get_psi, get_dengue_clusters, get_weather, get_shelter, address_to_latlng
-from SocialMedia.model import CrisisReport
+from SocialMedia.model import CrisisReport, Address, GeoCoordinate
 from SocialMedia.controller import SocialMedia
 import time, threading
 from CallCenter.CallCenter_Model import retrieve_active_incident_reports
@@ -42,6 +42,12 @@ WEATHER_ICONS = {"Partly Cloudy": "https://addons-media.operacdn.com/media/exten
             "Heavy Thundery Showers with Gusty Winds": "http://maps.google.com/mapfiles/kml/shapes/thunderstorm.png"
             }
 SHELTER_ICON = 'http://maps.google.com/mapfiles/kml/pal2/icon10.png'
+
+REGION_COORD = dict(west={"lat": 1.35735, "lng": 103.7},
+                    east={"lat": 1.35735, "lng": 103.94},
+                    central={"lat": 1.35735, "lng": 103.82},
+                    south={"lat": 1.29587, "lng": 103.82},
+                    north={"lat": 1.41803, "lng": 103.82})
 
 @map_api.route("/psi")
 def psimapview():
@@ -212,7 +218,10 @@ def periodic_psi_check():
     def _alert(info_dict, area):
         date = str(datetime.now().date())
         time = str(datetime.time(datetime.now()))
-        report = CrisisReport(identifier=1, name=area, address=area, category='Haze', description=info_dict['status'], date=date, time=time, advisory='Avoid out door activity')
+        coord = GeoCoordinate(latitude=REGION_COORD[area]['lat'], longitude=REGION_COORD[area]['lng'])
+        address = Address(street_name=None, unit_number=None, postal_code=None, coordinates=coord)
+
+        report = CrisisReport(identifier=1, name=area, address=address, category='Haze', description=info_dict['status'], date=date, time=time, advisory='Avoid out door activity')
         social_media = SocialMedia()
 
         social_media.alert_public(report)
