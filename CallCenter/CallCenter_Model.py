@@ -5,7 +5,7 @@ import json
 from datetime import datetime, timedelta
 from flask import g, Flask
 from Map.map_api import address_to_latlng
-from SocialMedia.model import CrisisReport, IncidentReport, Address, GeoCoordinate
+from SocialMedia.model import CrisisReport, IncidentReport, Address, GeoCoordinate, Priority
 from SocialMedia.controller import SocialMedia
 
 # from CallCenter import app
@@ -430,7 +430,7 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
     print(incident_report_id)
 
     # Alerting Authorities
-    priority = priority_injuries + priority_dangers + priority_help
+    priority = Priority(priority_injuries,priority_dangers,priority_help)
     assistance_required_dict = {0: 'No Assistance needed', 1: 'Emergency Ambulance', 2: 'Rescue and Evaluate',
                             3: 'Gas Leak Control'}  # a Dict to convert assistance_required from int to string
     report_status_dict = {1: 'REPORTED', 2: 'PENDING',
@@ -448,7 +448,7 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
     social_media.alert_authorities(incident_report, authority=assistance_required) # According to the value of "assistnace_required [1,2,or 3]", different authority will be alerted
 
     if "fire" in description.lower():   
-        crisis_report = CrisisReport(identifier=1, name=name, address=location, category='Fire', description=description, date=report_time, time=report_time, advisory='Move to open areas immediately')
+        crisis_report = CrisisReport(identifier=1, name=name, address=address, category='Fire', description=description, date=report_time, time=report_time, advisory='Move to open areas immediately')
         social_media.alert_public(crisis_report)
         social_media.post_facebook(crisis_report)
 
