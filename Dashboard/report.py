@@ -124,7 +124,8 @@ def get_psi_report():
         psi_dict['psi'].append(p['psi'])
         psi_dict['status'].append(p['status'])
 
-    keys = list(psi_dict.keys())
+    # keys = list(psi_dict.keys())
+    keys = ['locality', 'psi', 'status']
     length = len(psi_dict[keys[0]])
 
     items = ['<table id="psi">', '<caption><h3>3. PSI Report</h3></caption>', '<tr>']
@@ -181,7 +182,9 @@ def get_dengue_report():
         last_dengue_dict = parse_table(last_dengue[0], id='dengue')
         print(last_dengue_dict)
 
-    keys = list(dengue_dict.keys())
+    # keys = list(dengue_dict.keys())
+    keys = ['locality', 'Case with onset in last 2 weeks', 'Cases since start of cluster']
+    print(keys)
     length = len(dengue_dict[keys[0]])
 
     # sort three list by first list order
@@ -193,10 +196,12 @@ def get_dengue_report():
         items.append('<td><b>%s</b></td>' % k)
     items.append('</tr>')
 
+
     for i in range(length):
         items.append('<tr>')
         location = None
         for k in keys:
+            print(k)
             if k == attrs[0] and int(dengue_dict[k][i]) >= DENGUE_SHORT_THRESHOLD or \
                     k == attrs[1] and int(dengue_dict[k][i]) >= DENGUE_LONG_THRESHOLD:
                 color = "red"
@@ -490,7 +495,7 @@ def get_trend_values():
     psi_trend, dengue_trend = {}, {}
     dengue_trend["2 weeks total"] = []
     dengue_trend["overall total"] = []
-    for r in reports:
+    for r in reports:   
         cur_psi_report = parse_table(r, id="psi")
 
         # psi example: {'east': ['12', 'Healthy'], 'west': ['10', 'Healthy'], 'sourth': ['13', 'Healthy'],
@@ -588,8 +593,8 @@ def generate_time_ticks():
     return times
 
 
-if __name__ == '__main__':
-    # for i in range(10):
-    #     send_report()
-    # generate_trend_chart()
-    send_report()
+# if __name__ == '__main__':
+#     for i in range(10):
+#         send_report()
+#     # get_dengue_report()
+#     # send_report()
