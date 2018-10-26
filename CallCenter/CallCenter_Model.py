@@ -448,8 +448,8 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
     social_media.alert_authorities(incident_report, authority=assistance_required) # According to the value of "assistnace_required [1,2,or 3]", different authority will be alerted
 
     if "fire" in description.lower():   
-        crisis_report = CrisisReport(identifier=1, name=name, address=address, category='Fire', description=description, date=report_time, time=report_time, advisory='Move to open areas immediately')
-        social_media.alert_public(crisis_report)
+        crisis_report = CrisisReport(identifier=1, name=name, address=address, category='Fire', description=description, date='', time=report_time, advisory='Move to open areas immediately')
+        social_media.alert_public(crisis_report,100)
         social_media.post_facebook(crisis_report)
 
 
