@@ -56,4 +56,6 @@ Minimum code changes are made for docking each subsystem in.
 Often, the changes are (i) change Flask app into Blueprint and register to main app;
 (ii) extend dashboard-base.html to each .html template file.
 
+### About documentation
+Open doc/index.html to check documentations.
 
