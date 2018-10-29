@@ -12,6 +12,12 @@ import re
 @account_api.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
+    """
+    View function for registering users.
+    :param: None
+    :return: render a template
+    """
+
     if request.method == "POST":
         new_username, new_password, new_role = request.form['hf-username'], request.form['hf-password'], request.form['select']
         status = register_user(new_username, new_password, new_role)
@@ -30,6 +36,11 @@ def register():
 @account_api.route('/deregister', methods=['GET', 'POST'])
 @login_required
 def deregister():
+    """
+    View function for deregistering users.
+    :param: None
+    :return: render a template
+    """
     if request.method == "POST":
         try:
             username, is_checked = request.form['username'], request.form['checkbox1']
@@ -41,6 +52,19 @@ def deregister():
 
 
 def register_user(new_username, new_password, new_role):
+    """
+    Register a new user with validation.
+    Username must contain 8 characters, small letters and numbers.
+    Password must contain 10 characters, including big, small letters and numbers
+    :param new_username: string of new username
+    :param new_password: string of password
+    :param new_role: choice of role
+    :return: status code.
+                0 -> Username violation
+                1 -> OK
+                2 -> Password violation
+                3 -> Exception
+    """
     # username must contain 8 characters, small letters and numbers
     if not re.match("^(?=.*[a-z])(?=.*\d)[a-z\d]{8}$", new_username):
         return 0        # username violation
@@ -61,6 +85,12 @@ def register_user(new_username, new_password, new_role):
 
 
 def deregister_user(username):
+    """
+    Deregister a user by username.
+    :param username: string of username
+    :return: True for successful deregistration;
+            False for unsuccessful deregistration.
+    """
     try:
         u = User.query.filter_by(username=username).first()
         db.session.delete(u)

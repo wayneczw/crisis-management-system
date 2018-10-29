@@ -61,6 +61,11 @@ mail = Mail(app)
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    View function for login page.
+    :param: None
+    :return: render a template
+    """
     error = None
     if request.method == 'POST':
         if not __verify_login(request.form['username'], request.form['password'], request.form['role']):
@@ -75,6 +80,11 @@ def login():
 
 @app.route('/logout')
 def logout():
+    """
+    View function for logout page.
+    :param: None
+    :return: render a template
+    """
     session.pop('logged_in', None)
     session.pop('username', None)
     return redirect(url_for('login'))
@@ -99,6 +109,11 @@ def __verify_login(username, password, role):
 
 @app.shell_context_processor
 def make_shell_context():
+    """
+    Import models into shell context so they can be available once the shell start.
+    :param: None
+    :return: dictionary of database objects mappting.
+    """
     return {'db': db, 'User': User, 'Role': Role}
 
 # start the server with the 'run()' method

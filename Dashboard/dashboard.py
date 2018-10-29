@@ -8,6 +8,11 @@ dashboard_api = Blueprint('dashboard', __name__, template_folder='templates')
 @dashboard_api.route('/dashboard')
 @login_required
 def dashboard():
+    """
+    View function for dashboard.
+    :param: None
+    :return: render a template
+    """
     psi, dengue = get_trend_values()
     return render_template('dashboard.html', psi=psi, dengue=dengue)  # render a template
 
@@ -16,6 +21,11 @@ from model import *
 @dashboard_api.route('/report')
 @login_required
 def report():
+    """
+    View function for report.
+    :param: None
+    :return: render a template
+    """
     reports = Report.query.all()
     return render_template('report.html', reports=reports)
 
@@ -23,6 +33,11 @@ def report():
 @dashboard_api.route("/download/<path>")
 @login_required
 def download(path=None):
+    """
+    View function for download report.
+    :param: None
+    :return: render a template
+    """
     return send_from_directory('./Dashboard/report_history',
                                path, as_attachment=True)
 
@@ -30,6 +45,11 @@ def download(path=None):
 @dashboard_api.route("/send_now")
 @login_required
 def send_now():
+    """
+    View function for send report now.
+    :param: None
+    :return: render a template
+    """
     send_report()
     flash("Sent successfully!")
     return redirect(url_for('dashboard.report'))
