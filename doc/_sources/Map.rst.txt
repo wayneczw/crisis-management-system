@@ -1,0 +1,30 @@
+Map package
+===========
+
+Submodules
+----------
+
+Map.map module
+--------------
+
+.. automodule:: Map.map
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Map.map\_api module
+-------------------
+
+.. automodule:: Map.map_api
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: Map
+    :members:
+    :undoc-members:
+    :show-inheritance:

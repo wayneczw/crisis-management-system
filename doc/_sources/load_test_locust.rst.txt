@@ -1,0 +1,7 @@
+load\_test\_locust module
+=========================
+
+.. automodule:: load_test_locust
+    :members:
+    :undoc-members:
+    :show-inheritance:

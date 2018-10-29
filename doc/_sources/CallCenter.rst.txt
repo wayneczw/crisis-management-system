@@ -1,0 +1,38 @@
+CallCenter package
+==================
+
+Submodules
+----------
+
+CallCenter.CallCenter\_Controller \- Copy module
+------------------------------------------------
+
+.. automodule:: CallCenter.CallCenter_Controller - Copy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CallCenter.CallCenter\_Controller module
+----------------------------------------
+
+.. automodule:: CallCenter.CallCenter_Controller
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CallCenter.CallCenter\_Model module
+-----------------------------------
+
+.. automodule:: CallCenter.CallCenter_Model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: CallCenter
+    :members:
+    :undoc-members:
+    :show-inheritance:

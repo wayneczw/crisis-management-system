@@ -1,0 +1,22 @@
+AccountManagement package
+=========================
+
+Submodules
+----------
+
+AccountManagement.account\_management module
+--------------------------------------------
+
+.. automodule:: AccountManagement.account_management
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: AccountManagement
+    :members:
+    :undoc-members:
+    :show-inheritance:

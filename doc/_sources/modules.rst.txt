@@ -1,0 +1,16 @@
+crisis-management-system
+========================
+
+.. toctree::
+   :maxdepth: 4
+
+   CallCenter
+   Map
+   SocialMedia
+   app
+   app_test
+   db_test
+   load_test_locust
+   model
+   utils
+   venv

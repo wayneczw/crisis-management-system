@@ -1,0 +1,46 @@
+SocialMedia package
+===================
+
+Submodules
+----------
+
+SocialMedia.connector module
+----------------------------
+
+.. automodule:: SocialMedia.connector
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+SocialMedia.controller module
+-----------------------------
+
+.. automodule:: SocialMedia.controller
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+SocialMedia.model module
+------------------------
+
+.. automodule:: SocialMedia.model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+SocialMedia.renderer module
+---------------------------
+
+.. automodule:: SocialMedia.renderer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: SocialMedia
+    :members:
+    :undoc-members:
+    :show-inheritance:

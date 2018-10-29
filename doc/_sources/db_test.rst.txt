@@ -1,0 +1,7 @@
+db\_test module
+===============
+
+.. automodule:: db_test
+    :members:
+    :undoc-members:
+    :show-inheritance:
