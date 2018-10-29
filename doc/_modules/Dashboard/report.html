@@ -1,0 +1,792 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dashboard.report &mdash; CMS 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CMS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">crisis-management-system</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CMS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>Dashboard.report</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Dashboard.report</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">Map.map_api</span> <span class="k">import</span> <span class="n">get_weather</span><span class="p">,</span> <span class="n">get_psi</span><span class="p">,</span> <span class="n">get_dengue_clusters</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="k">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.image</span> <span class="k">import</span> <span class="n">MIMEImage</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="k">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="k">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">email</span>
+
+<span class="n">SCRIPT_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">FOLDER_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SCRIPT_PATH</span><span class="p">,</span> <span class="s1">&#39;report_history&#39;</span><span class="p">)</span>
+
+<span class="n">SENDER</span> <span class="o">=</span> <span class="s1">&#39;809955765@qq.com&#39;</span>
+<span class="n">PASSWORD</span> <span class="o">=</span> <span class="s1">&#39;uruirwekuirkbejf&#39;</span>
+<span class="n">RECEIVERS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;yue0068@gmail.com&#39;</span><span class="p">]</span>
+
+<span class="n">SUBJECT</span> <span class="o">=</span> <span class="s2">&quot;Status Report @ </span><span class="si">{0}</span><span class="s2">&quot;</span>
+<span class="n">TEMPLATE</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">       &lt;html&gt;</span>
+<span class="s1">         &lt;head&gt;&lt;/head&gt;</span>
+<span class="s1">         &lt;body&gt;</span>
+<span class="s1">            &lt;p&gt;Dear Prime Minister,&lt;/p&gt;</span>
+<span class="s1">            &lt;br&gt;</span>
+<span class="s1">            &lt;p&gt;The key indicators and trends at </span><span class="si">{0}</span><span class="s1"> are shown below:&lt;/p&gt;</span>
+<span class="s1">            &lt;p&gt;</span><span class="si">{1}</span><span class="s1">&lt;/p&gt;</span>
+<span class="s1">            &lt;p&gt;Please feel free to contact us if you need any further information.&lt;/p&gt;</span>
+<span class="s1">            &lt;br&gt;</span>
+<span class="s1">            &lt;p&gt;Sincerely,&lt;/p&gt;</span>
+<span class="s1">            &lt;p&gt;Crisis Management System - Team Giligili&lt;/p&gt;</span>
+<span class="s1">            &lt;p&gt;&lt;i&gt;&lt;small&gt;Note: This is an automatically generated email.&lt;/small&gt;&lt;/i&gt;&lt;/p&gt;</span>
+
+<span class="s1">         &lt;/body&gt;</span>
+<span class="s1">       &lt;/html&gt;</span>
+<span class="s1">       &#39;&#39;&#39;</span>
+<span class="n">TABLE_CSS</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;style&gt;</span>
+<span class="s2">            table {</span>
+<span class="s2">                font-family: arial, sans-serif;</span>
+<span class="s2">                border-collapse: collapse;</span>
+<span class="s2">                width: 40%;</span>
+<span class="s2">            }</span>
+
+<span class="s2">            td, th {</span>
+<span class="s2">                border: 1px solid #dddddd;</span>
+<span class="s2">                text-align: left;</span>
+<span class="s2">                padding: 8px;</span>
+<span class="s2">            }</span>
+<span class="s2">            &lt;/style&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+<span class="c1"># set up email server</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="s1">&#39;smtp.qq.com&#39;</span><span class="p">,</span> <span class="mi">465</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+<span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">SENDER</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">)</span>
+
+<span class="n">DENGUE_SHORT_THRESHOLD</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">DENGUE_LONG_THRESHOLD</span> <span class="o">=</span> <span class="mi">8</span>
+
+
+<div class="viewcode-block" id="get_latest_report"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.get_latest_report">[docs]</a><span class="k">def</span> <span class="nf">get_latest_report</span><span class="p">(</span><span class="n">num</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Fetches latest n report from local directory. [crisis-management-system/Dashboard/report_history]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num: the number of report need to be fetched, default is 1</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        report_path_list: a list of selected report absolute path</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">FOLDER_PATH</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">FOLDER_PATH</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FOLDER_PATH</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">FOLDER_PATH</span><span class="p">))[</span><span class="o">-</span><span class="n">num</span><span class="p">:]</span> <span class="k">if</span> <span class="s1">&#39;eml&#39;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="parse_table"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.parse_table">[docs]</a><span class="k">def</span> <span class="nf">parse_table</span><span class="p">(</span><span class="n">html_path</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Get selected table section from a html file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        html_path: path to html file</span>
+<span class="sd">        id: id of table   [&#39;psi&#39;, &#39;dengue&#39;, &#39;weather&#39;, &#39;incident&#39;]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A string of selected table section</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">html_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
+    <span class="n">bs</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">bs</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">aux</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)</span>
+        <span class="c1"># remove (new), (+1), (-5)</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;(new)&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">aux</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="get_psi_report"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.get_psi_report">[docs]</a><span class="k">def</span> <span class="nf">get_psi_report</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Generate psi html table report by calling psi API from map_api.py</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        psi_report: A string of psi html table report.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">psi_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;locality&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;psi&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">direction_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;east&#39;</span><span class="p">,</span> <span class="s1">&#39;west&#39;</span><span class="p">,</span> <span class="s1">&#39;sourth&#39;</span><span class="p">,</span> <span class="s1">&#39;north&#39;</span><span class="p">,</span> <span class="s1">&#39;central&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">get_psi</span><span class="p">()):</span>
+        <span class="n">psi_dict</span><span class="p">[</span><span class="s1">&#39;locality&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">direction_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">psi_dict</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">])</span>
+        <span class="n">psi_dict</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">])</span>
+
+    <span class="c1"># keys = list(psi_dict.keys())</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;locality&#39;</span><span class="p">,</span> <span class="s1">&#39;psi&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">]</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">psi_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;table id=&quot;psi&quot;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;caption&gt;&lt;h3&gt;3. PSI Report&lt;/h3&gt;&lt;/caption&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&lt;b&gt;</span><span class="si">%s</span><span class="s1">&lt;/b&gt;&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;locality&#39;</span><span class="p">:</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;</span><span class="si">%s</span><span class="s1">&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">psi_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">psi_dict</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Healthy&#39;</span><span class="p">:</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;</span><span class="si">%s</span><span class="s1">&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">psi_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">psi_dict</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Moderate&#39;</span><span class="p">:</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&lt;font color=&quot;yellow&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/font&gt;&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">psi_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">psi_dict</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Unhealthy&#39;</span><span class="p">:</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&lt;font color=&quot;orange&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/font&gt;&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">psi_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&lt;font color=&quot;red&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/font&gt;&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">psi_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+
+    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/table&gt;&#39;</span><span class="p">)</span>
+
+    <span class="n">psi_report</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">psi_report</span></div>
+
+
+<div class="viewcode-block" id="get_dengue_report"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.get_dengue_report">[docs]</a><span class="k">def</span> <span class="nf">get_dengue_report</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Generate dengue html table report by calling psi API from map_api.py</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dengue_report: A string of dengue html table report.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Case with onset in last 2 weeks&#39;</span><span class="p">,</span> <span class="s1">&#39;Cases since start of cluster&#39;</span><span class="p">]</span>
+    <span class="n">dengue_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;locality&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="n">attrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">[],</span> <span class="n">attrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="p">[]}</span>
+
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">get_dengue_clusters</span><span class="p">():</span>
+        <span class="n">dengue_dict</span><span class="p">[</span><span class="s1">&#39;locality&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;locality&#39;</span><span class="p">])</span>
+        <span class="n">dengue_dict</span><span class="p">[</span><span class="s1">&#39;Case with onset in last 2 weeks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;num_last2weeks&#39;</span><span class="p">])</span>
+        <span class="n">dengue_dict</span><span class="p">[</span><span class="s1">&#39;Cases since start of cluster&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;num_all&#39;</span><span class="p">])</span>
+
+    <span class="c1"># get last report</span>
+    <span class="n">last_dengue</span> <span class="o">=</span> <span class="n">get_latest_report</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># if last report exists</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">last_dengue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">last_dengue_dict</span> <span class="o">=</span> <span class="n">parse_table</span><span class="p">(</span><span class="n">last_dengue</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;dengue&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">last_dengue_dict</span><span class="p">)</span>
+
+    <span class="c1"># keys = list(dengue_dict.keys())</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;locality&#39;</span><span class="p">,</span> <span class="s1">&#39;Case with onset in last 2 weeks&#39;</span><span class="p">,</span> <span class="s1">&#39;Cases since start of cluster&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dengue_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+    <span class="c1"># sort three list by first list order</span>
+    <span class="n">dengue_dict</span><span class="p">[</span><span class="s1">&#39;locality&#39;</span><span class="p">],</span> <span class="n">dengue_dict</span><span class="p">[</span><span class="n">attrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">dengue_dict</span><span class="p">[</span><span class="n">attrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> \
+        <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dengue_dict</span><span class="p">[</span><span class="s1">&#39;locality&#39;</span><span class="p">],</span> <span class="n">dengue_dict</span><span class="p">[</span><span class="n">attrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">dengue_dict</span><span class="p">[</span><span class="n">attrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]])))</span>
+
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;table id=&quot;dengue&quot;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;caption&gt;&lt;h3&gt;1. Dengue Report&lt;/h3&gt;&lt;/caption&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&lt;b&gt;</span><span class="si">%s</span><span class="s1">&lt;/b&gt;&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">)</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">attrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">dengue_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">DENGUE_SHORT_THRESHOLD</span> <span class="ow">or</span> \
+                    <span class="n">k</span> <span class="o">==</span> <span class="n">attrs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">dengue_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">DENGUE_LONG_THRESHOLD</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="n">change_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="c1"># if last dengue exits</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">last_dengue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># if it appears in last report, show change</span>
+                <span class="k">if</span> <span class="n">location</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+                        <span class="n">diff</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dengue_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_dengue_dict</span><span class="p">[</span><span class="n">location</span><span class="p">][</span><span class="n">attrs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">k</span><span class="p">)])</span>
+                        <span class="c1"># if decrease, show blue diff</span>
+                        <span class="k">if</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">change_text</span> <span class="o">=</span> <span class="s1">&#39;&lt;font color=&quot;blue&quot;&gt;(</span><span class="si">{}</span><span class="s1">)&lt;/font&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+                        <span class="c1"># if increase, show red diff</span>
+                        <span class="k">elif</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">change_text</span> <span class="o">=</span> <span class="s1">&#39;&lt;font color=&quot;red&quot;&gt;(+</span><span class="si">{}</span><span class="s1">)&lt;/font&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+
+                <span class="c1"># if this is locality column</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dengue_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">last_dengue_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">location</span> <span class="o">=</span> <span class="n">dengue_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="c1"># this location appear in last report</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># new locality, add red &quot;(new)&quot; next to this locality name</span>
+                        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;</span><span class="si">{}</span><span class="s1">&lt;font color=&quot;red&quot;&gt;(new)&lt;/font&gt;&lt;/td&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dengue_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]))</span>
+                        <span class="k">continue</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&lt;font color=&quot;</span><span class="si">{}</span><span class="s1">&quot;&gt;</span><span class="si">{}</span><span class="s1">&lt;/font&gt;</span><span class="si">{}</span><span class="s1">&lt;/td&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">dengue_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">change_text</span><span class="p">))</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+
+    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/table&gt;&#39;</span><span class="p">)</span>
+
+    <span class="n">dengue_report</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dengue_report</span></div>
+
+
+<div class="viewcode-block" id="get_weather_report"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.get_weather_report">[docs]</a><span class="k">def</span> <span class="nf">get_weather_report</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Generate weather html table report by calling psi API from map_api.py</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        weather_report: A string of weather html table report.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weather_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;locality&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;weather&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">weather</span> <span class="o">=</span> <span class="n">get_weather</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">weather</span><span class="p">:</span>
+        <span class="n">weather_dict</span><span class="p">[</span><span class="s1">&#39;locality&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="n">weather_dict</span><span class="p">[</span><span class="s1">&#39;weather&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weather</span><span class="p">[</span><span class="n">w</span><span class="p">][</span><span class="s1">&#39;forecast&#39;</span><span class="p">])</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">weather_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weather_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;table id=&quot;weather&quot;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;caption&gt;&lt;h3&gt;2. Weather Report&lt;/h3&gt;&lt;/caption&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&lt;b&gt;</span><span class="si">%s</span><span class="s1">&lt;/b&gt;&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;weather&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">weather_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Moderate Rain&#39;</span><span class="p">:</span>
+                    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&lt;font color=&quot;blue&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/font&gt;&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">weather_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="s1">&#39;Heavy&#39;</span> <span class="ow">in</span> <span class="n">weather_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;Thundery&#39;</span> <span class="ow">in</span> <span class="n">weather_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&lt;font color=&quot;red&quot;&gt;</span><span class="si">%s</span><span class="s1">&lt;/font&gt;&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">weather_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;</span><span class="si">%s</span><span class="s1">&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">weather_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;</span><span class="si">%s</span><span class="s1">&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">weather_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+
+    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/table&gt;&#39;</span><span class="p">)</span>
+
+    <span class="n">weather_report</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">weather_report</span></div>
+
+
+<div class="viewcode-block" id="retrieve_active_incident_reports"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.retrieve_active_incident_reports">[docs]</a><span class="k">def</span> <span class="nf">retrieve_active_incident_reports</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Retrieve active incident report from /CallCenter/database.db</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list_all_incident_reports: A list of all incident reports.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">script_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">db_path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;/CallCenter/database.db&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="n">all_incident_reports</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM INCIDENT_REPORT&quot;</span><span class="p">)</span>
+
+    <span class="n">assistance_required_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;No Assistance needed&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Emergency Ambulance&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;Rescue and Evaluate&#39;</span><span class="p">,</span>
+                                <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;Gas Leak Control&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert assistance_required from int to string</span>
+    <span class="n">report_status_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;REPORTED&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;PENDING&#39;</span><span class="p">,</span>
+                          <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;CLOSED&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert report_status required from int to string</span>
+    <span class="n">is_first_such_incident_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                                   <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;TRUE&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert is_first_such_incident from int to string</span>
+
+    <span class="n">list_all_incident_reports</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">all_incident_reports</span><span class="p">:</span>
+        <span class="n">report</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>  <span class="c1"># Convert Tuple [1 Incident Report] into a list as list is easier to manipulate</span>
+        <span class="n">report</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span>
+                    <span class="p">:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span>  <span class="c1"># Remove the last 7 chars of the timestamp for &quot;First reported time&quot; as they are too precise.</span>
+        <span class="n">report</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">assistance_required_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span>  <span class="c1"># Convert asssistance_required from int to string</span>
+        <span class="n">report</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="n">report_status_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">10</span><span class="p">]]</span>  <span class="c1"># Convert report_status from int to string</span>
+        <span class="n">report</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_first_such_incident_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">11</span><span class="p">]]</span>  <span class="c1"># Convert is_first_such_incident from int to string</span>
+
+        <span class="n">report</span> <span class="o">=</span> <span class="n">report</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span>  <span class="c1"># Remove information on Latitude and Longitude as they are not needed</span>
+        <span class="n">list_all_incident_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">list_all_incident_reports</span></div>
+
+
+<div class="viewcode-block" id="get_incident_report"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.get_incident_report">[docs]</a><span class="k">def</span> <span class="nf">get_incident_report</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Generate incident html table report by calling psi API from map_api.py</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        incident_report: A string of incident html table report.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">incident_list</span> <span class="o">=</span> <span class="n">retrieve_active_incident_reports</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">incident_list</span><span class="p">)</span>
+
+    <span class="n">incident_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;report date&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;reporter&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                     <span class="s2">&quot;report&#39;s HP&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                     <span class="s1">&#39;tyoe of assistance need&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                     <span class="s1">&#39;priority for severity of injuries&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                     <span class="s1">&#39;priority for impending dangers&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                     <span class="s1">&#39;priority for presence of nearyby help&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                     <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">incident_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">inc</span> <span class="ow">in</span> <span class="n">incident_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inc</span><span class="p">[:</span><span class="mi">11</span><span class="p">]):</span>
+            <span class="n">incident_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">incident_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;table id=&quot;incident&quot;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;caption&gt;&lt;h3&gt;4. Incident Report&lt;/h3&gt;&lt;/caption&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;&lt;b&gt;</span><span class="si">%s</span><span class="s1">&lt;/b&gt;&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;td&gt;</span><span class="si">%s</span><span class="s1">&lt;/td&gt;&#39;</span> <span class="o">%</span> <span class="n">incident_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">)</span>
+
+    <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/table&gt;&#39;</span><span class="p">)</span>
+
+    <span class="n">incident_report</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">incident_report</span></div>
+
+
+<div class="viewcode-block" id="insert_db"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.insert_db">[docs]</a><span class="k">def</span> <span class="nf">insert_db</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Insert status report into app.db.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        | name: name of  the status report</span>
+<span class="sd">        | timastamp: timastamp of the status report</span>
+<span class="sd">        | path: path of the status report</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Print after successful add.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">script_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">db_path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;/app.db&#39;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO report (NAME, TIMESTAMP, HTML_PATH) VALUES (&#39;</span><span class="si">{}</span><span class="s2">&#39;, &#39;</span><span class="si">{}</span><span class="s2">&#39;, &#39;</span><span class="si">{}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Db saved successfully!&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="send_report"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.send_report">[docs]</a><span class="k">def</span> <span class="nf">send_report</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">SUBJECT</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    0. Generate status report.</span>
+<span class="sd">    1. Send status report to target email.</span>
+<span class="sd">    2. Save status report to local directory.</span>
+<span class="sd">    3. Insert status report into app.db.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        subject: subject of the email</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Print after successful sending email / saving file / inserting database.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: An error occured in sending email / save local file / insert database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Prepare subject</span>
+        <span class="n">now_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">astimezone</span><span class="p">()</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">now_time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+        <span class="n">subject</span> <span class="o">=</span> <span class="n">subject</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+
+        <span class="c1"># Prepare html content</span>
+        <span class="n">image_html</span> <span class="o">=</span> <span class="s1">&#39;&lt;h3&gt;5. Dengue Trend Graph&lt;/h3&gt;&lt;img src=&quot;cid:image1&quot;&gt;&lt;br&gt;&lt;h3&gt;5. PSI Trend Graph&lt;/h3&gt;&lt;img src=&quot;cid:image2&quot;&gt;&lt;br&gt;&#39;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">TABLE_CSS</span><span class="p">,</span> <span class="n">get_dengue_report</span><span class="p">(),</span> <span class="n">get_weather_report</span><span class="p">(),</span> <span class="n">get_psi_report</span><span class="p">(),</span> <span class="n">get_incident_report</span><span class="p">(),</span> <span class="n">image_html</span><span class="p">])</span>
+        <span class="n">email_content</span> <span class="o">=</span> <span class="n">TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">now</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+        <span class="c1"># print(email_content)</span>
+
+        <span class="c1"># Create the root message and fill in the from, to, and subject headers</span>
+        <span class="n">msg_root</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;related&#39;</span><span class="p">)</span>
+        <span class="n">msg_root</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span>
+        <span class="n">msg_root</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SENDER</span>
+        <span class="n">msg_to</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">RECEIVERS</span><span class="p">:</span>
+            <span class="n">msg_to</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">person</span><span class="p">)</span>
+        <span class="n">msg_root</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg_to</span>
+        <span class="n">msg_root</span><span class="o">.</span><span class="n">preamble</span> <span class="o">=</span> <span class="s1">&#39;This is a multi-part message in MIME format.&#39;</span>
+
+        <span class="c1"># Encapsulate the plain and HTML versions of the message body in an</span>
+        <span class="c1"># &#39;alternative&#39; part, so message agents can decide which they want to display.</span>
+        <span class="n">msg_alternative</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;alternative&#39;</span><span class="p">)</span>
+        <span class="n">msg_root</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msg_alternative</span><span class="p">)</span>
+
+        <span class="n">msg_text</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">email_content</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">)</span>
+        <span class="n">msg_alternative</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msg_text</span><span class="p">)</span>
+
+        <span class="c1"># first save, save a file without trend graph to let generate_trend_chart to extract current value</span>
+        <span class="c1"># save to local</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">FOLDER_PATH</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">FOLDER_PATH</span><span class="p">)</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/report_history/</span><span class="si">{}</span><span class="s2">.eml&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SCRIPT_PATH</span><span class="p">,</span> <span class="n">subject</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">msg_root</span><span class="p">)</span>
+
+        <span class="c1"># Prepare trend graph</span>
+        <span class="n">generate_trend_chart</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/report_history/Dengue trend.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SCRIPT_PATH</span><span class="p">),</span>
+                               <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/report_history/PSI trend.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SCRIPT_PATH</span><span class="p">)]):</span>
+
+            <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+            <span class="n">msg_image</span> <span class="o">=</span> <span class="n">MIMEImage</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="c1"># Define the image&#39;s ID as referenced above</span>
+            <span class="n">msg_image</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;image</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">msg_root</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msg_image</span><span class="p">)</span>
+
+        <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">SENDER</span><span class="p">,</span> <span class="n">RECEIVERS</span><span class="p">,</span> <span class="n">msg_root</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sent successfully!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># overwrite previous without trend graph version</span>
+        <span class="c1"># save to local</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">FOLDER_PATH</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">FOLDER_PATH</span><span class="p">)</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/report_history/</span><span class="si">{}</span><span class="s2">.eml&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SCRIPT_PATH</span><span class="p">,</span> <span class="n">subject</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">msg_root</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;File saved successfully!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># insert to db</span>
+        <span class="n">insert_db</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">now_time</span><span class="p">,</span> <span class="n">file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="get_trend_values"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.get_trend_values">[docs]</a><span class="k">def</span> <span class="nf">get_trend_values</span><span class="p">():</span>
+    <span class="n">reports</span> <span class="o">=</span> <span class="n">get_latest_report</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">psi_trend</span><span class="p">,</span> <span class="n">dengue_trend</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+    <span class="n">dengue_trend</span><span class="p">[</span><span class="s2">&quot;2 weeks total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dengue_trend</span><span class="p">[</span><span class="s2">&quot;overall total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reports</span><span class="p">:</span>   
+        <span class="n">cur_psi_report</span> <span class="o">=</span> <span class="n">parse_table</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;psi&quot;</span><span class="p">)</span>
+
+        <span class="c1"># psi example: {&#39;east&#39;: [&#39;12&#39;, &#39;Healthy&#39;], &#39;west&#39;: [&#39;10&#39;, &#39;Healthy&#39;], &#39;sourth&#39;: [&#39;13&#39;, &#39;Healthy&#39;],</span>
+        <span class="c1"># &#39;north&#39;: [&#39;10&#39;, &#39;Healthy&#39;], &#39;central&#39;: [&#39;11&#39;, &#39;Healthy&#39;]}</span>
+
+        <span class="n">cur_dengue_report</span> <span class="o">=</span> <span class="n">parse_table</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;dengue&quot;</span><span class="p">)</span>
+
+        <span class="c1"># dengue example: {&#39;Bishan Street 11(Bishan Loft)&#39;: [&#39;3&#39;, &#39;3&#39;], &#39;Bukit Batok Street 21(Blk 201)&#39;: [&#39;3&#39;, &#39;3&#39;],</span>
+        <span class="c1"># &#39;Eng Kong Crescent&#39;: [&#39;3&#39;, &#39;5&#39;], &#39;Jalan Gelenggang&#39;: [&#39;2&#39;, &#39;5&#39;], &#39;Jalan Tenaga(Blk 656)&#39;: [&#39;5&#39;, &#39;6&#39;],</span>
+        <span class="c1"># &#39;Woodlands Avenue 5(Bellewoods)&#39;: [&#39;3&#39;, &#39;5&#39;], &#39;Woodlands Circle&#39;: [&#39;1&#39;, &#39;10&#39;], &#39;Woodlands Cresent(Blk 787C)&#39;: [&#39;5&#39;, &#39;5&#39;]}</span>
+
+        <span class="n">cur_incident_report</span> <span class="o">=</span> <span class="n">parse_table</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;incident&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cur_psi_report</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">psi_trend</span><span class="p">:</span>
+                <span class="n">psi_trend</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">psi_trend</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">cur_psi_report</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="n">sum_two_weeks</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">sum_overall</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cur_dengue_report</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">sum_two_weeks</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cur_dengue_report</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">sum_overall</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cur_dengue_report</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">dengue_trend</span><span class="p">[</span><span class="s2">&quot;2 weeks total&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sum_two_weeks</span><span class="p">)</span>
+        <span class="n">dengue_trend</span><span class="p">[</span><span class="s2">&quot;overall total&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sum_overall</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">psi_trend</span><span class="p">,</span> <span class="n">dengue_trend</span></div>
+
+
+<div class="viewcode-block" id="generate_trend_chart"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.generate_trend_chart">[docs]</a><span class="k">def</span> <span class="nf">generate_trend_chart</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Generate chart using the latest 10 reports.</span>
+<span class="sd">    :return: chart - a chart image name</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">psi</span><span class="p">,</span> <span class="n">dengue</span> <span class="o">=</span> <span class="n">get_trend_values</span><span class="p">()</span>
+
+    <span class="n">start_x</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">dengue</span><span class="p">[</span><span class="s1">&#39;overall total&#39;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;len&#39;</span><span class="p">,</span> <span class="n">start_x</span><span class="p">)</span>
+
+    <span class="n">linestyles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">psi</span><span class="o">.</span><span class="n">keys</span><span class="p">()))):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">psi</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">start_x</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">psi</span><span class="p">[</span><span class="n">key</span><span class="p">]))],</span> <span class="n">psi</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyles</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">start_x</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">psi</span><span class="p">[</span><span class="n">key</span><span class="p">]))],</span> <span class="n">psi</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+    <span class="n">time_ticks</span> <span class="o">=</span> <span class="n">generate_time_ticks</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_ticks</span><span class="p">)),</span> <span class="n">time_ticks</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;PSI trend for the past 5 hours&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/report_history/PSI trend.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SCRIPT_PATH</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dengue</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">dengue</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">start_x</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dengue</span><span class="p">[</span><span class="n">key</span><span class="p">]))],</span> <span class="n">dengue</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">start_x</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dengue</span><span class="p">[</span><span class="n">key</span><span class="p">]))],</span> <span class="n">dengue</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_ticks</span><span class="p">)),</span> <span class="n">time_ticks</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Dengue cases trend for the past 5 hours&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/report_history/Dengue trend.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SCRIPT_PATH</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="generate_time_ticks"><a class="viewcode-back" href="../../Dashboard.html#Dashboard.report.generate_time_ticks">[docs]</a><span class="k">def</span> <span class="nf">generate_time_ticks</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Generate 10 time ticks.</span>
+<span class="sd">    :return: list of 10 time ticks.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">current_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">current_hours</span> <span class="o">=</span> <span class="n">current_time</span><span class="o">.</span><span class="n">hour</span>
+    <span class="n">current_minutes</span> <span class="o">=</span> <span class="n">current_time</span><span class="o">.</span><span class="n">minute</span>
+
+    <span class="n">times</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">current_minutes</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
+        <span class="n">current_minutes</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_minutes</span><span class="p">)</span>
+    <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">current_hours</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_minutes</span><span class="p">))</span>
+
+    <span class="n">current_minutes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">current_minutes</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+        <span class="n">current_minutes</span> <span class="o">-=</span> <span class="mi">30</span>
+        <span class="k">if</span> <span class="n">current_minutes</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">current_hours</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">current_hours</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">current_hours</span> <span class="o">+=</span> <span class="mi">24</span>
+            <span class="n">current_minutes</span> <span class="o">+=</span> <span class="mi">60</span>
+
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">current_minutes</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
+            <span class="n">current_minutes</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_minutes</span><span class="p">)</span>
+
+        <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">current_hours</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_minutes</span><span class="p">))</span>
+        <span class="n">current_minutes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">current_minutes</span><span class="p">)</span>
+
+    <span class="n">times</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">times</span></div>
+
+
+<span class="c1"># if __name__ == &#39;__main__&#39;:</span>
+<span class="c1">#     for i in range(10):</span>
+<span class="c1">#         send_report()</span>
+<span class="c1">#     # get_dengue_report()</span>
+<span class="c1">#     # send_report()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, giligili
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

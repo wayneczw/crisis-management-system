@@ -1,0 +1,890 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>CallCenter.CallCenter_Model &mdash; CMS 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CMS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">crisis-management-system</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CMS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>CallCenter.CallCenter_Model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for CallCenter.CallCenter_Model</h1><div class="highlight"><pre>
+<span></span><span class="n">social__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;insert_report&#39;</span><span class="p">]</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">g</span><span class="p">,</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">Map.map_api</span> <span class="k">import</span> <span class="n">address_to_latlng</span>
+<span class="kn">from</span> <span class="nn">SocialMedia.model</span> <span class="k">import</span> <span class="n">CrisisReport</span><span class="p">,</span> <span class="n">IncidentReport</span><span class="p">,</span> <span class="n">Address</span><span class="p">,</span> <span class="n">GeoCoordinate</span><span class="p">,</span> <span class="n">Priority</span>
+<span class="kn">from</span> <span class="nn">SocialMedia.controller</span> <span class="k">import</span> <span class="n">SocialMedia</span>
+
+<span class="c1"># from CallCenter import app</span>
+
+
+<span class="n">PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">DATABASE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="s1">&#39;database.db&#39;</span><span class="p">)</span>
+<span class="c1"># print(DATABASE)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">template_folder</span> <span class="o">=</span> <span class="s2">&quot;templates&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_db"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.get_db">[docs]</a><span class="k">def</span> <span class="nf">get_db</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     Get database.</span>
+<span class="sd">     </span>
+<span class="sd">     Returns:</span>
+<span class="sd">        db: A reference to database.</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+    <span class="c1"># getattr() will return the value of the &#39;_database&#39; attribute from g [see comment on g in the next line].</span>
+    <span class="c1"># if g has no attribute called &quot;_database&quot;, then &#39;None&#39; is returned</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s1">&#39;_database&#39;</span><span class="p">,</span>
+                 <span class="kc">None</span><span class="p">)</span>  <span class="c1"># g is a global/object that would last for only 1 request/response cycle [data in g does not persist, unlike a database]</span>
+    <span class="k">if</span> <span class="n">db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">_database</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                <span class="n">DATABASE</span><span class="p">)</span>  <span class="c1"># sqlite3.connect(DATABASE) will create the Database if that Database does not yet exist.</span>
+    <span class="k">return</span> <span class="n">db</span></div>
+
+
+<div class="viewcode-block" id="close_connection"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.close_connection">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">teardown_appcontext</span>
+<span class="k">def</span> <span class="nf">close_connection</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     Close database connection.</span>
+<span class="sd">     </span>
+<span class="sd">     Args:</span>
+<span class="sd">        exception: the exception forces the disconnetion of controller and database.</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s1">&#39;_database&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">db</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="init_db"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.init_db">[docs]</a><span class="k">def</span> <span class="nf">init_db</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     Initialize database.</span>
+<span class="sd">     </span>
+<span class="sd">     Raises:</span>
+<span class="sd">         FileNotFoundError: File not found.</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>  <span class="c1"># Within flask&#39;s application context</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
+
+        <span class="c1"># Opens a resource from the application’s resource folder:</span>
+        <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span><span class="s1">&#39;schema.sql&#39;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="c1"># Cursor is an object that allow us to fetch multiple results from the database and keep track of which result is which.</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  <span class="c1"># executescript allow us to execute &quot;multiple SQL statements at once&quot;.</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># Tell the Database to confirm/finalise the changes made to it. No Changes to DB can be reverted back after commit() is called.</span></div>
+
+
+<div class="viewcode-block" id="query_db"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.query_db">[docs]</a><span class="k">def</span> <span class="nf">query_db</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">()):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Query from database.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        query: an SQL query template.</span>
+<span class="sd">        args: a list of variables.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        rv: the result of the exectued query.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">cur</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>  <span class="c1"># cur is a Cursor object that contains the Results of the executed &#39;query&#39;</span>
+    <span class="n">rv</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>  <span class="c1"># retrieve the results from the Cursor object</span>
+    <span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># close the cursor</span>
+    <span class="k">return</span> <span class="n">rv</span></div>
+
+
+<span class="k">def</span> <span class="nf">__check_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Checks if the name is legal. If not a ValueError would be raised.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        name: the name of the reporter.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Illigal name.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;name cannot be empty&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;A&#39;</span> <span class="o">&lt;=</span> <span class="n">it</span> <span class="o">&lt;=</span> <span class="s1">&#39;Z&#39;</span> <span class="ow">or</span> <span class="s1">&#39;a&#39;</span> <span class="o">&lt;=</span> <span class="n">it</span> <span class="o">&lt;=</span> <span class="s1">&#39;z&#39;</span> <span class="ow">or</span> <span class="n">it</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span> <span class="ow">or</span> <span class="n">it</span> <span class="o">==</span> <span class="s1">&#39; &#39;</span> <span class="ow">or</span> <span class="n">it</span> <span class="o">==</span> <span class="s1">&#39;,&#39;</span> <span class="ow">or</span> <span class="n">it</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Illegal character &#39;</span> <span class="o">+</span> <span class="n">it</span> <span class="o">+</span> <span class="s1">&#39; in name&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">__check_mobile_no</span><span class="p">(</span><span class="n">no</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Checks if the mobile number is legal</span>
+<span class="sd">    The legal ones are defined as: [country code][&#39; &#39;|&#39;-&#39;][number]</span>
+<span class="sd">    Country code is either started by a &#39;+&#39; and followed by 1-3 digits or 4 digits</span>
+<span class="sd">    Number is defined as 8 to 13 digits.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        no: the phone number of the reporter.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        ValueError: Illigal mobile number.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;mobile number cannot be empty&#39;</span><span class="p">)</span>
+
+    <span class="n">no</span> <span class="o">=</span> <span class="n">no</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">no</span> <span class="o">=</span> <span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Too many spaces or hyphens :(&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">7</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">14</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number is either too short or too long&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">it</span> <span class="o">&lt;</span> <span class="s1">&#39;0&#39;</span> <span class="ow">or</span> <span class="n">it</span> <span class="o">&gt;</span> <span class="s1">&#39;9&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number should be numerical&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Illegal country code&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Illegal country code&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                <span class="k">if</span> <span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="s1">&#39;0&#39;</span> <span class="ow">or</span> <span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="s1">&#39;9&#39;</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Illegal country code&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Illegal country code&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">7</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">no</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">14</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number is either too short or too long&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">no</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">it</span> <span class="o">&lt;</span> <span class="s1">&#39;0&#39;</span> <span class="ow">or</span> <span class="n">it</span> <span class="o">&gt;</span> <span class="s1">&#39;9&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number should be numerical&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">__check_loc</span><span class="p">(</span><span class="n">loc</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Check if the location is empty.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        loc: the location of the incident reported.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Empty location.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">loc</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;location cannot be empty&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">__check_description</span><span class="p">(</span><span class="n">description</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Check if the description is empty.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        description: the description of the incident reported.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Empty description.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">description</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;description cannot be empty&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">__insert_incident</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mobile_number</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">assistance_required</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">priority_injuries</span><span class="p">,</span>
+                      <span class="n">priority_dangers</span><span class="p">,</span> <span class="n">priority_help</span><span class="p">,</span> <span class="n">report_status</span><span class="p">,</span>
+                      <span class="n">report_time</span><span class="p">,</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The same report judgement is buggy and I have no idea how to fix it</span>
+<span class="sd">    The current assumption is the first reported case would always report the earliest time...</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        | name: name.</span>
+<span class="sd">        | mobile_number: mobile number.</span>
+<span class="sd">        | location: location.</span>
+<span class="sd">        | assistance_required: if assistance is required.</span>
+<span class="sd">        | description: description.</span>
+<span class="sd">        | priority_injuries: priority of injuries.</span>
+<span class="sd">        | priority_dangers: priority of dangers.</span>
+<span class="sd">        | priority_help: priority of help.</span>
+<span class="sd">        | report_status: report status.</span>
+<span class="sd">        | report_time: reort time.</span>
+<span class="sd">        | latitude: latitude.</span>
+<span class="sd">        | longitude: longitute.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        _id: the id of the newest inserted report.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># creating a time interval that another new incident report would be classified as being about the same incident as this current incident report.</span>
+    <span class="n">earliest_time</span> <span class="o">=</span> <span class="n">report_time</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>  <span class="c1"># Within the Application Context:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>  <span class="c1"># call our private method to retreive the DB</span>
+
+        <span class="c1"># Checking if the Incident has already been reported before</span>
+        <span class="n">similar_incident_reports</span> <span class="o">=</span> <span class="n">query_db</span><span class="p">(</span>
+                <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                SELECT id FROM INCIDENT_REPORT WHERE</span>
+<span class="sd">                location = ? AND</span>
+<span class="sd">                priority_injuries = ? AND</span>
+<span class="sd">                priority_dangers = ? AND</span>
+<span class="sd">                priority_help = ? AND</span>
+<span class="sd">                assistance_required = ? AND</span>
+<span class="sd">                first_reported &gt; ?</span>
+<span class="sd">                &#39;&#39;&#39;</span><span class="p">,</span>
+                <span class="p">[</span>
+                    <span class="n">location</span><span class="p">,</span>
+                    <span class="n">priority_injuries</span><span class="p">,</span>
+                    <span class="n">priority_dangers</span><span class="p">,</span>
+                    <span class="n">priority_help</span><span class="p">,</span>
+                    <span class="n">assistance_required</span><span class="p">,</span>
+                    <span class="n">earliest_time</span>
+                <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># If not such Incident has been reported before, Insert an Incident Report into DB</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">similar_incident_reports</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># True</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># If the Incident Report pertains to an Incident which has already been reported.</span>
+            <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># False</span>
+
+        <span class="n">query_db</span><span class="p">(</span>
+                <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                INSERT INTO INCIDENT_REPORT(</span>
+<span class="sd">                  name,</span>
+<span class="sd">                  location,</span>
+<span class="sd">                  priority_injuries,</span>
+<span class="sd">                  priority_dangers,</span>
+<span class="sd">                  priority_help,</span>
+<span class="sd">                  assistance_required,</span>
+<span class="sd">                  first_reported,</span>
+<span class="sd">                  mobile_number,</span>
+<span class="sd">                  description,</span>
+<span class="sd">                  report_status,</span>
+<span class="sd">                  is_first_such_incident,</span>
+<span class="sd">                  latitude,</span>
+<span class="sd">                  longitude</span>
+<span class="sd">                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)</span>
+<span class="sd">                &#39;&#39;&#39;</span><span class="p">,</span>
+                <span class="p">[</span>
+                    <span class="n">name</span><span class="p">,</span>
+                    <span class="n">location</span><span class="p">,</span>
+                    <span class="n">priority_injuries</span><span class="p">,</span>
+                    <span class="n">priority_dangers</span><span class="p">,</span>
+                    <span class="n">priority_help</span><span class="p">,</span>
+                    <span class="n">assistance_required</span><span class="p">,</span>
+                    <span class="n">report_time</span><span class="p">,</span>
+                    <span class="n">mobile_number</span><span class="p">,</span>
+                    <span class="n">description</span><span class="p">,</span>
+                    <span class="n">report_status</span><span class="p">,</span>
+                    <span class="n">is_first_such_incident</span><span class="p">,</span>
+                    <span class="n">latitude</span><span class="p">,</span>
+                    <span class="n">longitude</span>                <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Retrieve the id of the Incident Report that we have just inserted into the DB [The id is set by the DB]</span>
+        <span class="n">_id</span> <span class="o">=</span> <span class="n">query_db</span><span class="p">(</span>
+                <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                SELECT id FROM INCIDENT_REPORT WHERE</span>
+<span class="sd">                location = ? AND</span>
+<span class="sd">                priority_injuries = ? AND</span>
+<span class="sd">                priority_dangers = ? AND</span>
+<span class="sd">                priority_help = ? AND</span>
+<span class="sd">                assistance_required = ? AND</span>
+<span class="sd">                first_reported = ?</span>
+<span class="sd">                &#39;&#39;&#39;</span><span class="p">,</span>
+                <span class="p">[</span>
+                    <span class="n">location</span><span class="p">,</span>
+                    <span class="n">priority_injuries</span><span class="p">,</span>
+                    <span class="n">priority_dangers</span><span class="p">,</span>
+                    <span class="n">priority_help</span><span class="p">,</span>
+                    <span class="n">assistance_required</span><span class="p">,</span>
+                    <span class="n">report_time</span>
+                <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># Confirm the changes made to the DB</span>
+
+        <span class="k">return</span> <span class="n">_id</span>  <span class="c1"># Return the id of the Newly inserted Incident Report</span>
+
+
+<div class="viewcode-block" id="insert_report"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.insert_report">[docs]</a><span class="k">def</span> <span class="nf">insert_report</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mobile_number</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">assistance_required</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">priority_injuries</span><span class="p">,</span> <span class="n">priority_dangers</span><span class="p">,</span>
+                  <span class="n">priority_help</span><span class="p">,</span> <span class="n">report_status</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Insert report into database</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        | name: name.</span>
+<span class="sd">        | mobile_number: mobile number.</span>
+<span class="sd">        | location: location.</span>
+<span class="sd">        | assistance_required: if assistance is required.</span>
+<span class="sd">        | description: description.</span>
+<span class="sd">        | priority_injuries: priority of injuries.</span>
+<span class="sd">        | priority_dangers: priority of dangers.</span>
+<span class="sd">        | priority_help: priority of help.</span>
+<span class="sd">        | report_status: report status.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        0</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        | ValueError: in __check_name raised if the name is illegal.</span>
+<span class="sd">        | ValueError: in __check_mobile_no raised if the mobile number is illegal.</span>
+<span class="sd">        | ValueError: in __check_loc raised if the location in empty.</span>
+<span class="sd">        | ValueError: in __check_description raised if the description is empty.</span>
+<span class="sd">        | ValueError: in insert_report raised if the report type and asssistance type are inconsistent.</span>
+<span class="sd">        | AssertionError: if the data inserted is invalid.</span>
+<span class="sd">        | PermissionError: if the reported incident is duplicated.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">__check_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">__check_mobile_no</span><span class="p">(</span><span class="n">mobile_number</span><span class="p">)</span>
+    <span class="n">__check_loc</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+    <span class="n">__check_description</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+
+    <span class="c1"># assistance_required is an int: 0 = No Assistance required; 1 = Emergency Ambulance; 2 = Rescue and Evacuation; 3 = Gas Leak Control</span>
+    <span class="c1"># report_status is an int: 1 = REPORTED [No assistance required]; 2 = PENDING [Waiting for Assistance but Assistance has not reached the victim yet]; 3 = CLOSED [Assistance has reached the victim already]</span>
+
+    <span class="c1"># Convert some string parameters into integers:</span>
+    <span class="n">assistance_required</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">assistance_required</span><span class="p">)</span>
+    <span class="n">priority_injuries</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">priority_injuries</span><span class="p">)</span>
+    <span class="n">priority_dangers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">priority_dangers</span><span class="p">)</span>
+    <span class="n">priority_help</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">priority_help</span><span class="p">)</span>
+    <span class="n">report_status</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">report_status</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">report_status</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">assistance_required</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Inconsistent report type and assistance type&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">report_status</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">assistance_required</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Inconsistent report type and assistance type&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Checking the validity of the Data:</span>
+    <span class="k">assert</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">assistance_required</span> <span class="o">&lt;</span> <span class="mi">4</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">priority_injuries</span> <span class="o">&lt;</span> <span class="mi">11</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">priority_dangers</span> <span class="o">&lt;</span> <span class="mi">11</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">priority_help</span> <span class="o">&lt;</span> <span class="mi">11</span>
+    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">report_status</span> <span class="o">&lt;</span> <span class="mi">4</span>
+
+    <span class="n">report_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+    <span class="n">_dict</span> <span class="o">=</span>  <span class="n">address_to_latlng</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="n">_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+    <span class="n">longitude</span> <span class="o">=</span> <span class="n">_dict</span><span class="p">[</span><span class="s1">&#39;lng&#39;</span><span class="p">]</span>
+
+
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
+        <span class="n">duplicates</span> <span class="o">=</span> <span class="n">query_db</span><span class="p">(</span>
+                <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                    SELECT * FROM INCIDENT_REPORT WHERE</span>
+<span class="sd">                    first_reported &gt; ? AND</span>
+<span class="sd">                    location = ? AND</span>
+<span class="sd">                    mobile_number = ? AND</span>
+<span class="sd">                    assistance_required = ? AND</span>
+<span class="sd">                    priority_injuries = ? AND</span>
+<span class="sd">                    priority_dangers = ? AND</span>
+<span class="sd">                    priority_help = ? AND</span>
+<span class="sd">                    report_status = ?</span>
+<span class="sd">                &#39;&#39;&#39;</span><span class="p">,</span>
+                <span class="p">[</span>
+                    <span class="n">report_time</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span> <span class="o">=</span> <span class="mi">5</span><span class="p">),</span>
+                    <span class="n">location</span><span class="p">,</span>
+                    <span class="n">mobile_number</span><span class="p">,</span>
+                    <span class="n">assistance_required</span><span class="p">,</span>
+                    <span class="n">priority_injuries</span><span class="p">,</span>
+                    <span class="n">priority_dangers</span><span class="p">,</span>
+                    <span class="n">priority_help</span><span class="p">,</span>
+                    <span class="n">report_status</span>
+                <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">duplicates</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">PermissionError</span><span class="p">(</span><span class="s1">&#39;Duplicate Report detected&#39;</span><span class="p">)</span>
+
+    <span class="n">incident_report_id</span> <span class="o">=</span> <span class="n">__insert_incident</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mobile_number</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">assistance_required</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span>
+                                           <span class="n">priority_injuries</span><span class="p">,</span> <span class="n">priority_dangers</span><span class="p">,</span> <span class="n">priority_help</span><span class="p">,</span> <span class="n">report_status</span><span class="p">,</span>
+                                           <span class="n">report_time</span><span class="p">,</span><span class="n">latitude</span><span class="p">,</span><span class="n">longitude</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">incident_report_id</span><span class="p">)</span>
+
+    <span class="c1"># Alerting Authorities</span>
+    <span class="k">if</span> <span class="n">assistance_required</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">priority</span> <span class="o">=</span> <span class="n">Priority</span><span class="p">(</span><span class="n">priority_injuries</span><span class="p">,</span><span class="n">priority_dangers</span><span class="p">,</span><span class="n">priority_help</span><span class="p">)</span>
+        <span class="n">assistance_required_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;No Assistance needed&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Emergency Ambulance&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;Rescue and Evaluate&#39;</span><span class="p">,</span>
+                                <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;Gas Leak Control&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert assistance_required from int to string</span>
+        <span class="n">report_status_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;REPORTED&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;PENDING&#39;</span><span class="p">,</span>
+                          <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;CLOSED&#39;</span><span class="p">}</span>
+        <span class="n">assistance_required_string</span> <span class="o">=</span> <span class="n">assistance_required_dict</span><span class="p">[</span><span class="n">assistance_required</span><span class="p">]</span>  <span class="c1"># Convert asssistance_required from int to string</span>
+        <span class="n">report_status_string</span> <span class="o">=</span> <span class="n">report_status_dict</span><span class="p">[</span><span class="n">report_status</span><span class="p">]</span>  <span class="c1"># Convert report_status from int to string</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">GeoCoordinate</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">longitude</span><span class="p">)</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="n">Address</span><span class="p">(</span><span class="n">street_name</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">unit_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">postal_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coordinates</span><span class="o">=</span><span class="n">coord</span><span class="p">)</span>
+
+        <span class="n">incident_report</span> <span class="o">=</span> <span class="n">IncidentReport</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> 
+                    <span class="n">phone</span><span class="o">=</span><span class="n">mobile_number</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">report_status_string</span><span class="p">,</span> 
+                    <span class="n">reported_time</span><span class="o">=</span><span class="n">report_time</span><span class="p">,</span> <span class="n">assistance_required</span><span class="o">=</span><span class="n">assistance_required_string</span><span class="p">,</span>
+                    <span class="n">priority</span><span class="o">=</span><span class="n">priority</span><span class="p">)</span>
+        <span class="n">social_media</span> <span class="o">=</span> <span class="n">SocialMedia</span><span class="p">()</span>
+        <span class="n">social_media</span><span class="o">.</span><span class="n">alert_authorities</span><span class="p">(</span><span class="n">incident_report</span><span class="p">,</span> <span class="n">authority</span><span class="o">=</span><span class="n">assistance_required</span><span class="p">)</span> <span class="c1"># According to the value of &quot;assistnace_required [1,2,or 3]&quot;, different authority will be alerted</span>
+
+        <span class="k">if</span> <span class="s2">&quot;fire&quot;</span> <span class="ow">in</span> <span class="n">description</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>   
+            <span class="n">crisis_report</span> <span class="o">=</span> <span class="n">CrisisReport</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s1">&#39;Fire&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">report_time</span><span class="p">,</span> <span class="n">advisory</span><span class="o">=</span><span class="s1">&#39;Move to open areas immediately&#39;</span><span class="p">)</span>
+            <span class="n">social_media</span><span class="o">.</span><span class="n">alert_public</span><span class="p">(</span><span class="n">crisis_report</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+            <span class="n">social_media</span><span class="o">.</span><span class="n">post_facebook</span><span class="p">(</span><span class="n">crisis_report</span><span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="delete_report"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.delete_report">[docs]</a><span class="k">def</span> <span class="nf">delete_report</span><span class="p">(</span><span class="n">id_of_incident_report</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Delete incident report.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        id_of_incident_report: id of the incident report that would be deleted.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        0</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>  <span class="c1"># Within the Application Context:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>  <span class="c1"># call our private method to retreive the DB</span>
+        <span class="n">query_db</span><span class="p">(</span>
+                <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                DELETE FROM INCIDENT_REPORT WHERE</span>
+<span class="sd">                id = ?</span>
+<span class="sd">                &#39;&#39;&#39;</span><span class="p">,</span>
+                <span class="p">[</span>
+                    <span class="n">id_of_incident_report</span>
+                <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="update_report"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.update_report">[docs]</a><span class="k">def</span> <span class="nf">update_report</span><span class="p">(</span><span class="n">id_of_incident_report</span><span class="p">,</span> <span class="n">caller_name</span><span class="p">,</span> <span class="n">caller_mobile_number</span><span class="p">,</span> <span class="n">caller_location</span><span class="p">,</span> <span class="n">type_of_assistance</span><span class="p">,</span>
+                  <span class="n">description</span><span class="p">,</span> <span class="n">priority_for_severity_of_injuries</span><span class="p">,</span> <span class="n">priority_for_impending_dangers</span><span class="p">,</span>
+                  <span class="n">priority_for_presence_of_nearby_help</span><span class="p">,</span> <span class="n">report_status</span><span class="p">,</span> <span class="n">is_first_such_incident</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Update report in database</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        | id_of_incident_report: id of the incident report.</span>
+<span class="sd">        | caller_name: name of the caller.</span>
+<span class="sd">        | caller_mobile_number: name.</span>
+<span class="sd">        | caller_location: location.</span>
+<span class="sd">        | type_of_assistance: if assistance is required.</span>
+<span class="sd">        | description: description.</span>
+<span class="sd">        | priority_for_severity_of_injuries: priority of injuries.</span>
+<span class="sd">        | priority_for_impending_dangers: priority of dangers.</span>
+<span class="sd">        | priority_for_presence_of_nearby_help: priority of help.</span>
+<span class="sd">        | report_status: report status.</span>
+<span class="sd">        | is_first_such_incident: if is first such incident.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        0</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        | ValueError: in __check_name raised if the name is illegal.</span>
+<span class="sd">        | ValueError: in __check_mobile_no raised if the mobile number is illegal.</span>
+<span class="sd">        | ValueError: in __check_loc raised if the location in empty.</span>
+<span class="sd">        | ValueError: in __check_description raised if the description is empty.</span>
+<span class="sd">        | ValueError: in insert_report raised if the report type and asssistance type are inconsistent.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># assistance_required is an int: 0 = No Assistance required; 1 = Emergency Ambulance; 2 = Rescue and Evacuation; 3 = Gas Leak Control</span>
+    <span class="c1"># report_status is an int: 1 = REPORTED [No assistance required]; 2 = PENDING [Waiting for Assistance but Assistance has not reached the victim yet]; 3 = CLOSED [Assistance has reached the victim already]</span>
+
+    <span class="n">__check_name</span><span class="p">(</span><span class="n">caller_name</span><span class="p">)</span>
+    <span class="n">__check_mobile_no</span><span class="p">(</span><span class="n">caller_mobile_number</span><span class="p">)</span>
+    <span class="n">__check_loc</span><span class="p">(</span><span class="n">caller_location</span><span class="p">)</span>
+    <span class="n">__check_description</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">report_status</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">type_of_assistance</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Inconsistent report type and assistance type&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">report_status</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">type_of_assistance</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Inconsistent report type and assistance type&#39;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>  <span class="c1"># Within the Application Context:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>  <span class="c1"># call our private method to retreive the DB</span>
+
+        <span class="n">query_db</span><span class="p">(</span>
+                <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                UPDATE INCIDENT_REPORT SET</span>
+<span class="sd">                  name = ?,</span>
+<span class="sd">                  location = ?,</span>
+<span class="sd">                  priority_injuries = ?,</span>
+<span class="sd">                  priority_dangers = ?,</span>
+<span class="sd">                  priority_help = ?,</span>
+<span class="sd">                  assistance_required = ?,</span>
+<span class="sd">                  mobile_number = ?,</span>
+<span class="sd">                  description = ?,</span>
+<span class="sd">                  report_status = ?,</span>
+<span class="sd">                  is_first_such_incident = ?</span>
+<span class="sd">                  WHERE id = ?</span>
+<span class="sd">                &#39;&#39;&#39;</span><span class="p">,</span>
+                <span class="p">[</span>
+                    <span class="n">caller_name</span><span class="p">,</span>
+                    <span class="n">caller_location</span><span class="p">,</span>
+                    <span class="n">priority_for_severity_of_injuries</span><span class="p">,</span>
+                    <span class="n">priority_for_impending_dangers</span><span class="p">,</span>
+                    <span class="n">priority_for_presence_of_nearby_help</span><span class="p">,</span>
+                    <span class="n">type_of_assistance</span><span class="p">,</span>
+                    <span class="n">caller_mobile_number</span><span class="p">,</span>
+                    <span class="n">description</span><span class="p">,</span>
+                    <span class="n">report_status</span><span class="p">,</span>
+                    <span class="n">is_first_such_incident</span><span class="p">,</span>
+                    <span class="n">id_of_incident_report</span>
+                <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># Confirm the changes made to the DB</span>
+
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="retrieve_all_incident_reports"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.retrieve_all_incident_reports">[docs]</a><span class="k">def</span> <span class="nf">retrieve_all_incident_reports</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retrieve all incident reports.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list_all_incident_reports: get all the incident reports.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>  <span class="c1"># Within the Application Context:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>  <span class="c1"># call our private method to retreive the DB</span>
+
+        <span class="n">all_incident_reports</span> <span class="o">=</span> <span class="n">query_db</span><span class="p">(</span>
+                <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                SELECT * FROM INCIDENT_REPORT</span>
+<span class="sd">                &#39;&#39;&#39;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Some Formatting of the results from the Database</span>
+        <span class="n">assistance_required_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;No Assistance needed&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Emergency Ambulance&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;Rescue and Evaluate&#39;</span><span class="p">,</span>
+                                    <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;Gas Leak Control&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert assistance_required from int to string</span>
+        <span class="n">report_status_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;REPORTED&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;PENDING&#39;</span><span class="p">,</span>
+                              <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;CLOSED&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert report_status required from int to string</span>
+        <span class="n">is_first_such_incident_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                                       <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;TRUE&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert is_first_such_incident from int to string</span>
+
+        <span class="n">list_all_incident_reports</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">all_incident_reports</span><span class="p">:</span>
+            <span class="n">report</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>  <span class="c1"># Convert Tuple [1 Incident Report] into a list as list is easier to manipulate</span>
+            <span class="n">report</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span>
+                        <span class="p">:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span>  <span class="c1"># Remove the last 7 chars of the timestamp for &quot;First reported time&quot; as they are too precise.</span>
+            <span class="n">report</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">assistance_required_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span>  <span class="c1"># Convert asssistance_required from int to string</span>
+            <span class="n">report</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="n">report_status_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">10</span><span class="p">]]</span>  <span class="c1"># Convert report_status from int to string</span>
+            <span class="n">report</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_first_such_incident_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">11</span><span class="p">]]</span>  <span class="c1"># Convert is_first_such_incident from int to string</span>
+
+            <span class="n">report</span> <span class="o">=</span> <span class="n">report</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span> <span class="c1"># Remove information on Latitude and Longitude as they are not needed</span>
+            <span class="n">list_all_incident_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># Confirm the changes made to the DB</span>
+
+        <span class="k">return</span> <span class="n">list_all_incident_reports</span></div>
+
+
+<div class="viewcode-block" id="retrieve_active_incident_reports"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.retrieve_active_incident_reports">[docs]</a><span class="k">def</span> <span class="nf">retrieve_active_incident_reports</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retrieve all active incident reports.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list_all_active_incident_reports: get all the incident reports that are &#39;PENDING&#39;, i.e. awaiting assistance.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>  <span class="c1"># Within the Application Context:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>  <span class="c1"># call our private method to retreive the DB</span>
+
+        <span class="n">all_incident_reports</span> <span class="o">=</span> <span class="n">query_db</span><span class="p">(</span>
+                <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                SELECT * FROM INCIDENT_REPORT WHERE</span>
+<span class="sd">                report_status &lt;= 2</span>
+<span class="sd">                &#39;&#39;&#39;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Some Formatting of the results from the Database</span>
+        <span class="n">assistance_required_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;No Assistance needed&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Emergency Ambulance&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;Rescue and Evaluate&#39;</span><span class="p">,</span>
+                                    <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;Gas Leak Control&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert assistance_required from int to string</span>
+        <span class="n">report_status_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;REPORTED&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;PENDING&#39;</span><span class="p">,</span>
+                              <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;CLOSED&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert report_status required from int to string</span>
+        <span class="n">is_first_such_incident_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                                       <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;TRUE&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert is_first_such_incident from int to string</span>
+
+        <span class="n">list_all_active_incident_reports</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">all_incident_reports</span><span class="p">:</span>
+            <span class="n">report</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>  <span class="c1"># Convert Tuple [1 Incident Report] into a list as list is easier to manipulate</span>
+            <span class="n">report</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span>
+                        <span class="p">:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span>  <span class="c1"># Remove the last 7 chars of the timestamp for &quot;First reported time&quot; as they are too precise.</span>
+            <span class="n">report</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">assistance_required_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span>  <span class="c1"># Convert asssistance_required from int to string</span>
+            <span class="n">report</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="n">report_status_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">10</span><span class="p">]]</span>  <span class="c1"># Convert report_status from int to string</span>
+            <span class="n">report</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_first_such_incident_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">11</span><span class="p">]]</span>  <span class="c1"># Convert is_first_such_incident from int to string</span>
+
+            <span class="n">list_all_active_incident_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># Confirm the changes made to the DB</span>
+
+        <span class="k">return</span> <span class="n">list_all_active_incident_reports</span></div>
+
+
+<div class="viewcode-block" id="retrieve_selected_incident_report"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.retrieve_selected_incident_report">[docs]</a><span class="k">def</span> <span class="nf">retrieve_selected_incident_report</span><span class="p">(</span><span class="n">id_of_incident_report</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retrieve selected incident reports.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        id_of_incident_report: the id of the incident that is being searched.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        report: the report that is being searched.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>  <span class="c1"># Within the Application Context:</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>  <span class="c1"># call our private method to retreive the DB</span>
+
+        <span class="n">report</span> <span class="o">=</span> <span class="n">query_db</span><span class="p">(</span>
+                <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">                SELECT * FROM INCIDENT_REPORT WHERE</span>
+<span class="sd">                id = ?</span>
+<span class="sd">                &#39;&#39;&#39;</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">id_of_incident_report</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Some Formatting of the results from the Database</span>
+        <span class="n">assistance_required_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;No Assistance needed&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Emergency Ambulance&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;Rescue and Evaluate&#39;</span><span class="p">,</span>
+                                    <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;Gas Leak Control&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert assistance_required from int to string</span>
+        <span class="n">report_status_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;REPORTED&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;PENDING&#39;</span><span class="p">,</span>
+                              <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;CLOSED&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert report_status required from int to string</span>
+        <span class="n">is_first_such_incident_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;FALSE&#39;</span><span class="p">,</span>
+                                       <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;TRUE&#39;</span><span class="p">}</span>  <span class="c1"># a Dict to convert is_first_such_incident from int to string</span>
+
+        <span class="n">report</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># get the report out from a list with just 1 element</span>
+        <span class="n">report</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>  <span class="c1"># Convert Tuple [1 Incident Report] into a list as list is easier to manipulate</span>
+        <span class="n">report</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span>
+                    <span class="p">:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span>  <span class="c1"># Remove the last 7 chars of the timestamp for &quot;First reported time&quot; as they are too precise.</span>
+        <span class="n">report</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">assistance_required_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span>  <span class="c1"># Convert asssistance_required from int to string</span>
+        <span class="n">report</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="n">report_status_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">10</span><span class="p">]]</span>  <span class="c1"># Convert report_status from int to string</span>
+        <span class="n">report</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_first_such_incident_dict</span><span class="p">[</span><span class="n">report</span><span class="p">[</span><span class="mi">11</span><span class="p">]]</span>  <span class="c1"># Convert is_first_such_incident from int to string</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># Confirm the changes made to the DB</span>
+
+        <span class="k">return</span> <span class="n">report</span></div>
+
+
+<div class="viewcode-block" id="query_time_interval"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Model.query_time_interval">[docs]</a><span class="k">def</span> <span class="nf">query_time_interval</span><span class="p">(</span><span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span> <span class="o">=</span> <span class="mi">30</span><span class="p">),</span> <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function is to be called by dashboard</span>
+<span class="sd">    The two arguments are of datetime data type</span>
+<span class="sd">    If omitted, the default query would be of interval [now - 30min, now]</span>
+<span class="sd">    A list of json objects would be returned.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        | start: start time of the query.</span>
+<span class="sd">        | end: end time of the query.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        ret: a list of json objects.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">query_db</span><span class="p">(</span>
+                <span class="s1">&#39;SELECT * FROM INCIDENT WHERE first_reported &lt; ? AND first_reported &gt; ?&#39;</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">end</span><span class="p">,</span> <span class="n">start</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># The priorities are currently returned as ints</span>
+        <span class="c1"># Maybe they would be returned as strings to make more sense (but harder to handle) later</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;id&#39;</span>                 <span class="p">:</span> <span class="n">it</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s1">&#39;name&#39;</span>               <span class="p">:</span> <span class="n">it</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s1">&#39;first_reported&#39;</span>     <span class="p">:</span> <span class="n">it</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s1">&#39;location&#39;</span>           <span class="p">:</span> <span class="n">it</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                <span class="s1">&#39;report_cnt&#39;</span>         <span class="p">:</span> <span class="n">it</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                <span class="s1">&#39;priority_injuries&#39;</span>  <span class="p">:</span> <span class="n">it</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                <span class="s1">&#39;priority_dangers&#39;</span>   <span class="p">:</span> <span class="n">it</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+                <span class="s1">&#39;priority_help&#39;</span>      <span class="p">:</span> <span class="n">it</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+                <span class="s1">&#39;assistance_required&#39;</span><span class="p">:</span> <span class="n">it</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+            <span class="p">}</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ret</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, giligili
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

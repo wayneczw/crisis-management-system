@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dashboard package &mdash; cms  documentation</title>
+  <title>Dashboard package &mdash; CMS 1.0 documentation</title>
   
 
   
@@ -27,7 +27,9 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Map package" href="Map.html" />
+    <link rel="prev" title="CallCenter package" href="CallCenter.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -46,7 +48,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> cms
+            <a href="index.html" class="icon icon-home"> CMS
           
 
           
@@ -76,17 +78,30 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Dashboard package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-Dashboard.dashboard">Dashboard.dashboard module</a></li>
-<li><a class="reference internal" href="#module-Dashboard.report">Dashboard.report module</a></li>
-<li><a class="reference internal" href="#module-Dashboard">Module contents</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">crisis-management-system</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AccountManagement.html">AccountManagement package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CallCenter.html">CallCenter package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Dashboard package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-Dashboard.dashboard">Dashboard.dashboard module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-Dashboard.report">Dashboard.report module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-Dashboard">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Map.html">Map package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SocialMedia.html">SocialMedia package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_test.html">app_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="db_test.html">db_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="load_test_locust.html">load_test_locust module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html">model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
 </ul>
 </li>
 </ul>
-</div>
+
             
           
         </div>
@@ -99,7 +114,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">cms</a>
+          <a href="index.html">CMS</a>
         
       </nav>
 
@@ -130,6 +145,8 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
+          <li><a href="modules.html">crisis-management-system</a> &raquo;</li>
+        
       <li>Dashboard package</li>
     
     
@@ -158,44 +175,62 @@
 <span id="dashboard-dashboard-module"></span><h2>Dashboard.dashboard module<a class="headerlink" href="#module-Dashboard.dashboard" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="Dashboard.dashboard.dashboard">
-<code class="descclassname">Dashboard.dashboard.</code><code class="descname">dashboard</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.dashboard.dashboard" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">Dashboard.dashboard.</code><code class="descname">dashboard</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/dashboard.html#dashboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.dashboard.dashboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>View function for dashboard.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>render a template</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="Dashboard.dashboard.download">
-<code class="descclassname">Dashboard.dashboard.</code><code class="descname">download</code><span class="sig-paren">(</span><em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.dashboard.download" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">Dashboard.dashboard.</code><code class="descname">download</code><span class="sig-paren">(</span><em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/dashboard.html#download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.dashboard.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>View function for download report.
+Returns:</p>
+<blockquote>
+<div>render a template</div></blockquote>
+</dd></dl>
 
 <dl class="function">
 <dt id="Dashboard.dashboard.report">
-<code class="descclassname">Dashboard.dashboard.</code><code class="descname">report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.dashboard.report" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">Dashboard.dashboard.</code><code class="descname">report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/dashboard.html#report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.dashboard.report" title="Permalink to this definition">¶</a></dt>
+<dd><p>View function for report.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>render a template</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="Dashboard.dashboard.send_now">
-<code class="descclassname">Dashboard.dashboard.</code><code class="descname">send_now</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.dashboard.send_now" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">Dashboard.dashboard.</code><code class="descname">send_now</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/dashboard.html#send_now"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.dashboard.send_now" title="Permalink to this definition">¶</a></dt>
+<dd><p>View function for send report now.
+Returns:</p>
+<blockquote>
+<div>render a template</div></blockquote>
+</dd></dl>
 
 </div>
 <div class="section" id="module-Dashboard.report">
 <span id="dashboard-report-module"></span><h2>Dashboard.report module<a class="headerlink" href="#module-Dashboard.report" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="Dashboard.report.generate_time_ticks">
-<code class="descclassname">Dashboard.report.</code><code class="descname">generate_time_ticks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.generate_time_ticks" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">generate_time_ticks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#generate_time_ticks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.generate_time_ticks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate 10 time ticks.
 :return: list of 10 time ticks.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="Dashboard.report.generate_trend_chart">
-<code class="descclassname">Dashboard.report.</code><code class="descname">generate_trend_chart</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.generate_trend_chart" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">generate_trend_chart</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#generate_trend_chart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.generate_trend_chart" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate chart using the latest 10 reports.
 :return: chart - a chart image name</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="Dashboard.report.get_dengue_report">
-<code class="descclassname">Dashboard.report.</code><code class="descname">get_dengue_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.get_dengue_report" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">get_dengue_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#get_dengue_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.get_dengue_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate dengue html table report by calling psi API from map_api.py</p>
 <p>Args:</p>
 <dl class="docutils">
@@ -206,9 +241,8 @@
 
 <dl class="function">
 <dt id="Dashboard.report.get_incident_report">
-<code class="descclassname">Dashboard.report.</code><code class="descname">get_incident_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.get_incident_report" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">get_incident_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#get_incident_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.get_incident_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate incident html table report by calling psi API from map_api.py</p>
-<p>Args:</p>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>incident_report: A string of incident html table report.</dd>
@@ -217,7 +251,7 @@
 
 <dl class="function">
 <dt id="Dashboard.report.get_latest_report">
-<code class="descclassname">Dashboard.report.</code><code class="descname">get_latest_report</code><span class="sig-paren">(</span><em>num=1</em><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.get_latest_report" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">get_latest_report</code><span class="sig-paren">(</span><em>num=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#get_latest_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.get_latest_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetches latest n report from local directory. [crisis-management-system/Dashboard/report_history]</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -229,7 +263,7 @@
 
 <dl class="function">
 <dt id="Dashboard.report.get_psi_report">
-<code class="descclassname">Dashboard.report.</code><code class="descname">get_psi_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.get_psi_report" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">get_psi_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#get_psi_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.get_psi_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate psi html table report by calling psi API from map_api.py</p>
 <p>Args:</p>
 <dl class="docutils">
@@ -240,12 +274,12 @@
 
 <dl class="function">
 <dt id="Dashboard.report.get_trend_values">
-<code class="descclassname">Dashboard.report.</code><code class="descname">get_trend_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.get_trend_values" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">get_trend_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#get_trend_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.get_trend_values" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="Dashboard.report.get_weather_report">
-<code class="descclassname">Dashboard.report.</code><code class="descname">get_weather_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.get_weather_report" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">get_weather_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#get_weather_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.get_weather_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate weather html table report by calling psi API from map_api.py</p>
 <p>Args:</p>
 <dl class="docutils">
@@ -256,13 +290,16 @@
 
 <dl class="function">
 <dt id="Dashboard.report.insert_db">
-<code class="descclassname">Dashboard.report.</code><code class="descname">insert_db</code><span class="sig-paren">(</span><em>name</em>, <em>timestamp</em>, <em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.insert_db" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">insert_db</code><span class="sig-paren">(</span><em>name</em>, <em>timestamp</em>, <em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#insert_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.insert_db" title="Permalink to this definition">¶</a></dt>
 <dd><p>Insert status report into app.db.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>name: name of  the status report
-timastamp: timastamp of the status report
-path: path of the status report</dd>
+<dd><div class="first last line-block">
+<div class="line">name: name of  the status report</div>
+<div class="line">timastamp: timastamp of the status report</div>
+<div class="line">path: path of the status report</div>
+</div>
+</dd>
 <dt>Returns:</dt>
 <dd>Print after successful add.</dd>
 </dl>
@@ -270,7 +307,7 @@ path: path of the status report</dd>
 
 <dl class="function">
 <dt id="Dashboard.report.parse_table">
-<code class="descclassname">Dashboard.report.</code><code class="descname">parse_table</code><span class="sig-paren">(</span><em>html_path</em>, <em>id</em><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.parse_table" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">parse_table</code><span class="sig-paren">(</span><em>html_path</em>, <em>id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#parse_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.parse_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get selected table section from a html file.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -283,9 +320,8 @@ id: id of table   [‘psi’, ‘dengue’, ‘weather’, ‘incident’]</dd>
 
 <dl class="function">
 <dt id="Dashboard.report.retrieve_active_incident_reports">
-<code class="descclassname">Dashboard.report.</code><code class="descname">retrieve_active_incident_reports</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.retrieve_active_incident_reports" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">retrieve_active_incident_reports</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#retrieve_active_incident_reports"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.retrieve_active_incident_reports" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve active incident report from /CallCenter/database.db</p>
-<p>Args:</p>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>list_all_incident_reports: A list of all incident reports.</dd>
@@ -294,7 +330,7 @@ id: id of table   [‘psi’, ‘dengue’, ‘weather’, ‘incident’]</dd>
 
 <dl class="function">
 <dt id="Dashboard.report.send_report">
-<code class="descclassname">Dashboard.report.</code><code class="descname">send_report</code><span class="sig-paren">(</span><em>subject='Status Report &#64; {0}'</em><span class="sig-paren">)</span><a class="headerlink" href="#Dashboard.report.send_report" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Dashboard.report.</code><code class="descname">send_report</code><span class="sig-paren">(</span><em>subject='Status Report &#64; {0}'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Dashboard/report.html#send_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Dashboard.report.send_report" title="Permalink to this definition">¶</a></dt>
 <dd><ol class="arabic simple" start="0">
 <li>Generate status report.</li>
 <li>Send status report to target email.</li>
@@ -322,6 +358,15 @@ id: id of table   [‘psi’, ‘dengue’, ‘weather’, ‘incident’]</dd>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Map.html" class="btn btn-neutral float-right" title="Map package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="CallCenter.html" class="btn btn-neutral" title="CallCenter package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

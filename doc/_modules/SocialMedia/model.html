@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SocialMedia.model &mdash; CMS 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CMS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">crisis-management-system</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CMS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>SocialMedia.model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for SocialMedia.model</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">radians</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">asin</span><span class="p">,</span> <span class="n">sqrt</span>
+
+
+<div class="viewcode-block" id="Priority"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.Priority">[docs]</a><span class="k">class</span> <span class="nc">Priority</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">injury_value</span><span class="p">,</span> <span class="n">danger_value</span><span class="p">,</span> <span class="n">help_value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">injury</span> <span class="o">=</span> <span class="n">injury_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">danger</span> <span class="o">=</span> <span class="n">danger_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="n">help_value</span></div>
+
+
+<div class="viewcode-block" id="Report"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.Report">[docs]</a><span class="k">class</span> <span class="nc">Report</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span></div>
+
+
+<div class="viewcode-block" id="IncidentReport"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.IncidentReport">[docs]</a><span class="k">class</span> <span class="nc">IncidentReport</span><span class="p">(</span><span class="n">Report</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">phone</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">reported_time</span><span class="p">,</span> <span class="n">assistance_required</span><span class="p">,</span>
+                 <span class="n">priority</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reported_time</span> <span class="o">=</span> <span class="n">reported_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assistance_required</span> <span class="o">=</span> <span class="n">assistance_required</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">priority</span></div>
+
+
+<div class="viewcode-block" id="CrisisReport"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.CrisisReport">[docs]</a><span class="k">class</span> <span class="nc">CrisisReport</span><span class="p">(</span><span class="n">Report</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">advisory</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">category</span> <span class="o">=</span> <span class="n">category</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">date</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">advisory</span> <span class="o">=</span> <span class="n">advisory</span></div>
+
+
+<div class="viewcode-block" id="Contact"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.Contact">[docs]</a><span class="k">class</span> <span class="nc">Contact</span><span class="p">:</span>
+    <span class="n">AUTHORITY_POLICE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">AUTHORITY_SCDF_Ambulance</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">AUTHORITY_SCDF_Rescue</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">AUTHORITY_SingaporePower_GasLeak</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">phone</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span>
+
+<div class="viewcode-block" id="Contact.retrieve_authority_contact"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.Contact.retrieve_authority_contact">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_authority_contact</span><span class="p">(</span><span class="n">authority</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">authority</span> <span class="o">==</span> <span class="n">Contact</span><span class="o">.</span><span class="n">AUTHORITY_POLICE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Contact</span><span class="p">(</span><span class="s1">&#39;Police&#39;</span><span class="p">,</span> <span class="s1">&#39;+6591515341&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">authority</span> <span class="o">==</span> <span class="n">Contact</span><span class="o">.</span><span class="n">AUTHORITY_SCDF_Ambulance</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Contact</span><span class="p">(</span><span class="s1">&#39;SCDF_Ambulance&#39;</span><span class="p">,</span> <span class="s1">&#39;+6591515341&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">authority</span> <span class="o">==</span> <span class="n">Contact</span><span class="o">.</span><span class="n">AUTHORITY_SCDF_Rescue</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Contact</span><span class="p">(</span><span class="s1">&#39;SCDF_Rescue&#39;</span><span class="p">,</span> <span class="s1">&#39;+6591515341&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">authority</span> <span class="o">==</span> <span class="n">Contact</span><span class="o">.</span><span class="n">AUTHORITY_SingaporePower_GasLeak</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Contact</span><span class="p">(</span><span class="s1">&#39;SingaporePower&#39;</span><span class="p">,</span> <span class="s1">&#39;+6591515341&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Authority is undefined&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Person"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.Person">[docs]</a><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">Contact</span><span class="p">):</span>
+    <span class="n">GENDER_MALE</span> <span class="o">=</span> <span class="s1">&#39;M&#39;</span>
+    <span class="n">GENDER_FEMALE</span> <span class="o">=</span> <span class="s1">&#39;F&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">phone</span><span class="p">,</span> <span class="n">gender</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">phone</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gender</span> <span class="o">=</span> <span class="n">gender</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span>
+
+<div class="viewcode-block" id="Person.retrieve_nearby_residents"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.Person.retrieve_nearby_residents">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_nearby_residents</span><span class="p">(</span><span class="n">coordinate</span><span class="p">,</span> <span class="n">max_distance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve nearby residents</span>
+<span class="sd">        :param coordinate: The anchor point coordinate to search for nearby residents</span>
+<span class="sd">        :param max_distance: The maximum distance allowed from the anchor point</span>
+<span class="sd">        :return: A list of nearby residents</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">person_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Person</span><span class="p">(</span><span class="s2">&quot;Tan Ying Hao&quot;</span><span class="p">,</span> <span class="s1">&#39;+6591515341&#39;</span><span class="p">,</span> <span class="n">Person</span><span class="o">.</span><span class="n">GENDER_MALE</span><span class="p">,</span>
+                   <span class="n">Address</span><span class="p">(</span><span class="s1">&#39;Blk 540 Jelepang Road&#39;</span><span class="p">,</span> <span class="s1">&#39;20-36&#39;</span><span class="p">,</span> <span class="s1">&#39;670540&#39;</span><span class="p">,</span>
+                           <span class="n">GeoCoordinate</span><span class="p">(</span><span class="mf">1.384860</span><span class="p">,</span> <span class="mf">103.766550</span><span class="p">))),</span>
+            <span class="n">Person</span><span class="p">(</span><span class="s2">&quot;Lim Xuan Yin&quot;</span><span class="p">,</span> <span class="s1">&#39;+6590290589&#39;</span><span class="p">,</span> <span class="n">Person</span><span class="o">.</span><span class="n">GENDER_MALE</span><span class="p">,</span>
+                   <span class="n">Address</span><span class="p">(</span><span class="s1">&#39;Blk 487 Tampines Street Avenue 4&#39;</span><span class="p">,</span> <span class="s1">&#39;03-99&#39;</span><span class="p">,</span> <span class="s1">&#39;520487&#39;</span><span class="p">,</span>
+                           <span class="n">GeoCoordinate</span><span class="p">(</span><span class="mf">1.360320</span><span class="p">,</span> <span class="mf">103.944397</span><span class="p">)))</span>
+        <span class="p">]</span>
+
+        <span class="n">nearby</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">person_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">person</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">coordinates</span><span class="o">.</span><span class="n">calculate_distance</span><span class="p">(</span><span class="n">coordinate</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">max_distance</span><span class="p">:</span>
+                <span class="n">nearby</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">person</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nearby</span></div></div>
+
+
+<div class="viewcode-block" id="Address"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.Address">[docs]</a><span class="k">class</span> <span class="nc">Address</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">street_name</span><span class="p">,</span> <span class="n">unit_number</span><span class="p">,</span> <span class="n">postal_code</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">street_name</span> <span class="o">=</span> <span class="n">street_name</span> <span class="k">if</span> <span class="n">street_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unit_number</span> <span class="o">=</span> <span class="n">unit_number</span> <span class="k">if</span> <span class="n">unit_number</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">postal_code</span> <span class="o">=</span> <span class="n">postal_code</span> <span class="k">if</span> <span class="n">postal_code</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__coordinates__</span> <span class="o">=</span> <span class="n">coordinates</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__coordinates__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__coordinates__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">GeoCoordinate</span><span class="p">(</span><span class="mf">1.384860</span><span class="p">,</span> <span class="mf">103.766550</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GeoCoordinate"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.GeoCoordinate">[docs]</a><span class="k">class</span> <span class="nc">GeoCoordinate</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">latitude</span> <span class="o">=</span> <span class="n">latitude</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">longitude</span> <span class="o">=</span> <span class="n">longitude</span>
+
+<div class="viewcode-block" id="GeoCoordinate.calculate_distance"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.model.GeoCoordinate.calculate_distance">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the distance from the this coordinate to the specified destination</span>
+<span class="sd">        :param destination: The destination coordinate</span>
+<span class="sd">        :return: A float value indicating the distance between this coordinate and destination in kilometres</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">lon1</span><span class="p">,</span> <span class="n">lat1</span><span class="p">,</span> <span class="n">lon2</span><span class="p">,</span> <span class="n">lat2</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">radians</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                                               <span class="n">destination</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">destination</span><span class="o">.</span><span class="n">latitude</span><span class="p">])</span>
+
+        <span class="n">dlon</span> <span class="o">=</span> <span class="n">lon2</span> <span class="o">-</span> <span class="n">lon1</span>
+        <span class="n">dlat</span> <span class="o">=</span> <span class="n">lat2</span> <span class="o">-</span> <span class="n">lat1</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">dlat</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">cos</span><span class="p">(</span><span class="n">lat1</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">lat2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">dlon</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">asin</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">c</span> <span class="o">*</span> <span class="mi">6371</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, giligili
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

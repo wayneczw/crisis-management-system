@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Map.map &mdash; CMS 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CMS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">crisis-management-system</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CMS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>Map.map</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Map.map</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;periodic_psi_check&#39;</span><span class="p">]</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">Blueprint</span>
+<span class="kn">from</span> <span class="nn">flask_googlemaps</span> <span class="k">import</span> <span class="n">GoogleMaps</span>
+<span class="kn">from</span> <span class="nn">flask_googlemaps</span> <span class="k">import</span> <span class="n">Map</span><span class="p">,</span> <span class="n">icons</span>
+<span class="kn">from</span> <span class="nn">.map_api</span> <span class="k">import</span> <span class="n">get_psi</span><span class="p">,</span> <span class="n">get_dengue_clusters</span><span class="p">,</span> <span class="n">get_weather</span><span class="p">,</span> <span class="n">get_shelter</span><span class="p">,</span> <span class="n">address_to_latlng</span>
+<span class="kn">from</span> <span class="nn">SocialMedia.model</span> <span class="k">import</span> <span class="n">CrisisReport</span><span class="p">,</span> <span class="n">Address</span><span class="p">,</span> <span class="n">GeoCoordinate</span>
+<span class="kn">from</span> <span class="nn">SocialMedia.controller</span> <span class="k">import</span> <span class="n">SocialMedia</span>
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">CallCenter.CallCenter_Model</span> <span class="k">import</span> <span class="n">retrieve_active_incident_reports</span>
+
+
+<span class="n">map_api</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="s1">&#39;templates&#39;</span><span class="p">,</span> <span class="p">)</span>
+
+<span class="n">COLOR_CODE</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">green</span><span class="o">=</span><span class="s1">&#39;#228B22&#39;</span><span class="p">,</span> <span class="n">blue</span><span class="o">=</span><span class="s1">&#39;#4169e1&#39;</span><span class="p">,</span> <span class="n">yellow</span><span class="o">=</span><span class="s1">&#39;#ffcc00&#39;</span><span class="p">,</span> <span class="n">orange</span><span class="o">=</span><span class="s1">&#39;#FF4500&#39;</span><span class="p">,</span> <span class="n">red</span><span class="o">=</span><span class="s1">&#39;#B22222&#39;</span><span class="p">)</span>
+
+<span class="n">PSI_ICONS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="s2">&quot;//maps.google.com/mapfiles/kml/paddle/E.png&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;W&#39;</span><span class="p">:</span> <span class="s2">&quot;//maps.google.com/mapfiles/kml/paddle/W.png&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="s2">&quot;//maps.google.com/mapfiles/kml/paddle/S.png&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="s2">&quot;//maps.google.com/mapfiles/kml/paddle/N.png&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="s2">&quot;//maps.google.com/mapfiles/kml/paddle/C.png&quot;</span>
+            <span class="p">}</span>
+<span class="n">WEATHER_ICONS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Partly Cloudy&quot;</span><span class="p">:</span> <span class="s2">&quot;https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Partly Cloudy (Day)&quot;</span><span class="p">:</span> <span class="s2">&quot;https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Partly Cloudy (Night)&quot;</span><span class="p">:</span> <span class="s2">&quot;https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Cloudy&quot;</span><span class="p">:</span> <span class="s2">&quot;https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Cloudy (Day)&quot;</span><span class="p">:</span> <span class="s2">&quot;https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Cloudy (Night)&quot;</span><span class="p">:</span> <span class="s2">&quot;https://addons-media.operacdn.com/media/extensions/52/228552/0.1.0-rev1/icons/icon_64x64_944d829ba23973bd494ff4458c6536c0.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Fair (Day)&quot;</span><span class="p">:</span> <span class="s2">&quot;https://images.sftcdn.net/images/t_app-logo-l,f_auto,dpr_auto/p/6342e25c-9b2e-11e6-8327-00163ed833e7/297691412/heliospaint-logo.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Fair (Night)&quot;</span><span class="p">:</span> <span class="s2">&quot;https://addons-media.operacdn.com/media/extensions/59/228359/0.2.8-rev1/icons/icon_64x64_0681774836f9505465805085bb518811.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Fair and Warm&quot;</span><span class="p">:</span> <span class="s2">&quot;https://images.sftcdn.net/images/t_app-logo-l,f_auto,dpr_auto/p/6342e25c-9b2e-11e6-8327-00163ed833e7/297691412/heliospaint-logo.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Light Rain&quot;</span><span class="p">:</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/shapes/rainy.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Moderate Rain&quot;</span><span class="p">:</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/shapes/rainy.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Heavy Rain&quot;</span><span class="p">:</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/shapes/rainy.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Passing Showers&quot;</span><span class="p">:</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/shapes/rainy.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Light Showers&quot;</span><span class="p">:</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/shapes/rainy.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Showers&quot;</span><span class="p">:</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/shapes/rainy.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Heavy Showers&quot;</span><span class="p">:</span> <span class="s2">&quot;https://addons.cdn.mozilla.net/user-media/addon_icons/0/398-64.png?modified=1441890566&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Thundery Showers&quot;</span><span class="p">:</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/shapes/thunderstorm.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Heavy Thundery Showers&quot;</span><span class="p">:</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/shapes/thunderstorm.png&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Heavy Thundery Showers with Gusty Winds&quot;</span><span class="p">:</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/shapes/thunderstorm.png&quot;</span>
+            <span class="p">}</span>
+<span class="n">SHELTER_ICON</span> <span class="o">=</span> <span class="s1">&#39;http://maps.google.com/mapfiles/kml/pal2/icon10.png&#39;</span>
+
+<span class="n">REGION_COORD</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">west</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="mf">1.35735</span><span class="p">,</span> <span class="s2">&quot;lng&quot;</span><span class="p">:</span> <span class="mf">103.7</span><span class="p">},</span>
+                    <span class="n">east</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="mf">1.35735</span><span class="p">,</span> <span class="s2">&quot;lng&quot;</span><span class="p">:</span> <span class="mf">103.94</span><span class="p">},</span>
+                    <span class="n">central</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="mf">1.35735</span><span class="p">,</span> <span class="s2">&quot;lng&quot;</span><span class="p">:</span> <span class="mf">103.82</span><span class="p">},</span>
+                    <span class="n">south</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="mf">1.29587</span><span class="p">,</span> <span class="s2">&quot;lng&quot;</span><span class="p">:</span> <span class="mf">103.82</span><span class="p">},</span>
+                    <span class="n">north</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="mf">1.41803</span><span class="p">,</span> <span class="s2">&quot;lng&quot;</span><span class="p">:</span> <span class="mf">103.82</span><span class="p">})</span>
+
+<span class="nd">@map_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/psi&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">psimapview</span><span class="p">():</span>
+    <span class="n">east_info</span><span class="p">,</span> <span class="n">west_info</span><span class="p">,</span> <span class="n">south_info</span><span class="p">,</span> <span class="n">north_info</span><span class="p">,</span> <span class="n">central_info</span> <span class="o">=</span> <span class="n">get_psi</span><span class="p">()</span>
+
+    <span class="n">psimap</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;psimap&quot;</span><span class="p">,</span>
+        <span class="n">lat</span><span class="o">=</span><span class="mf">1.3521</span><span class="p">,</span>
+        <span class="n">lng</span><span class="o">=</span><span class="mf">103.8198</span><span class="p">,</span>
+        <span class="n">zoom</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">region</span><span class="o">=</span><span class="s1">&#39;SG&#39;</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;height:800px;width:1200px;margin:0;&quot;</span><span class="p">,</span>
+        <span class="n">markers</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span>   
+                <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">PSI_ICONS</span><span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;lat&#39;</span><span class="p">:</span>  <span class="n">east_info</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;lng&#39;</span><span class="p">:</span>  <span class="n">east_info</span><span class="p">[</span><span class="s1">&#39;lng&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;infobox&#39;</span><span class="p">:</span> <span class="s2">&quot;&lt;b style=&#39;color:</span><span class="si">{}</span><span class="s2">;&#39;&gt; &lt;h3&gt;North PSI:&lt;/h3&gt; &lt;h4&gt;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&lt;/h4&gt;&lt;/b&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">COLOR_CODE</span><span class="p">[</span><span class="n">east_info</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]],</span> <span class="n">east_info</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">east_info</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">])</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">PSI_ICONS</span><span class="p">[</span><span class="s1">&#39;W&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;lat&#39;</span><span class="p">:</span>  <span class="n">west_info</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;lng&#39;</span><span class="p">:</span>  <span class="n">west_info</span><span class="p">[</span><span class="s1">&#39;lng&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;infobox&#39;</span><span class="p">:</span> <span class="s2">&quot;&lt;b style=&#39;color:</span><span class="si">{}</span><span class="s2">;&#39;&gt; &lt;h3&gt;West PSI:&lt;/h3&gt; &lt;h4&gt;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&lt;/h4&gt;&lt;/b&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">COLOR_CODE</span><span class="p">[</span><span class="n">west_info</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]],</span> <span class="n">west_info</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">west_info</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">])</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">PSI_ICONS</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;lat&#39;</span><span class="p">:</span>  <span class="n">south_info</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;lng&#39;</span><span class="p">:</span>  <span class="n">south_info</span><span class="p">[</span><span class="s1">&#39;lng&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;infobox&#39;</span><span class="p">:</span> <span class="s2">&quot;&lt;b style=&#39;color:</span><span class="si">{}</span><span class="s2">;&#39;&gt; &lt;h3&gt;South PSI:&lt;/h3&gt; &lt;h4&gt;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&lt;/h4&gt;&lt;/b&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">COLOR_CODE</span><span class="p">[</span><span class="n">south_info</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]],</span> <span class="n">south_info</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">south_info</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">])</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">PSI_ICONS</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;lat&#39;</span><span class="p">:</span>  <span class="n">north_info</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;lng&#39;</span><span class="p">:</span>  <span class="n">north_info</span><span class="p">[</span><span class="s1">&#39;lng&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;infobox&#39;</span><span class="p">:</span> <span class="s2">&quot;&lt;b style=&#39;color:</span><span class="si">{}</span><span class="s2">;&#39;&gt; &lt;h3&gt;North PSI:&lt;/h3&gt; &lt;h4&gt;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&lt;/h4&gt;&lt;/b&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">COLOR_CODE</span><span class="p">[</span><span class="n">north_info</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]],</span> <span class="n">north_info</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">north_info</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">])</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">PSI_ICONS</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;lat&#39;</span><span class="p">:</span>  <span class="n">central_info</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;lng&#39;</span><span class="p">:</span>  <span class="n">central_info</span><span class="p">[</span><span class="s1">&#39;lng&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;infobox&#39;</span><span class="p">:</span> <span class="s2">&quot;&lt;b style=&#39;color:</span><span class="si">{}</span><span class="s2">;&#39;&gt; &lt;h3&gt;Central PSI:&lt;/h3&gt; &lt;h4&gt;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&lt;/h4&gt;&lt;/b&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">COLOR_CODE</span><span class="p">[</span><span class="n">central_info</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]],</span> <span class="n">central_info</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">central_info</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">])</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;psimap.html&#39;</span><span class="p">,</span> <span class="n">psimap</span><span class="o">=</span><span class="n">psimap</span><span class="p">)</span>
+
+
+<span class="nd">@map_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/weather&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">weathermapview</span><span class="p">():</span>
+    <span class="n">weather_dict</span> <span class="o">=</span> <span class="n">get_weather</span><span class="p">()</span>
+
+    <span class="c1">#create markers</span>
+    <span class="n">markers_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">area</span><span class="p">,</span> <span class="n">info_dict</span> <span class="ow">in</span> <span class="n">weather_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">tmp_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">WEATHER_ICONS</span><span class="p">[</span><span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;forecast&#39;</span><span class="p">]],</span>
+                        <span class="n">lat</span><span class="o">=</span><span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span>
+                        <span class="n">lng</span><span class="o">=</span><span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;lng&#39;</span><span class="p">],</span>
+                        <span class="n">infobox</span><span class="o">=</span><span class="s2">&quot;&lt;h3&gt;</span><span class="si">{}</span><span class="s2">&lt;/h3&gt; &lt;h4&gt;Forecast: </span><span class="si">{}</span><span class="s2">&lt;/h4&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;forecast&#39;</span><span class="p">]))</span>
+        <span class="n">markers_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
+
+    <span class="n">weathermap</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;weathermap&quot;</span><span class="p">,</span>
+        <span class="n">lat</span><span class="o">=</span><span class="mf">1.3521</span><span class="p">,</span>
+        <span class="n">lng</span><span class="o">=</span><span class="mf">103.8198</span><span class="p">,</span>
+        <span class="n">zoom</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">region</span><span class="o">=</span><span class="s1">&#39;SG&#39;</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;height:800px;width:1200px;margin:0;&quot;</span><span class="p">,</span>
+        <span class="n">markers</span><span class="o">=</span><span class="n">markers_list</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;weathermap.html&#39;</span><span class="p">,</span> <span class="n">weathermap</span><span class="o">=</span><span class="n">weathermap</span><span class="p">)</span>
+
+
+<span class="nd">@map_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/shelters&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">sheltermapview</span><span class="p">():</span>
+    <span class="n">shelters_dict</span> <span class="o">=</span> <span class="n">get_shelter</span><span class="p">()</span>
+
+    <span class="c1">#create markers</span>
+    <span class="n">markers_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">area</span><span class="p">,</span> <span class="n">info_dict</span> <span class="ow">in</span> <span class="n">shelters_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        
+        <span class="n">tmp_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">SHELTER_ICON</span><span class="p">,</span>
+                        <span class="n">lat</span><span class="o">=</span><span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span>
+                        <span class="n">lng</span><span class="o">=</span><span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;lng&#39;</span><span class="p">],</span>
+                        <span class="n">infobox</span><span class="o">=</span><span class="s2">&quot;&lt;h3&gt; </span><span class="si">{}</span><span class="s2">&lt;/h3&gt; &lt;h4&gt;Address: </span><span class="si">{}</span><span class="s2">&lt;/h4&gt; &lt;h4&gt;Description: </span><span class="si">{}</span><span class="s2">&lt;/h4&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">],</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]))</span>
+        <span class="n">markers_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
+
+    <span class="n">sheltersmap</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;sheltersmap&quot;</span><span class="p">,</span>
+        <span class="n">lat</span><span class="o">=</span><span class="mf">1.3521</span><span class="p">,</span>
+        <span class="n">lng</span><span class="o">=</span><span class="mf">103.8198</span><span class="p">,</span>
+        <span class="n">zoom</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">region</span><span class="o">=</span><span class="s1">&#39;SG&#39;</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;height:800px;width:1200px;margin:0;&quot;</span><span class="p">,</span>
+        <span class="n">markers</span><span class="o">=</span><span class="n">markers_list</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;sheltersmap.html&#39;</span><span class="p">,</span> <span class="n">sheltersmap</span><span class="o">=</span><span class="n">sheltersmap</span><span class="p">)</span>
+
+<span class="nd">@map_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/dengue&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">denguemapview</span><span class="p">():</span>
+
+    <span class="n">dengue_clusters</span> <span class="o">=</span> <span class="n">get_dengue_clusters</span><span class="p">()</span>
+
+    <span class="n">markers_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">dengue_clusters</span><span class="p">:</span>
+        <span class="n">latlng</span> <span class="o">=</span> <span class="n">address_to_latlng</span><span class="p">(</span><span class="n">cluster</span><span class="p">[</span><span class="s1">&#39;locality&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">cluster</span><span class="p">[</span><span class="s1">&#39;num_all&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">icon</span> <span class="o">=</span> <span class="n">icons</span><span class="o">.</span><span class="n">dots</span><span class="o">.</span><span class="n">red</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">icon</span> <span class="o">=</span> <span class="n">icons</span><span class="o">.</span><span class="n">dots</span><span class="o">.</span><span class="n">orange</span>
+        <span class="n">tmp_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">,</span>
+            <span class="n">lat</span><span class="o">=</span><span class="n">latlng</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span>
+            <span class="n">lng</span><span class="o">=</span><span class="n">latlng</span><span class="p">[</span><span class="s1">&#39;lng&#39;</span><span class="p">],</span>
+            <span class="n">infobox</span><span class="o">=</span><span class="s2">&quot;&lt;h3&gt; </span><span class="si">{}</span><span class="s2">&lt;/h3&gt; &lt;h4&gt;Cases with onset in last 2 weeks: </span><span class="si">{}</span><span class="s2">&lt;/h4&gt; &lt;h4&gt;Cases since start of cluster: </span><span class="si">{}</span><span class="s2">&lt;/h4&gt; &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cluster</span><span class="p">[</span><span class="s1">&#39;cluster&#39;</span><span class="p">],</span> <span class="n">cluster</span><span class="p">[</span><span class="s1">&#39;num_last2weeks&#39;</span><span class="p">],</span> <span class="n">cluster</span><span class="p">[</span><span class="s1">&#39;num_all&#39;</span><span class="p">]))</span>
+        <span class="n">markers_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
+
+    <span class="n">denguemap</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;denguemap&quot;</span><span class="p">,</span>
+        <span class="n">lat</span><span class="o">=</span><span class="mf">1.3521</span><span class="p">,</span>
+        <span class="n">lng</span><span class="o">=</span><span class="mf">103.8198</span><span class="p">,</span>
+        <span class="n">zoom</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">region</span><span class="o">=</span><span class="s1">&#39;SG&#39;</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;height:800px;width:1200px;margin:0;&quot;</span><span class="p">,</span>
+        <span class="n">markers</span><span class="o">=</span><span class="n">markers_list</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;denguemap.html&#39;</span><span class="p">,</span> <span class="n">denguemap</span><span class="o">=</span><span class="n">denguemap</span><span class="p">)</span>
+
+<span class="nd">@map_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/incidents&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">incidentsmapview</span><span class="p">():</span>
+
+    <span class="n">incidents_list</span> <span class="o">=</span> <span class="n">retrieve_active_incident_reports</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Incidents:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="n">incidents_list</span><span class="p">)</span>
+    <span class="c1"># create markers</span>
+    <span class="n">markers_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">incident</span> <span class="ow">in</span> <span class="n">incidents_list</span><span class="p">:</span>
+        <span class="n">info_string</span> <span class="o">=</span> <span class="s2">&quot;&lt;h6&gt;ID: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt; &lt;h6&gt;Report Date: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt; &lt;h6&gt;Reporter: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;&lt;h6&gt;Reporter&#39;s HP: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt; &lt;h6&gt;Location: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt; &lt;h6&gt;Type of Assistance Need: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;&lt;h6&gt;Description: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt; &lt;h6&gt;Priority for Severity of Injuries: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt; &quot;</span> <span class="o">+</span> <span class="s2">&quot;&lt;h6&gt;Priority for Impending Dangers: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt; &lt;h6&gt;Priority for Presence of Nearby Help: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt; &lt;h6&gt;Status: </span><span class="si">{}</span><span class="s2">&lt;/h6&gt;&quot;</span>
+        <span class="k">if</span> <span class="n">incident</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;REPORTED&quot;</span><span class="p">:</span>
+            <span class="n">icon</span> <span class="o">=</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/pal3/icon59.png&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">icon</span> <span class="o">=</span> <span class="s2">&quot;http://maps.google.com/mapfiles/kml/pal3/icon37.png&quot;</span>
+        <span class="n">tmp_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">,</span>
+                        <span class="n">lat</span><span class="o">=</span><span class="n">incident</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span>
+                        <span class="n">lng</span><span class="o">=</span><span class="n">incident</span><span class="p">[</span><span class="mi">13</span><span class="p">],</span>
+                        <span class="n">infobox</span><span class="o">=</span><span class="n">info_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">incident</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">incident</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">incident</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">incident</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">incident</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">incident</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span><span class="n">incident</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span><span class="n">incident</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span><span class="n">incident</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span><span class="n">incident</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">incident</span><span class="p">[</span><span class="mi">10</span><span class="p">]))</span>
+        <span class="n">markers_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
+
+    <span class="n">incidentsmap</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;incidentsmap&quot;</span><span class="p">,</span>
+        <span class="n">lat</span><span class="o">=</span><span class="mf">1.3521</span><span class="p">,</span>
+        <span class="n">lng</span><span class="o">=</span><span class="mf">103.8198</span><span class="p">,</span>
+        <span class="n">zoom</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">region</span><span class="o">=</span><span class="s1">&#39;SG&#39;</span><span class="p">,</span>
+        <span class="n">style</span><span class="o">=</span><span class="s2">&quot;height:800px;width:1200px;margin:0;&quot;</span><span class="p">,</span>
+        <span class="n">markers</span><span class="o">=</span><span class="n">markers_list</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;incidentsmap.html&#39;</span><span class="p">,</span> <span class="n">incidentsmap</span><span class="o">=</span><span class="n">incidentsmap</span><span class="p">)</span>
+
+<div class="viewcode-block" id="periodic_psi_check"><a class="viewcode-back" href="../../Map.html#Map.map.periodic_psi_check">[docs]</a><span class="k">def</span> <span class="nf">periodic_psi_check</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">_check_threshold</span><span class="p">(</span><span class="n">psi</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">psi</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">def</span> <span class="nf">_alert</span><span class="p">(</span><span class="n">info_dict</span><span class="p">,</span> <span class="n">area</span><span class="p">):</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">GeoCoordinate</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">REGION_COORD</span><span class="p">[</span><span class="n">area</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span> <span class="n">longitude</span><span class="o">=</span><span class="n">REGION_COORD</span><span class="p">[</span><span class="n">area</span><span class="p">][</span><span class="s1">&#39;lng&#39;</span><span class="p">])</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="n">Address</span><span class="p">(</span><span class="n">street_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unit_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">postal_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coordinates</span><span class="o">=</span><span class="n">coord</span><span class="p">)</span>
+
+        <span class="n">report</span> <span class="o">=</span> <span class="n">CrisisReport</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s1">&#39;Haze&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">advisory</span><span class="o">=</span><span class="s1">&#39;Avoid out door activity&#39;</span><span class="p">)</span>
+        <span class="n">social_media</span> <span class="o">=</span> <span class="n">SocialMedia</span><span class="p">()</span>
+
+        <span class="n">social_media</span><span class="o">.</span><span class="n">alert_public</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+        <span class="n">social_media</span><span class="o">.</span><span class="n">post_facebook</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+ 
+    <span class="n">east_info</span><span class="p">,</span> <span class="n">west_info</span><span class="p">,</span> <span class="n">south_info</span><span class="p">,</span> <span class="n">north_info</span><span class="p">,</span> <span class="n">central_info</span> <span class="o">=</span> <span class="n">get_psi</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">_check_threshold</span><span class="p">(</span><span class="n">east_info</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]):</span> <span class="n">_alert</span><span class="p">(</span><span class="n">east_info</span><span class="p">,</span> <span class="s1">&#39;east&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_check_threshold</span><span class="p">(</span><span class="n">west_info</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]):</span> <span class="n">_alert</span><span class="p">(</span><span class="n">west_info</span><span class="p">,</span> <span class="s1">&#39;west&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_check_threshold</span><span class="p">(</span><span class="n">south_info</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]):</span> <span class="n">_alert</span><span class="p">(</span><span class="n">south_info</span><span class="p">,</span> <span class="s1">&#39;south&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_check_threshold</span><span class="p">(</span><span class="n">north_info</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]):</span> <span class="n">_alert</span><span class="p">(</span><span class="n">north_info</span><span class="p">,</span> <span class="s1">&#39;north&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_check_threshold</span><span class="p">(</span><span class="n">central_info</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]):</span> <span class="n">_alert</span><span class="p">(</span><span class="n">central_info</span><span class="p">,</span> <span class="s1">&#39;central&#39;</span><span class="p">)</span>
+
+    <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="n">periodic_psi_check</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+
+<span class="c1"># if __name__ == &quot;__main__&quot;:</span>
+<span class="c1">#     app.run(debug=True, use_reloader=True)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, giligili
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

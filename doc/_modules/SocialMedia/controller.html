@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SocialMedia.controller &mdash; CMS 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CMS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">crisis-management-system</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CMS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>SocialMedia.controller</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for SocialMedia.controller</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">SocialMedia</span> <span class="k">import</span> <span class="n">model</span><span class="p">,</span> <span class="n">renderer</span><span class="p">,</span> <span class="n">connector</span>
+
+<span class="n">ALERT_AUTHORITY_SPEC</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Crisis Management System</span>
+
+<span class="s2">The following incident was recorded and assistance is required from your department.</span>
+
+<span class="s2">*Incident ID*</span>
+<span class="si">{0.identifier}</span><span class="s2"></span>
+
+<span class="s2">*Reported Time*</span>
+<span class="si">{0.reported_time}</span><span class="s2"></span>
+
+<span class="s2">*Caller Name* </span>
+<span class="si">{0.name}</span><span class="s2"></span>
+
+<span class="s2">*Caller Phone*</span>
+<span class="si">{0.phone}</span><span class="s2"></span>
+
+<span class="s2">*Address*</span>
+<span class="si">{0.address.street_name}</span><span class="s2"> </span><span class="si">{0.address.unit_number}</span><span class="s2"></span>
+<span class="si">{0.address.postal_code}</span><span class="s2"></span>
+
+<span class="s2">*Description*</span>
+<span class="si">{0.description}</span><span class="s2"></span>
+
+<span class="s2">*Assistance Required*</span>
+<span class="si">{0.assistance_required}</span><span class="s2"></span>
+
+<span class="s2">*Priority Values*</span>
+<span class="s2">Injury: </span><span class="si">{0.priority.injury}</span><span class="s2"></span>
+<span class="s2">Danger: </span><span class="si">{0.priority.danger}</span><span class="s2"></span>
+<span class="s2">Help:</span><span class="si">{0.priority.help}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">ALERT_PUBLIC_SPEC</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Public Alert Message</span>
+<span class="s2">        </span>
+<span class="s2">This is a public alert message to inform you </span>
+<span class="s2">that an incident has occurred on </span><span class="si">{0.date}</span><span class="s2"> </span><span class="si">{0.time}</span><span class="s2"> </span>
+<span class="s2">in the vicinity of your residential area, </span>
+<span class="s2">please follow the advisory stated below on any possible </span>
+<span class="s2">follow-up actions.</span>
+<span class="s2">        </span>
+<span class="s2">Incident Name: </span>
+<span class="si">{0.name}</span><span class="s2"></span>
+
+<span class="s2">Incident Category: </span>
+<span class="si">{0.category}</span><span class="s2"></span>
+<span class="s2">        </span>
+<span class="s2">Description:</span>
+<span class="si">{0.description}</span><span class="s2"></span>
+<span class="s2">        </span>
+<span class="s2">Advisory:</span>
+<span class="si">{0.advisory}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="SocialMedia"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.controller.SocialMedia">[docs]</a><span class="k">class</span> <span class="nc">SocialMedia</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SocialMedia is the main-entry point for the social media subsystem. It is a controller class that provides the</span>
+<span class="sd">    following services:</span>
+<span class="sd">        - Alert authorities about an incident</span>
+<span class="sd">        - Alert public members residing near a crisis area about a crisis</span>
+<span class="sd">        - Post to facebook with information about a crisis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alert_authority_renderer</span> <span class="o">=</span> <span class="n">renderer</span><span class="o">.</span><span class="n">MessageFormatRenderer</span><span class="p">(</span><span class="n">ALERT_AUTHORITY_SPEC</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alert_public_renderer</span> <span class="o">=</span> <span class="n">renderer</span><span class="o">.</span><span class="n">MessageFormatRenderer</span><span class="p">(</span><span class="n">ALERT_PUBLIC_SPEC</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">facebook_renderer</span> <span class="o">=</span> <span class="n">renderer</span><span class="o">.</span><span class="n">MessageFormatRenderer</span><span class="p">(</span><span class="n">ALERT_PUBLIC_SPEC</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">facebook_connector</span> <span class="o">=</span> <span class="n">connector</span><span class="o">.</span><span class="n">FacebookConnector</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sms_connector</span> <span class="o">=</span> <span class="n">connector</span><span class="o">.</span><span class="n">SMSConnector</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SocialMedia.alert_authorities"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.controller.SocialMedia.alert_authorities">[docs]</a>    <span class="k">def</span> <span class="nf">alert_authorities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">incident</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">IncidentReport</span><span class="p">,</span> <span class="n">authority</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Alert authorities about an incident</span>
+<span class="sd">        :param incident: The details of an incident</span>
+<span class="sd">        :param authority:  Valid values are defined in Model.Contact.AUTHORITY_* constants</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sms_connector</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alert_authority_renderer</span><span class="o">.</span><span class="n">render_message</span><span class="p">(</span><span class="n">incident</span><span class="p">),</span>
+                                        <span class="n">model</span><span class="o">.</span><span class="n">Contact</span><span class="o">.</span><span class="n">retrieve_authority_contact</span><span class="p">(</span><span class="n">authority</span><span class="p">)</span><span class="o">.</span><span class="n">phone</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SocialMedia.alert_public"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.controller.SocialMedia.alert_public">[docs]</a>    <span class="k">def</span> <span class="nf">alert_public</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">crisis</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">CrisisReport</span><span class="p">,</span> <span class="n">max_distance_km</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Alert public members residing near a crisis area about a crisis</span>
+<span class="sd">        :param crisis: The details of a crisis</span>
+<span class="sd">        :param max_distance_km: The maximum distance of nearby residents</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">public_members</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Person</span><span class="o">.</span><span class="n">retrieve_nearby_residents</span><span class="p">(</span><span class="n">crisis</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">max_distance_km</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">public_members</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sms_connector</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alert_public_renderer</span><span class="o">.</span><span class="n">render_message</span><span class="p">(</span><span class="n">crisis</span><span class="p">),</span> <span class="n">member</span><span class="o">.</span><span class="n">phone</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SocialMedia.post_facebook"><a class="viewcode-back" href="../../SocialMedia.html#SocialMedia.controller.SocialMedia.post_facebook">[docs]</a>    <span class="k">def</span> <span class="nf">post_facebook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">crisis</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">CrisisReport</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post to facebook with information about a crisis</span>
+<span class="sd">        :param crisis: The details of a crisis</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">facebook_connector</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">facebook_renderer</span><span class="o">.</span><span class="n">render_message</span><span class="p">(</span><span class="n">crisis</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, giligili
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

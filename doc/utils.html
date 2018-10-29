@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>utils module &mdash; cms  documentation</title>
+  <title>utils module &mdash; CMS 1.0 documentation</title>
   
 
   
@@ -27,7 +27,8 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="model module" href="model.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -46,7 +47,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> cms
+            <a href="index.html" class="icon icon-home"> CMS
           
 
           
@@ -76,11 +77,24 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">utils module</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">crisis-management-system</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AccountManagement.html">AccountManagement package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CallCenter.html">CallCenter package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard.html">Dashboard package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Map.html">Map package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SocialMedia.html">SocialMedia package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_test.html">app_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="db_test.html">db_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="load_test_locust.html">load_test_locust module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html">model module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">utils module</a></li>
 </ul>
-</div>
+</li>
+</ul>
+
             
           
         </div>
@@ -93,7 +107,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">cms</a>
+          <a href="index.html">CMS</a>
         
       </nav>
 
@@ -124,6 +138,8 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
+          <li><a href="modules.html">crisis-management-system</a> &raquo;</li>
+        
       <li>utils module</li>
     
     
@@ -147,13 +163,20 @@
 <span id="utils-module"></span><h1>utils module<a class="headerlink" href="#module-utils" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="utils.async_">
-<code class="descclassname">utils.</code><code class="descname">async_</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="headerlink" href="#utils.async_" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">utils.</code><code class="descname">async_</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#async_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="utils.login_required">
-<code class="descclassname">utils.</code><code class="descname">login_required</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="headerlink" href="#utils.login_required" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">utils.</code><code class="descname">login_required</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#login_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.login_required" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login required decorator.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>f: view function.</dd>
+<dt>Returns:</dt>
+<dd>if is looged in, return function, else return login page.</dd>
+</dl>
+</dd></dl>
 
 </div>
 
@@ -162,6 +185,13 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="model.html" class="btn btn-neutral" title="model module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

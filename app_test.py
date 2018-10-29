@@ -11,8 +11,6 @@ class FunctionalTest(unittest.TestCase):
     def test_view_form_main(self):
         """
         Test main page.
-        :param: None
-        :return: None
         """
         rv = self.client.get('/')
         self.assertEqual(rv.status_code, 200)
@@ -23,8 +21,6 @@ class FunctionalTest(unittest.TestCase):
     def test_map_psi(self):
         """
         Test map psi api.
-        :param: None
-        :return: None
         """
         resp = self.client.get('/map/psi')
         self.assertEqual(resp.status, '200 OK')
@@ -33,8 +29,6 @@ class FunctionalTest(unittest.TestCase):
     def test_map_weather(self):
         """
         Test map weather api.
-        :param: None
-        :return: None
         """
         resp = self.client.get('/map/weather')
         self.assertEqual(resp.status, '200 OK')
@@ -43,8 +37,6 @@ class FunctionalTest(unittest.TestCase):
     def test_map_shelters(self):
         """
         Test map shelter api.
-        :param: None
-        :return: None
         """
         resp = self.client.get('/map/shelters')
         self.assertEqual(resp.status, '200 OK')
@@ -53,8 +45,6 @@ class FunctionalTest(unittest.TestCase):
     def test_map_dengue(self):
         """
         Test map dengue api.
-        :param: None
-        :return: None
         """
         resp = self.client.get('/map/dengue')
         self.assertEqual(resp.status, '200 OK')
@@ -63,8 +53,6 @@ class FunctionalTest(unittest.TestCase):
     def test_map_incidents(self):
         """
         Test map incidents api.
-        :param: None
-        :return: None
         """
         resp = self.client.get('/map/incidents')
         self.assertEqual(resp.status, '200 OK')
@@ -75,8 +63,6 @@ class FunctionalTest(unittest.TestCase):
     def test_dashboard_page(self):
         """
         Test dashboard page.
-        :param: None
-        :return: None
         """
         post_data = {'username': 'admin_test', 'password':'admin_test', 'role':'Admin'}
         rv = self.client.post('/', data=post_data, follow_redirects=True)
@@ -95,8 +81,6 @@ class FunctionalTest(unittest.TestCase):
     def test_login(self):
         """
         Test login page.
-        :param: None
-        :return: None
         """
         post_data = {'username': 'admin_test', 'password': 'admin_test', 'role': 'Admin'}
         rv = self.client.post('/login', data=post_data, follow_redirects=True)
@@ -111,8 +95,6 @@ class FunctionalTest(unittest.TestCase):
     def test_logout(self):
         """
         Test logout page.
-        :param: None
-        :return: None
         """
         resp = self.client.get('/logout')
         self.assertEqual(resp.status, '302 FOUND')
@@ -120,8 +102,6 @@ class FunctionalTest(unittest.TestCase):
     def test_register(self):
         """
         Test register page.
-        :param: None
-        :return: None
         """
         post_data = {'hf-username': 'govd0003', 'hf-password': 'Abcabc123A', 'select': 'Admin'}
         rv = self.client.post('/account/register', data=post_data, follow_redirects=True)
@@ -130,8 +110,6 @@ class FunctionalTest(unittest.TestCase):
     def test_deregister(self):
         """
         Test deregister page.
-        :param: None
-        :return: None
         """
         post_data = {'hf-username': 'govd0003'}
         rv = self.client.post('/account/deregister', data=post_data, follow_redirects=True)
@@ -142,8 +120,6 @@ class FunctionalTest(unittest.TestCase):
     def test_submit_incident(self):
         """
         Test submit incident page.
-        :param: None
-        :return: None
         """
         post_data = {'caller_name': 'testing', 'caller_mobile_number': '12345678', 'caller_location': 'NTU',
                      'type_of_assistance' : '1', 'description': '123', 'priority_for_severity_of_injuries': '1',
@@ -156,8 +132,6 @@ class FunctionalTest(unittest.TestCase):
     def test_update_incident(self):
         """
         Test update incident page.
-        :param: None
-        :return: None
         """
         # I have problems loading the update page. need to consult call center team. #
         pass
@@ -165,8 +139,6 @@ class FunctionalTest(unittest.TestCase):
     def test_delete_incident(self):
         """
         Test delete incident page.
-        :param: None
-        :return: None
         """
         # I have problems loading the delete page. need to consult call center team. #
         pass
@@ -176,8 +148,6 @@ class FunctionalTest(unittest.TestCase):
     def test_report(self):
         """
         Test generate report function.
-        :param: None
-        :return: None
         """
         post_data = {'username': 'admin_test', 'password': 'admin_test', 'role': 'Admin'}
         self.client.post('/login', data=post_data, follow_redirects=True)
@@ -188,8 +158,6 @@ class FunctionalTest(unittest.TestCase):
     def test_download_report(self):
         """
         Test download report function.
-        :param: None
-        :return: None
         """
         post_data = {'username': 'admin_test', 'password': 'admin_test', 'role': 'Admin'}
         self.client.post('/login', data=post_data, follow_redirects=True)
@@ -200,8 +168,6 @@ class FunctionalTest(unittest.TestCase):
     def test_send_report(self):     # may fail, SMTPServer is unstable
         """
         Test send report function.
-        :param: None
-        :return: None
         """
         post_data = {'username': 'admin_test', 'password': 'admin_test', 'role': 'Admin'}
         self.client.post('/login', data=post_data, follow_redirects=True)

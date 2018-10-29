@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>app_test module &mdash; cms  documentation</title>
+  <title>app_test module &mdash; CMS 1.0 documentation</title>
   
 
   
@@ -27,7 +27,9 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="db_test module" href="db_test.html" />
+    <link rel="prev" title="app module" href="app.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -46,7 +48,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> cms
+            <a href="index.html" class="icon icon-home"> CMS
           
 
           
@@ -76,11 +78,24 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">app_test module</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">crisis-management-system</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AccountManagement.html">AccountManagement package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CallCenter.html">CallCenter package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard.html">Dashboard package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Map.html">Map package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SocialMedia.html">SocialMedia package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">app_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="db_test.html">db_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="load_test_locust.html">load_test_locust module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html">model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
 </ul>
-</div>
+</li>
+</ul>
+
             
           
         </div>
@@ -93,7 +108,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">cms</a>
+          <a href="index.html">CMS</a>
         
       </nav>
 
@@ -124,6 +139,8 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
+          <li><a href="modules.html">crisis-management-system</a> &raquo;</li>
+        
       <li>app_test module</li>
     
     
@@ -147,98 +164,115 @@
 <span id="app-test-module"></span><h1>app_test module<a class="headerlink" href="#module-app_test" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="app_test.FunctionalTest">
-<em class="property">class </em><code class="descclassname">app_test.</code><code class="descname">FunctionalTest</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">app_test.</code><code class="descname">FunctionalTest</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
 <dl class="method">
 <dt id="app_test.FunctionalTest.setUp">
-<code class="descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.setUp" title="Permalink to this definition">¶</a></dt>
+<code class="descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.setUp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.setUp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Hook method for setting up the test fixture before exercising it.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_dashboard_page">
-<code class="descname">test_dashboard_page</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_dashboard_page" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_dashboard_page</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_dashboard_page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_dashboard_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test dashboard page.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_delete_incident">
-<code class="descname">test_delete_incident</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_delete_incident" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_delete_incident</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_delete_incident"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_delete_incident" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test delete incident page.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_deregister">
-<code class="descname">test_deregister</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_deregister" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_deregister</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_deregister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_deregister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test deregister page.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_download_report">
-<code class="descname">test_download_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_download_report" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_download_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_download_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_download_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test download report function.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_login">
-<code class="descname">test_login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_login" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test login page.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_logout">
-<code class="descname">test_logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_logout" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test logout page.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_map_dengue">
-<code class="descname">test_map_dengue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_map_dengue" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_map_dengue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_map_dengue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_map_dengue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test map dengue api.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_map_incidents">
-<code class="descname">test_map_incidents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_map_incidents" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_map_incidents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_map_incidents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_map_incidents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test map incidents api.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_map_psi">
-<code class="descname">test_map_psi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_map_psi" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_map_psi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_map_psi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_map_psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test map psi api.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_map_shelters">
-<code class="descname">test_map_shelters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_map_shelters" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_map_shelters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_map_shelters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_map_shelters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test map shelter api.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_map_weather">
-<code class="descname">test_map_weather</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_map_weather" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_map_weather</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_map_weather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_map_weather" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test map weather api.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_register">
-<code class="descname">test_register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_register" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test register page.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_report">
-<code class="descname">test_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_report" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test generate report function.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_send_report">
-<code class="descname">test_send_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_send_report" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_send_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_send_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_send_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test send report function.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_submit_incident">
-<code class="descname">test_submit_incident</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_submit_incident" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_submit_incident</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_submit_incident"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_submit_incident" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test submit incident page.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_update_incident">
-<code class="descname">test_update_incident</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_update_incident" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_update_incident</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_update_incident"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_update_incident" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test update incident page.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="app_test.FunctionalTest.test_view_form_main">
-<code class="descname">test_view_form_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app_test.FunctionalTest.test_view_form_main" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">test_view_form_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app_test.html#FunctionalTest.test_view_form_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app_test.FunctionalTest.test_view_form_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test main page.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -249,6 +283,15 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="db_test.html" class="btn btn-neutral float-right" title="db_test module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="app.html" class="btn btn-neutral" title="app module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

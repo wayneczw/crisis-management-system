@@ -4,7 +4,9 @@ crisis-management-system
 .. toctree::
    :maxdepth: 4
 
+   AccountManagement
    CallCenter
+   Dashboard
    Map
    SocialMedia
    app

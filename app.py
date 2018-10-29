@@ -63,8 +63,9 @@ mail = Mail(app)
 def login():
     """
     View function for login page.
-    :param: None
-    :return: render a template
+
+    Returns:
+        render a template.
     """
     error = None
     if request.method == 'POST':
@@ -82,8 +83,9 @@ def login():
 def logout():
     """
     View function for logout page.
-    :param: None
-    :return: render a template
+
+    Returns:
+        render a template.
     """
     session.pop('logged_in', None)
     session.pop('username', None)
@@ -111,8 +113,9 @@ def __verify_login(username, password, role):
 def make_shell_context():
     """
     Import models into shell context so they can be available once the shell start.
-    :param: None
-    :return: dictionary of database objects mappting.
+
+    Returns:
+        dictionary of database objects mappting.
     """
     return {'db': db, 'User': User, 'Role': Role}
 

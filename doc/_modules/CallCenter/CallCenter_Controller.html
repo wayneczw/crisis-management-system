@@ -1,0 +1,647 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>CallCenter.CallCenter_Controller &mdash; CMS 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CMS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">crisis-management-system</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CMS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>CallCenter.CallCenter_Controller</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for CallCenter.CallCenter_Controller</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">Blueprint</span>
+<span class="kn">from</span> <span class="nn">CallCenter.CallCenter_Model</span> <span class="k">import</span> <span class="n">init_db</span><span class="p">,</span> <span class="n">retrieve_all_incident_reports</span><span class="p">,</span> <span class="n">update_report</span><span class="p">,</span> <span class="n">retrieve_selected_incident_report</span><span class="p">,</span> <span class="n">delete_report</span><span class="p">,</span> <span class="n">insert_report</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">sleep</span>
+
+
+<span class="n">callcenter_api</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;callcenter&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="s1">&#39;CallCenter_Views&#39;</span><span class="p">,</span> <span class="p">)</span>
+<span class="n">callcenter_api</span><span class="o">.</span><span class="n">secret_key</span> <span class="o">=</span> <span class="s2">&quot;a2nbs81sSJl8d&quot;</span>  <span class="c1"># Set Encryption key to encrypt the Data sent by client during a Session [These Data is stored in the encrypted form]</span>
+<span class="n">init_db</span><span class="p">()</span>  <span class="c1"># Initialise database</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">@app.route() will indicate the web address that we need to type into our Web Browser.</span>
+<span class="sd">E.g. For the below, the function &quot;submit_new_incident_report()&quot; will be called whenever the user goes to an Web Address</span>
+<span class="sd">that ends with &quot;/submit_new_incident_report&quot;</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="update_incident_report"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Controller.update_incident_report">[docs]</a><span class="nd">@callcenter_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/update_incident_report_page&quot;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">update_incident_report</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    First Page of Updating an Incident Report.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        the html page enabling searching incident report to be updated.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">all_incident_reports</span> <span class="o">=</span> <span class="n">retrieve_all_incident_reports</span><span class="p">()</span> <span class="c1"># Call a Method from Model to retrieve all the Incident Reports</span>
+    <span class="c1"># Render the html page that corresponds to this method [And we give the html file some arguments]:</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;callcenter_ui_update_incident_report-int.html&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="s1">&#39;First reported time&#39;</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Mobile no.&#39;</span> <span class="p">,</span> <span class="s1">&#39;Location&#39;</span><span class="p">,</span> <span class="s1">&#39;Assistance requested&#39;</span><span class="p">,</span> <span class="s1">&#39;Description&#39;</span> <span class="p">,</span> <span class="s1">&#39;Priority on injuries&#39;</span><span class="p">,</span> <span class="s1">&#39;Priority on dangers&#39;</span><span class="p">,</span> <span class="s1">&#39;Priority on help&#39;</span><span class="p">,</span> <span class="s1">&#39;Report status&#39;</span><span class="p">,</span> <span class="s1">&#39;Is first such incident&#39;</span><span class="p">],</span> <span class="n">items</span><span class="o">=</span><span class="n">all_incident_reports</span><span class="p">)</span></div>
+
+
+<span class="c1"># Update Information about one particular Incident Report into the DB based on which incident the Call Operator has selected</span>
+
+
+<div class="viewcode-block" id="row_detail_for_update"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Controller.row_detail_for_update">[docs]</a><span class="nd">@callcenter_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/row_detail_for_update/&lt;rowData&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">row_detail_for_update</span><span class="p">(</span><span class="n">rowData</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Update Information about one particular Incident Report into the DB based on which incident the Call Operator has selected.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rowData: a particular incident report in database.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        return the html page enabling updating incident information</span>
+<span class="sd">        if&#39;submit&#39;button is pressed, return the updated information of the particular incident selected.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>  <span class="c1"># i.e. Once &quot;Submit&quot; Button is pressed</span>
+        <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;id_of_incident_report&#39;</span><span class="p">]</span>
+        <span class="n">first_reported</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;first_reported&#39;</span><span class="p">]</span>  <span class="c1"># Get the &quot;caller_name&quot; from the form that the User has submitted</span>
+        <span class="n">first_reported</span> <span class="o">=</span> <span class="n">first_reported</span> <span class="o">+</span> <span class="s2">&quot;0000000&quot;</span>   <span class="c1"># add back the last 7 digits when we storing the timestamp in database.</span>
+        <span class="n">caller_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;caller_name&#39;</span><span class="p">]</span>  <span class="c1"># Get the &quot;caller_name&quot; from the form that the User has submitted</span>
+        <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;caller_mobile_number&#39;</span><span class="p">]</span>
+        <span class="n">caller_location</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;caller_location&#39;</span><span class="p">]</span>
+        <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;type_of_assistance&#39;</span><span class="p">]</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+        <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;priority_for_severity_of_injuries&#39;</span><span class="p">]</span>
+        <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;priority_for_impending_dangers&#39;</span><span class="p">]</span>
+        <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;priority_for_presence_of_nearby_help&#39;</span><span class="p">]</span>
+        <span class="n">report_status</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;report_status&#39;</span><span class="p">]</span>
+        <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;is_first_such_incident&#39;</span><span class="p">]</span>
+
+
+        <span class="c1"># Update the Report in our Database by calling this method of the Model:</span>
+        <span class="n">update_report</span><span class="p">(</span><span class="n">id_of_incident_report</span><span class="p">,</span> <span class="n">caller_name</span><span class="p">,</span> <span class="n">caller_mobile_number</span> <span class="p">,</span> <span class="n">caller_location</span><span class="p">,</span> <span class="n">type_of_assistance</span><span class="p">,</span> <span class="n">description</span> <span class="p">,</span> <span class="n">priority_for_severity_of_injuries</span><span class="p">,</span> <span class="n">priority_for_impending_dangers</span><span class="p">,</span> <span class="n">priority_for_presence_of_nearby_help</span><span class="p">,</span> <span class="n">report_status</span><span class="p">,</span> <span class="n">is_first_such_incident</span><span class="p">)</span>
+
+
+        <span class="c1"># Show the Confirmation Page; Note that paramters such as &quot;caller_name&quot; is sent to the html file as an argument.</span>
+        <span class="c1"># Store some data using Session:</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;id_of_incident_report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">id_of_incident_report</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;first_reported&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">first_reported</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_name</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_mobile_number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_mobile_number</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_location</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;type_of_assistance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_of_assistance</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_severity_of_injuries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority_for_severity_of_injuries</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_impending_dangers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority_for_impending_dangers</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_presence_of_nearby_help&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority_for_presence_of_nearby_help</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;report_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">report_status</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;is_first_such_incident&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_first_such_incident</span>
+
+        <span class="c1"># Move to the Confirmation Page now:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/callcenter/incident_report_update_completion_page&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># i.e. &quot;Submit&quot; Button has not been pressed</span>
+
+        <span class="c1"># Getting an Integer [id_of_incident_report] from the String[rowData]</span>
+        <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">rowData</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">char</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="n">id_of_incident_report</span><span class="o">+</span><span class="n">char</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+        <span class="c1"># Call a method from the Model to retrieve that Incident Report from DB</span>
+        <span class="n">report</span> <span class="o">=</span> <span class="n">retrieve_selected_incident_report</span><span class="p">(</span><span class="n">id_of_incident_report</span><span class="p">)</span>
+
+        <span class="c1"># Break down the incident report that has been retrieved from the DB into dif parts:</span>
+        <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># get the id of the incident report</span>
+        <span class="n">first_reported</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># timestamp of when the incident is being reported at</span>
+        <span class="n">caller_name</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">caller_location</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+        <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+        <span class="n">report_status</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+        <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+
+        <span class="c1"># Render a html file and provide that html file with some arguments</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;callcenter_ui_row_detail_for_update.html&#39;</span><span class="p">,</span>
+                    <span class="n">id_of_incident_report</span><span class="o">=</span><span class="n">id_of_incident_report</span><span class="p">,</span>
+                    <span class="n">first_reported</span> <span class="o">=</span> <span class="n">first_reported</span><span class="p">,</span>
+                    <span class="n">caller_name</span> <span class="o">=</span> <span class="n">caller_name</span><span class="p">,</span>
+                    <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">caller_mobile_number</span><span class="p">,</span>
+                    <span class="n">caller_location</span> <span class="o">=</span> <span class="n">caller_location</span><span class="p">,</span>
+                    <span class="n">description</span> <span class="o">=</span> <span class="n">description</span><span class="p">,</span>
+                    <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">type_of_assistance</span><span class="p">,</span>
+                    <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">priority_for_severity_of_injuries</span><span class="p">,</span>
+                    <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">priority_for_impending_dangers</span><span class="p">,</span>
+                    <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">priority_for_presence_of_nearby_help</span><span class="p">,</span>
+                    <span class="n">report_status</span> <span class="o">=</span> <span class="n">report_status</span><span class="p">,</span>
+                    <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">is_first_such_incident</span>
+                                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="incident_report_update_completion_page"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Controller.incident_report_update_completion_page">[docs]</a><span class="nd">@callcenter_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/incident_report_update_completion_page&quot;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">incident_report_update_completion_page</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Show the Completion Page after Updating an Incident Report</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        return the html page for the updated incident information of the particular incident selected</span>
+<span class="sd">        if&#39;go back&#39;button is pressed, return the html page enabling updating incident.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>  <span class="c1"># i.e. &quot;Submit&quot; Button has been pressed</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/callcenter/update_incident_report_page&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Retrieve Data that has been stored in the Session:</span>
+    <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;id_of_incident_report&#39;</span><span class="p">]</span>
+    <span class="n">first_reported</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;first_reported&#39;</span><span class="p">]</span>
+    <span class="n">caller_name</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_name&#39;</span><span class="p">]</span>
+    <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_mobile_number&#39;</span><span class="p">]</span>
+    <span class="n">caller_location</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_location&#39;</span><span class="p">]</span>
+    <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;type_of_assistance&#39;</span><span class="p">]</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+    <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_severity_of_injuries&#39;</span><span class="p">]</span>
+    <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_impending_dangers&#39;</span><span class="p">]</span>
+    <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_presence_of_nearby_help&#39;</span><span class="p">]</span>
+    <span class="n">report_status</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;report_status&#39;</span><span class="p">]</span>
+    <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;is_first_such_incident&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Some formatting before displaying the data:</span>
+    <span class="n">assistance_required_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;No Assistance needed&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s1">&#39;Emergency Ambulance&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s1">&#39;Rescue and Evaluate&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s1">&#39;Gas Leak Control&#39;</span><span class="p">}</span> <span class="c1"># a Dict to convert assistance_required from int to string</span>
+    <span class="n">report_status_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;REPORTED&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s1">&#39;PENDING&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s1">&#39;CLOSED&#39;</span><span class="p">}</span> <span class="c1"># a Dict to convert report_status required from int to string</span>
+    <span class="n">is_first_such_incident_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;FALSE&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s1">&#39;TRUE&#39;</span><span class="p">}</span> <span class="c1"># a Dict to convert is_first_such_incident from int to string</span>
+    <span class="n">first_reported</span> <span class="o">=</span> <span class="n">first_reported</span><span class="p">[:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span>   <span class="c1"># remove last 7 chars [too precise]</span>
+
+    <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">assistance_required_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">type_of_assistance</span><span class="p">)]</span>
+    <span class="n">report_status</span> <span class="o">=</span> <span class="n">report_status_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">report_status</span><span class="p">)]</span>
+    <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">is_first_such_incident_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">is_first_such_incident</span><span class="p">)]</span>
+
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+                <span class="s1">&#39;callcenter_ui_new_incident_report_update_completion.html&#39;</span><span class="p">,</span>
+                <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="n">id_of_incident_report</span><span class="p">,</span>
+                <span class="n">first_reported</span> <span class="o">=</span> <span class="n">first_reported</span><span class="p">,</span>
+                <span class="n">caller_name</span> <span class="o">=</span> <span class="n">caller_name</span><span class="p">,</span>
+                <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">caller_mobile_number</span><span class="p">,</span>
+                <span class="n">caller_location</span> <span class="o">=</span> <span class="n">caller_location</span><span class="p">,</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="n">description</span><span class="p">,</span>
+                <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">type_of_assistance</span><span class="p">,</span>
+                <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">priority_for_severity_of_injuries</span><span class="p">,</span>
+                <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">priority_for_impending_dangers</span><span class="p">,</span>
+                <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">priority_for_presence_of_nearby_help</span><span class="p">,</span>
+                <span class="n">report_status</span> <span class="o">=</span> <span class="n">report_status</span><span class="p">,</span>
+                <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">is_first_such_incident</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete_incident_report"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Controller.delete_incident_report">[docs]</a><span class="nd">@callcenter_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/delete_incident_report_page&quot;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">delete_incident_report</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    First Page of Deleting an Incident Report</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        return the html page for incident information of the all incident reports for Call Operator to select</span>
+<span class="sd">        if a particular record is selected for deletion, return the html page for the details of the incident to be deleted.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">all_incident_reports</span> <span class="o">=</span> <span class="n">retrieve_all_incident_reports</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/dashboard&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;callcenter_ui_delete_incident_report-int.html&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="s1">&#39;First reported time&#39;</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Mobile no.&#39;</span> <span class="p">,</span> <span class="s1">&#39;Location&#39;</span><span class="p">,</span> <span class="s1">&#39;Assistance requested&#39;</span><span class="p">,</span> <span class="s1">&#39;Description&#39;</span> <span class="p">,</span> <span class="s1">&#39;Priority on injuries&#39;</span><span class="p">,</span> <span class="s1">&#39;Priority on dangers&#39;</span><span class="p">,</span> <span class="s1">&#39;Priority on help&#39;</span><span class="p">,</span> <span class="s1">&#39;Report status&#39;</span><span class="p">,</span> <span class="s1">&#39;Is first such incident&#39;</span><span class="p">],</span> <span class="n">items</span><span class="o">=</span><span class="n">all_incident_reports</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="row_detail_for_delete"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Controller.row_detail_for_delete">[docs]</a><span class="nd">@callcenter_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/row_detail_for_delete/&lt;rowData&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">row_detail_for_delete</span><span class="p">(</span><span class="n">rowData</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Delete Information about one particular Incident Report into the DB based on which incident the Call Operator has selected</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rowData: a particular incident report in database.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        return the incident information of a particular incident selected by Call Operator for deletion</span>
+<span class="sd">        if &#39;delete&#39; button is pressed, return the html page for incident report delete completion.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;id_of_incident_report&#39;</span><span class="p">]</span>
+        <span class="n">first_reported</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;first_reported&#39;</span><span class="p">]</span>  <span class="c1"># Get the &quot;caller_name&quot; from the form that the User has submitted</span>
+        <span class="n">first_reported</span> <span class="o">=</span> <span class="n">first_reported</span> <span class="o">+</span> <span class="s2">&quot;0000000&quot;</span>   <span class="c1"># add back the last 7 digits when we storing the timestamp in database.</span>
+        <span class="n">caller_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;caller_name&#39;</span><span class="p">]</span>  <span class="c1"># Get the &quot;caller_name&quot; from the form that the User has submitted</span>
+        <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;caller_mobile_number&#39;</span><span class="p">]</span>
+        <span class="n">caller_location</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;caller_location&#39;</span><span class="p">]</span>
+        <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;type_of_assistance&#39;</span><span class="p">]</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+        <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;priority_for_severity_of_injuries&#39;</span><span class="p">]</span>
+        <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;priority_for_impending_dangers&#39;</span><span class="p">]</span>
+        <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;priority_for_presence_of_nearby_help&#39;</span><span class="p">]</span>
+        <span class="n">report_status</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;report_status&#39;</span><span class="p">]</span>
+        <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;is_first_such_incident&#39;</span><span class="p">]</span>
+
+
+        <span class="c1"># Delete the Report in our Database by calling this method:</span>
+        <span class="n">delete_report</span><span class="p">(</span><span class="n">id_of_incident_report</span><span class="p">)</span>
+
+
+        <span class="c1"># Show the Confirmation Page; Note that paramters such as &quot;caller_name&quot; is sent to the html file as an argument.</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;id_of_incident_report&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">id_of_incident_report</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;first_reported&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">first_reported</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_name</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_mobile_number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_mobile_number</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_location</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;type_of_assistance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_of_assistance</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_severity_of_injuries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority_for_severity_of_injuries</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_impending_dangers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority_for_impending_dangers</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_presence_of_nearby_help&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority_for_presence_of_nearby_help</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;report_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">report_status</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;is_first_such_incident&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_first_such_incident</span>
+
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/callcenter/incident_report_delete_completion_page&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># Getting an Integer ID from the String[rowData]</span>
+        <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">rowData</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">char</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="n">id_of_incident_report</span><span class="o">+</span><span class="n">char</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+        <span class="n">report</span> <span class="o">=</span> <span class="n">retrieve_selected_incident_report</span><span class="p">(</span><span class="n">id_of_incident_report</span><span class="p">)</span>
+
+
+        <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># get the id of the incident report</span>
+        <span class="n">first_reported</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># timestamp of when the incident is being reported at</span>
+        <span class="n">caller_name</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">caller_location</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+        <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+        <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+        <span class="n">report_status</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+        <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+
+
+
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;callcenter_ui_row_detail_for_delete.html&#39;</span><span class="p">,</span>
+                    <span class="n">id_of_incident_report</span><span class="o">=</span><span class="n">id_of_incident_report</span><span class="p">,</span>
+                    <span class="n">first_reported</span> <span class="o">=</span> <span class="n">first_reported</span><span class="p">,</span>
+                    <span class="n">caller_name</span> <span class="o">=</span> <span class="n">caller_name</span><span class="p">,</span>
+                    <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">caller_mobile_number</span><span class="p">,</span>
+                    <span class="n">caller_location</span> <span class="o">=</span> <span class="n">caller_location</span><span class="p">,</span>
+                    <span class="n">description</span> <span class="o">=</span> <span class="n">description</span><span class="p">,</span>
+                    <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">type_of_assistance</span><span class="p">,</span>
+                    <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">priority_for_severity_of_injuries</span><span class="p">,</span>
+                    <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">priority_for_impending_dangers</span><span class="p">,</span>
+                    <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">priority_for_presence_of_nearby_help</span><span class="p">,</span>
+                    <span class="n">report_status</span> <span class="o">=</span> <span class="n">report_status</span><span class="p">,</span>
+                    <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">is_first_such_incident</span>
+                                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="incident_report_delete_completion_page"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Controller.incident_report_delete_completion_page">[docs]</a><span class="nd">@callcenter_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/incident_report_delete_completion_page&quot;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">incident_report_delete_completion_page</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Show the Completion Page after Deleting an Incident Report.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        return html page for the information of the deleted incident.</span>
+<span class="sd">        if &#39;go back&#39; button is pressed, return the html page enabling deleting incident report.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/callcenter/delete_incident_report_page&#39;</span><span class="p">)</span>
+
+    <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;id_of_incident_report&#39;</span><span class="p">]</span>
+    <span class="n">first_reported</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;first_reported&#39;</span><span class="p">]</span>
+    <span class="n">caller_name</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_name&#39;</span><span class="p">]</span>
+    <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_mobile_number&#39;</span><span class="p">]</span>
+    <span class="n">caller_location</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_location&#39;</span><span class="p">]</span>
+    <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;type_of_assistance&#39;</span><span class="p">]</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+    <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_severity_of_injuries&#39;</span><span class="p">]</span>
+    <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_impending_dangers&#39;</span><span class="p">]</span>
+    <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_presence_of_nearby_help&#39;</span><span class="p">]</span>
+    <span class="n">report_status</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;report_status&#39;</span><span class="p">]</span>
+    <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;is_first_such_incident&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Some formatting before displaying the data:</span>
+    <span class="n">assistance_required_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;No Assistance needed&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s1">&#39;Emergency Ambulance&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s1">&#39;Rescue and Evaluate&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s1">&#39;Gas Leak Control&#39;</span><span class="p">}</span> <span class="c1"># a Dict to convert assistance_required from int to string</span>
+    <span class="n">report_status_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;REPORTED&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s1">&#39;PENDING&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s1">&#39;CLOSED&#39;</span><span class="p">}</span> <span class="c1"># a Dict to convert report_status required from int to string</span>
+    <span class="n">is_first_such_incident_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;FALSE&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s1">&#39;TRUE&#39;</span><span class="p">}</span> <span class="c1"># a Dict to convert is_first_such_incident from int to string</span>
+
+    <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">assistance_required_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">type_of_assistance</span><span class="p">)]</span>
+    <span class="n">report_status</span> <span class="o">=</span> <span class="n">report_status_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">report_status</span><span class="p">)]</span>
+    <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">is_first_such_incident_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">is_first_such_incident</span><span class="p">)]</span>
+    <span class="n">first_reported</span> <span class="o">=</span> <span class="n">first_reported</span><span class="p">[:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span>   <span class="c1"># remove last 7 chars [too precise]</span>
+
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+                <span class="s1">&#39;callcenter_ui_new_incident_report_delete_completion.html&#39;</span><span class="p">,</span>
+                <span class="n">id_of_incident_report</span> <span class="o">=</span> <span class="n">id_of_incident_report</span><span class="p">,</span>
+                <span class="n">first_reported</span> <span class="o">=</span> <span class="n">first_reported</span><span class="p">,</span>
+                <span class="n">caller_name</span> <span class="o">=</span> <span class="n">caller_name</span><span class="p">,</span>
+                <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">caller_mobile_number</span><span class="p">,</span>
+                <span class="n">caller_location</span> <span class="o">=</span> <span class="n">caller_location</span><span class="p">,</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="n">description</span><span class="p">,</span>
+                <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">type_of_assistance</span><span class="p">,</span>
+                <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">priority_for_severity_of_injuries</span><span class="p">,</span>
+                <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">priority_for_impending_dangers</span><span class="p">,</span>
+                <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">priority_for_presence_of_nearby_help</span><span class="p">,</span>
+                <span class="n">report_status</span> <span class="o">=</span> <span class="n">report_status</span><span class="p">,</span>
+                <span class="n">is_first_such_incident</span> <span class="o">=</span> <span class="n">is_first_such_incident</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="incident_report_sent_completion_page"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Controller.incident_report_sent_completion_page">[docs]</a><span class="nd">@callcenter_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/incident_report_sent_completion_page&quot;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">incident_report_sent_completion_page</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Show the Completion Page after sending an Incident Report.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        return html page for the information of the new incident submitted</span>
+<span class="sd">        if &#39;go back&#39; button is pressed, return the html page enabling submitting new incident record.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">caller_name</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_name&#39;</span><span class="p">]</span>
+    <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_mobile_number&#39;</span><span class="p">]</span>
+    <span class="n">caller_location</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_location&#39;</span><span class="p">]</span>
+    <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;type_of_assistance&#39;</span><span class="p">]</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+    <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_severity_of_injuries&#39;</span><span class="p">]</span>
+    <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_impending_dangers&#39;</span><span class="p">]</span>
+    <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_presence_of_nearby_help&#39;</span><span class="p">]</span>
+    <span class="n">report_status</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;report_status&#39;</span><span class="p">]</span>
+
+
+    <span class="c1"># Some formatting before displaying the data:</span>
+    <span class="n">assistance_required_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;No Assistance needed&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s1">&#39;Emergency Ambulance&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s1">&#39;Rescue and Evaluate&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s1">&#39;Gas Leak Control&#39;</span><span class="p">}</span> <span class="c1"># a Dict to convert assistance_required from int to string</span>
+    <span class="n">report_status_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;REPORTED&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s1">&#39;PENDING&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s1">&#39;CLOSED&#39;</span><span class="p">}</span> <span class="c1"># a Dict to convert report_status required from int to string</span>
+    <span class="n">is_first_such_incident_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;FALSE&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s1">&#39;TRUE&#39;</span><span class="p">}</span> <span class="c1"># a Dict to convert is_first_such_incident from int to string</span>
+
+    <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">assistance_required_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">type_of_assistance</span><span class="p">)]</span>
+    <span class="n">report_status</span> <span class="o">=</span> <span class="n">report_status_dict</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">report_status</span><span class="p">)]</span>
+
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/callcenter/submit_new_incident_report&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+                <span class="s1">&#39;callcenter_ui_new_incident_report_sent_completion.html&#39;</span><span class="p">,</span>
+                <span class="n">caller_name</span> <span class="o">=</span> <span class="n">caller_name</span><span class="p">,</span>
+                <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">caller_mobile_number</span><span class="p">,</span>
+                <span class="n">caller_location</span> <span class="o">=</span> <span class="n">caller_location</span><span class="p">,</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="n">description</span><span class="p">,</span>
+                <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">type_of_assistance</span><span class="p">,</span>
+                <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">priority_for_severity_of_injuries</span><span class="p">,</span>
+                <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">priority_for_impending_dangers</span><span class="p">,</span>
+                <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">priority_for_presence_of_nearby_help</span><span class="p">,</span>
+                <span class="n">report_status</span> <span class="o">=</span> <span class="n">report_status</span>
+                            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="submit_new_incident_report"><a class="viewcode-back" href="../../CallCenter.html#CallCenter.CallCenter_Controller.submit_new_incident_report">[docs]</a><span class="nd">@callcenter_api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/submit_new_incident_report&quot;</span><span class="p">,</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">submit_new_incident_report</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     To submit a new Incident report into Database.</span>
+<span class="sd">     </span>
+<span class="sd">     Returns:</span>
+<span class="sd">         return html page enabling submitting a new incident record</span>
+<span class="sd">        if &#39;submit&#39; button is pressed, return the html page for information of the new incident submitted.</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+    <span class="c1"># Public Method</span>
+    <span class="c1"># To submit a new Incident report into Database; No parameters is required;</span>
+    <span class="c1"># This Function is called whenever Call Operator need to submit a new Incident Report.</span>
+
+    <span class="c1"># If the user has POST sth [i.e. Submitted a form],</span>
+    <span class="c1"># we will show him/her the &quot;Incident Report has been sent&quot; Confirmation Page.</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">caller_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;caller_name&#39;</span><span class="p">]</span>  <span class="c1"># Get the &quot;caller_name&quot; from the form that the User has submitted</span>
+        <span class="n">caller_mobile_number</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;caller_mobile_number&#39;</span><span class="p">]</span>
+        <span class="n">caller_location</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;caller_location&#39;</span><span class="p">]</span>
+        <span class="n">type_of_assistance</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;type_of_assistance&#39;</span><span class="p">]</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+        <span class="n">priority_for_severity_of_injuries</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;priority_for_severity_of_injuries&#39;</span><span class="p">]</span>
+        <span class="n">priority_for_impending_dangers</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;priority_for_impending_dangers&#39;</span><span class="p">]</span>
+        <span class="n">priority_for_presence_of_nearby_help</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;priority_for_presence_of_nearby_help&#39;</span><span class="p">]</span>
+        <span class="n">report_status</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;report_status&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Insert the Report into our Database by calling this method of our Model:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">insert_report</span><span class="p">(</span><span class="n">caller_name</span><span class="p">,</span> <span class="n">caller_mobile_number</span> <span class="p">,</span> <span class="n">caller_location</span><span class="p">,</span> <span class="n">type_of_assistance</span><span class="p">,</span> <span class="n">description</span> <span class="p">,</span> <span class="n">priority_for_severity_of_injuries</span><span class="p">,</span> <span class="n">priority_for_impending_dangers</span><span class="p">,</span> <span class="n">priority_for_presence_of_nearby_help</span><span class="p">,</span> <span class="n">report_status</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;. Please try again!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/callcenter/submit_new_incident_report&#39;</span><span class="p">)</span> <span class="c1"># stay on the same page</span>
+        <span class="k">except</span> <span class="ne">PermissionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;. Please try again!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/callcenter/submit_new_incident_report&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Show the Confirmation Page; Note that paramters such as &quot;caller_name&quot; is sent to the html file as an argument.</span>
+
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_name</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_mobile_number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_mobile_number</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;caller_location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">caller_location</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;type_of_assistance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_of_assistance</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_severity_of_injuries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority_for_severity_of_injuries</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_impending_dangers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority_for_impending_dangers</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;priority_for_presence_of_nearby_help&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">priority_for_presence_of_nearby_help</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;report_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">report_status</span>
+
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/callcenter/incident_report_sent_completion_page&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If User has not sent anything, we will show him/her the Form to submit a New Incident Report.</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;callcenter_ui_new_incident_report_submission-int.html&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, giligili
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>SocialMedia package &mdash; cms  documentation</title>
+  <title>SocialMedia package &mdash; CMS 1.0 documentation</title>
   
 
   
@@ -27,7 +27,9 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="app module" href="app.html" />
+    <link rel="prev" title="Map package" href="Map.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -46,7 +48,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> cms
+            <a href="index.html" class="icon icon-home"> CMS
           
 
           
@@ -76,19 +78,32 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">SocialMedia package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-SocialMedia.connector">SocialMedia.connector module</a></li>
-<li><a class="reference internal" href="#module-SocialMedia.controller">SocialMedia.controller module</a></li>
-<li><a class="reference internal" href="#module-SocialMedia.model">SocialMedia.model module</a></li>
-<li><a class="reference internal" href="#module-SocialMedia.renderer">SocialMedia.renderer module</a></li>
-<li><a class="reference internal" href="#module-SocialMedia">Module contents</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">crisis-management-system</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AccountManagement.html">AccountManagement package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CallCenter.html">CallCenter package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard.html">Dashboard package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Map.html">Map package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SocialMedia package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SocialMedia.connector">SocialMedia.connector module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SocialMedia.controller">SocialMedia.controller module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SocialMedia.model">SocialMedia.model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SocialMedia.renderer">SocialMedia.renderer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-SocialMedia">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_test.html">app_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="db_test.html">db_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="load_test_locust.html">load_test_locust module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html">model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
 </ul>
 </li>
 </ul>
-</div>
+
             
           
         </div>
@@ -101,7 +116,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">cms</a>
+          <a href="index.html">CMS</a>
         
       </nav>
 
@@ -132,6 +147,8 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
+          <li><a href="modules.html">crisis-management-system</a> &raquo;</li>
+        
       <li>SocialMedia package</li>
     
     
@@ -160,24 +177,24 @@
 <span id="socialmedia-connector-module"></span><h2>SocialMedia.connector module<a class="headerlink" href="#module-SocialMedia.connector" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="SocialMedia.connector.APIConnector">
-<em class="property">class </em><code class="descclassname">SocialMedia.connector.</code><code class="descname">APIConnector</code><a class="headerlink" href="#SocialMedia.connector.APIConnector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.connector.</code><code class="descname">APIConnector</code><a class="reference internal" href="_modules/SocialMedia/connector.html#APIConnector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.connector.APIConnector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class for API connectors</p>
 <dl class="method">
 <dt id="SocialMedia.connector.APIConnector.send_message">
-<code class="descname">send_message</code><span class="sig-paren">(</span><em>message: str</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.connector.APIConnector.send_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">send_message</code><span class="sig-paren">(</span><em>message: str</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/connector.html#APIConnector.send_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.connector.APIConnector.send_message" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="SocialMedia.connector.FacebookConnector">
-<em class="property">class </em><code class="descclassname">SocialMedia.connector.</code><code class="descname">FacebookConnector</code><a class="headerlink" href="#SocialMedia.connector.FacebookConnector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.connector.</code><code class="descname">FacebookConnector</code><a class="reference internal" href="_modules/SocialMedia/connector.html#FacebookConnector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.connector.FacebookConnector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SocialMedia.connector.APIConnector" title="SocialMedia.connector.APIConnector"><code class="xref py py-class docutils literal notranslate"><span class="pre">SocialMedia.connector.APIConnector</span></code></a></p>
 <p>FacebookConnector is an APIConnector that performs communication with the Facebook API</p>
 <dl class="method">
 <dt id="SocialMedia.connector.FacebookConnector.send_message">
-<code class="descname">send_message</code><span class="sig-paren">(</span><em>message: str</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.connector.FacebookConnector.send_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">send_message</code><span class="sig-paren">(</span><em>message: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/connector.html#FacebookConnector.send_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.connector.FacebookConnector.send_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a message to the Facebook API
 :param message: A text string message to be sent to the Facebook API
 :return: None</p>
@@ -187,12 +204,12 @@
 
 <dl class="class">
 <dt id="SocialMedia.connector.SMSConnector">
-<em class="property">class </em><code class="descclassname">SocialMedia.connector.</code><code class="descname">SMSConnector</code><a class="headerlink" href="#SocialMedia.connector.SMSConnector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.connector.</code><code class="descname">SMSConnector</code><a class="reference internal" href="_modules/SocialMedia/connector.html#SMSConnector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.connector.SMSConnector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SocialMedia.connector.APIConnector" title="SocialMedia.connector.APIConnector"><code class="xref py py-class docutils literal notranslate"><span class="pre">SocialMedia.connector.APIConnector</span></code></a></p>
 <p>SMSConnector is an APIConnector that performs communication with the SMS API</p>
 <dl class="method">
 <dt id="SocialMedia.connector.SMSConnector.send_message">
-<code class="descname">send_message</code><span class="sig-paren">(</span><em>message: str</em>, <em>recipient_number: int</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.connector.SMSConnector.send_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">send_message</code><span class="sig-paren">(</span><em>message: str</em>, <em>recipient_number: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/connector.html#SMSConnector.send_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.connector.SMSConnector.send_message" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a message to the SMS API
 :param message: A text string message to be sent to the SMS API
 :param recipient_number: The phone number to indicate to the SMS API
@@ -206,7 +223,7 @@
 <span id="socialmedia-controller-module"></span><h2>SocialMedia.controller module<a class="headerlink" href="#module-SocialMedia.controller" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="SocialMedia.controller.SocialMedia">
-<em class="property">class </em><code class="descclassname">SocialMedia.controller.</code><code class="descname">SocialMedia</code><a class="headerlink" href="#SocialMedia.controller.SocialMedia" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.controller.</code><code class="descname">SocialMedia</code><a class="reference internal" href="_modules/SocialMedia/controller.html#SocialMedia"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.controller.SocialMedia" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>SocialMedia is the main-entry point for the social media subsystem. It is a controller class that provides the
 following services:</p>
@@ -219,7 +236,7 @@ following services:</p>
 </div></blockquote>
 <dl class="method">
 <dt id="SocialMedia.controller.SocialMedia.alert_authorities">
-<code class="descname">alert_authorities</code><span class="sig-paren">(</span><em>incident: SocialMedia.model.IncidentReport</em>, <em>authority</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.controller.SocialMedia.alert_authorities" title="Permalink to this definition">¶</a></dt>
+<code class="descname">alert_authorities</code><span class="sig-paren">(</span><em>incident: SocialMedia.model.IncidentReport</em>, <em>authority</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/controller.html#SocialMedia.alert_authorities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.controller.SocialMedia.alert_authorities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alert authorities about an incident
 :param incident: The details of an incident
 :param authority:  Valid values are defined in Model.Contact.AUTHORITY_* constants
@@ -228,7 +245,7 @@ following services:</p>
 
 <dl class="method">
 <dt id="SocialMedia.controller.SocialMedia.alert_public">
-<code class="descname">alert_public</code><span class="sig-paren">(</span><em>crisis: SocialMedia.model.CrisisReport</em>, <em>max_distance_km=5</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.controller.SocialMedia.alert_public" title="Permalink to this definition">¶</a></dt>
+<code class="descname">alert_public</code><span class="sig-paren">(</span><em>crisis: SocialMedia.model.CrisisReport</em>, <em>max_distance_km=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/controller.html#SocialMedia.alert_public"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.controller.SocialMedia.alert_public" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alert public members residing near a crisis area about a crisis
 :param crisis: The details of a crisis
 :param max_distance_km: The maximum distance of nearby residents
@@ -237,7 +254,7 @@ following services:</p>
 
 <dl class="method">
 <dt id="SocialMedia.controller.SocialMedia.post_facebook">
-<code class="descname">post_facebook</code><span class="sig-paren">(</span><em>crisis: SocialMedia.model.CrisisReport</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.controller.SocialMedia.post_facebook" title="Permalink to this definition">¶</a></dt>
+<code class="descname">post_facebook</code><span class="sig-paren">(</span><em>crisis: SocialMedia.model.CrisisReport</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/controller.html#SocialMedia.post_facebook"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.controller.SocialMedia.post_facebook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Post to facebook with information about a crisis
 :param crisis: The details of a crisis
 :return: None</p>
@@ -250,7 +267,7 @@ following services:</p>
 <span id="socialmedia-model-module"></span><h2>SocialMedia.model module<a class="headerlink" href="#module-SocialMedia.model" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="SocialMedia.model.Address">
-<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">Address</code><span class="sig-paren">(</span><em>street_name</em>, <em>unit_number</em>, <em>postal_code</em>, <em>coordinates</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.Address" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">Address</code><span class="sig-paren">(</span><em>street_name</em>, <em>unit_number</em>, <em>postal_code</em>, <em>coordinates</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#Address"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.Address" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="attribute">
 <dt id="SocialMedia.model.Address.coordinates">
@@ -261,7 +278,7 @@ following services:</p>
 
 <dl class="class">
 <dt id="SocialMedia.model.Contact">
-<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">Contact</code><span class="sig-paren">(</span><em>name</em>, <em>phone</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.Contact" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">Contact</code><span class="sig-paren">(</span><em>name</em>, <em>phone</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#Contact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.Contact" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="attribute">
 <dt id="SocialMedia.model.Contact.AUTHORITY_POLICE">
@@ -285,24 +302,24 @@ following services:</p>
 
 <dl class="staticmethod">
 <dt id="SocialMedia.model.Contact.retrieve_authority_contact">
-<em class="property">static </em><code class="descname">retrieve_authority_contact</code><span class="sig-paren">(</span><em>authority</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.Contact.retrieve_authority_contact" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">retrieve_authority_contact</code><span class="sig-paren">(</span><em>authority</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#Contact.retrieve_authority_contact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.Contact.retrieve_authority_contact" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="SocialMedia.model.CrisisReport">
-<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">CrisisReport</code><span class="sig-paren">(</span><em>identifier</em>, <em>name</em>, <em>address</em>, <em>category</em>, <em>description</em>, <em>date</em>, <em>time</em>, <em>advisory</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.CrisisReport" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">CrisisReport</code><span class="sig-paren">(</span><em>identifier</em>, <em>name</em>, <em>address</em>, <em>category</em>, <em>description</em>, <em>date</em>, <em>time</em>, <em>advisory</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#CrisisReport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.CrisisReport" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SocialMedia.model.Report" title="SocialMedia.model.Report"><code class="xref py py-class docutils literal notranslate"><span class="pre">SocialMedia.model.Report</span></code></a></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="SocialMedia.model.GeoCoordinate">
-<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">GeoCoordinate</code><span class="sig-paren">(</span><em>latitude</em>, <em>longitude</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.GeoCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">GeoCoordinate</code><span class="sig-paren">(</span><em>latitude</em>, <em>longitude</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#GeoCoordinate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.GeoCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="SocialMedia.model.GeoCoordinate.calculate_distance">
-<code class="descname">calculate_distance</code><span class="sig-paren">(</span><em>destination</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.GeoCoordinate.calculate_distance" title="Permalink to this definition">¶</a></dt>
+<code class="descname">calculate_distance</code><span class="sig-paren">(</span><em>destination</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#GeoCoordinate.calculate_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.GeoCoordinate.calculate_distance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the distance from the this coordinate to the specified destination
 :param destination: The destination coordinate
 :return: A float value indicating the distance between this coordinate and destination in kilometres</p>
@@ -312,13 +329,13 @@ following services:</p>
 
 <dl class="class">
 <dt id="SocialMedia.model.IncidentReport">
-<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">IncidentReport</code><span class="sig-paren">(</span><em>identifier</em>, <em>name</em>, <em>address</em>, <em>phone</em>, <em>description</em>, <em>status</em>, <em>reported_time</em>, <em>assistance_required</em>, <em>priority</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.IncidentReport" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">IncidentReport</code><span class="sig-paren">(</span><em>identifier</em>, <em>name</em>, <em>address</em>, <em>phone</em>, <em>description</em>, <em>status</em>, <em>reported_time</em>, <em>assistance_required</em>, <em>priority</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#IncidentReport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.IncidentReport" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SocialMedia.model.Report" title="SocialMedia.model.Report"><code class="xref py py-class docutils literal notranslate"><span class="pre">SocialMedia.model.Report</span></code></a></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="SocialMedia.model.Person">
-<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">Person</code><span class="sig-paren">(</span><em>name</em>, <em>phone</em>, <em>gender</em>, <em>address</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.Person" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">Person</code><span class="sig-paren">(</span><em>name</em>, <em>phone</em>, <em>gender</em>, <em>address</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#Person"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.Person" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SocialMedia.model.Contact" title="SocialMedia.model.Contact"><code class="xref py py-class docutils literal notranslate"><span class="pre">SocialMedia.model.Contact</span></code></a></p>
 <dl class="attribute">
 <dt id="SocialMedia.model.Person.GENDER_FEMALE">
@@ -332,7 +349,7 @@ following services:</p>
 
 <dl class="staticmethod">
 <dt id="SocialMedia.model.Person.retrieve_nearby_residents">
-<em class="property">static </em><code class="descname">retrieve_nearby_residents</code><span class="sig-paren">(</span><em>coordinate</em>, <em>max_distance</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.Person.retrieve_nearby_residents" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">retrieve_nearby_residents</code><span class="sig-paren">(</span><em>coordinate</em>, <em>max_distance</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#Person.retrieve_nearby_residents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.Person.retrieve_nearby_residents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve nearby residents
 :param coordinate: The anchor point coordinate to search for nearby residents
 :param max_distance: The maximum distance allowed from the anchor point
@@ -343,13 +360,13 @@ following services:</p>
 
 <dl class="class">
 <dt id="SocialMedia.model.Priority">
-<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">Priority</code><span class="sig-paren">(</span><em>injury_value</em>, <em>danger_value</em>, <em>help_value</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.Priority" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">Priority</code><span class="sig-paren">(</span><em>injury_value</em>, <em>danger_value</em>, <em>help_value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#Priority"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.Priority" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="SocialMedia.model.Report">
-<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">Report</code><span class="sig-paren">(</span><em>identifier</em>, <em>name</em>, <em>address</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.model.Report" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.model.</code><code class="descname">Report</code><span class="sig-paren">(</span><em>identifier</em>, <em>name</em>, <em>address</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/model.html#Report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.model.Report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
@@ -358,36 +375,36 @@ following services:</p>
 <span id="socialmedia-renderer-module"></span><h2>SocialMedia.renderer module<a class="headerlink" href="#module-SocialMedia.renderer" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="SocialMedia.renderer.MessageFormatRenderer">
-<em class="property">class </em><code class="descclassname">SocialMedia.renderer.</code><code class="descname">MessageFormatRenderer</code><span class="sig-paren">(</span><em>format_spec: str</em><span class="sig-paren">)</span><a class="headerlink" href="#SocialMedia.renderer.MessageFormatRenderer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.renderer.</code><code class="descname">MessageFormatRenderer</code><span class="sig-paren">(</span><em>format_spec: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SocialMedia/renderer.html#MessageFormatRenderer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.renderer.MessageFormatRenderer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SocialMedia.renderer.MessageRenderer" title="SocialMedia.renderer.MessageRenderer"><code class="xref py py-class docutils literal notranslate"><span class="pre">SocialMedia.renderer.MessageRenderer</span></code></a></p>
 <p>MessageFormatRenderer is a MessageRenderer that formats a string with an
 input parameter based on a predefined format_spec string</p>
 <dl class="method">
 <dt id="SocialMedia.renderer.MessageFormatRenderer.render_message">
-<code class="descname">render_message</code><span class="sig-paren">(</span><em>input</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#SocialMedia.renderer.MessageFormatRenderer.render_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">render_message</code><span class="sig-paren">(</span><em>input</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/SocialMedia/renderer.html#MessageFormatRenderer.render_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.renderer.MessageFormatRenderer.render_message" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="SocialMedia.renderer.MessageRenderer">
-<em class="property">class </em><code class="descclassname">SocialMedia.renderer.</code><code class="descname">MessageRenderer</code><a class="headerlink" href="#SocialMedia.renderer.MessageRenderer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.renderer.</code><code class="descname">MessageRenderer</code><a class="reference internal" href="_modules/SocialMedia/renderer.html#MessageRenderer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.renderer.MessageRenderer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class for message renderer</p>
 <dl class="method">
 <dt id="SocialMedia.renderer.MessageRenderer.render_message">
-<code class="descname">render_message</code><span class="sig-paren">(</span><em>incident: SocialMedia.model.CrisisReport</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#SocialMedia.renderer.MessageRenderer.render_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">render_message</code><span class="sig-paren">(</span><em>incident: SocialMedia.model.CrisisReport</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/SocialMedia/renderer.html#MessageRenderer.render_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.renderer.MessageRenderer.render_message" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="SocialMedia.renderer.StubMessageRenderer">
-<em class="property">class </em><code class="descclassname">SocialMedia.renderer.</code><code class="descname">StubMessageRenderer</code><a class="headerlink" href="#SocialMedia.renderer.StubMessageRenderer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">SocialMedia.renderer.</code><code class="descname">StubMessageRenderer</code><a class="reference internal" href="_modules/SocialMedia/renderer.html#StubMessageRenderer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.renderer.StubMessageRenderer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#SocialMedia.renderer.MessageRenderer" title="SocialMedia.renderer.MessageRenderer"><code class="xref py py-class docutils literal notranslate"><span class="pre">SocialMedia.renderer.MessageRenderer</span></code></a></p>
 <dl class="method">
 <dt id="SocialMedia.renderer.StubMessageRenderer.render_message">
-<code class="descname">render_message</code><span class="sig-paren">(</span><em>incident: SocialMedia.model.CrisisReport</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#SocialMedia.renderer.StubMessageRenderer.render_message" title="Permalink to this definition">¶</a></dt>
+<code class="descname">render_message</code><span class="sig-paren">(</span><em>incident: SocialMedia.model.CrisisReport</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/SocialMedia/renderer.html#StubMessageRenderer.render_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SocialMedia.renderer.StubMessageRenderer.render_message" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -403,6 +420,15 @@ input parameter based on a predefined format_spec string</p>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="app.html" class="btn btn-neutral float-right" title="app module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Map.html" class="btn btn-neutral" title="Map package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

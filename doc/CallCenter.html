@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>CallCenter package &mdash; cms  documentation</title>
+  <title>CallCenter package &mdash; CMS 1.0 documentation</title>
   
 
   
@@ -27,7 +27,9 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Dashboard package" href="Dashboard.html" />
+    <link rel="prev" title="AccountManagement package" href="AccountManagement.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -46,7 +48,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> cms
+            <a href="index.html" class="icon icon-home"> CMS
           
 
           
@@ -76,18 +78,31 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">CallCenter package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#callcenter-callcenter-controller-copy-module">CallCenter.CallCenter_Controller - Copy module</a></li>
-<li><a class="reference internal" href="#module-CallCenter.CallCenter_Controller">CallCenter.CallCenter_Controller module</a></li>
-<li><a class="reference internal" href="#module-CallCenter.CallCenter_Model">CallCenter.CallCenter_Model module</a></li>
-<li><a class="reference internal" href="#module-CallCenter">Module contents</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">crisis-management-system</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AccountManagement.html">AccountManagement package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">CallCenter package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#callcenter-callcenter-controller-copy-module">CallCenter.CallCenter_Controller - Copy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-CallCenter.CallCenter_Controller">CallCenter.CallCenter_Controller module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-CallCenter.CallCenter_Model">CallCenter.CallCenter_Model module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-CallCenter">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard.html">Dashboard package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Map.html">Map package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SocialMedia.html">SocialMedia package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.html">app module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_test.html">app_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="db_test.html">db_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="load_test_locust.html">load_test_locust module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html">model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
 </ul>
 </li>
 </ul>
-</div>
+
             
           
         </div>
@@ -100,7 +115,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">cms</a>
+          <a href="index.html">CMS</a>
         
       </nav>
 
@@ -130,6 +145,8 @@
   <ul class="wy-breadcrumbs">
     
       <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">crisis-management-system</a> &raquo;</li>
         
       <li>CallCenter package</li>
     
@@ -162,51 +179,273 @@
 <span id="callcenter-callcenter-controller-module"></span><h2>CallCenter.CallCenter_Controller module<a class="headerlink" href="#module-CallCenter.CallCenter_Controller" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="CallCenter.CallCenter_Controller.delete_incident_report">
-<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">delete_incident_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CallCenter.CallCenter_Controller.delete_incident_report" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">delete_incident_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Controller.html#delete_incident_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Controller.delete_incident_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>First Page of Deleting an Incident Report</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>return the html page for incident information of the all incident reports for Call Operator to select
+if a particular record is selected for deletion, return the html page for the details of the incident to be deleted.</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="CallCenter.CallCenter_Controller.incident_report_delete_completion_page">
-<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">incident_report_delete_completion_page</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CallCenter.CallCenter_Controller.incident_report_delete_completion_page" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">incident_report_delete_completion_page</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Controller.html#incident_report_delete_completion_page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Controller.incident_report_delete_completion_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the Completion Page after Deleting an Incident Report.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>return html page for the information of the deleted incident.
+if ‘go back’ button is pressed, return the html page enabling deleting incident report.</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="CallCenter.CallCenter_Controller.incident_report_sent_completion_page">
-<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">incident_report_sent_completion_page</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CallCenter.CallCenter_Controller.incident_report_sent_completion_page" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">incident_report_sent_completion_page</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Controller.html#incident_report_sent_completion_page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Controller.incident_report_sent_completion_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the Completion Page after sending an Incident Report.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>return html page for the information of the new incident submitted
+if ‘go back’ button is pressed, return the html page enabling submitting new incident record.</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="CallCenter.CallCenter_Controller.incident_report_update_completion_page">
-<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">incident_report_update_completion_page</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CallCenter.CallCenter_Controller.incident_report_update_completion_page" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">incident_report_update_completion_page</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Controller.html#incident_report_update_completion_page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Controller.incident_report_update_completion_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the Completion Page after Updating an Incident Report</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>return the html page for the updated incident information of the particular incident selected
+if’go back’button is pressed, return the html page enabling updating incident.</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="CallCenter.CallCenter_Controller.row_detail_for_delete">
-<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">row_detail_for_delete</code><span class="sig-paren">(</span><em>rowData</em><span class="sig-paren">)</span><a class="headerlink" href="#CallCenter.CallCenter_Controller.row_detail_for_delete" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">row_detail_for_delete</code><span class="sig-paren">(</span><em>rowData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Controller.html#row_detail_for_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Controller.row_detail_for_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete Information about one particular Incident Report into the DB based on which incident the Call Operator has selected</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>rowData: a particular incident report in database.</dd>
+<dt>Returns:</dt>
+<dd>return the incident information of a particular incident selected by Call Operator for deletion
+if ‘delete’ button is pressed, return the html page for incident report delete completion.</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="CallCenter.CallCenter_Controller.row_detail_for_update">
-<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">row_detail_for_update</code><span class="sig-paren">(</span><em>rowData</em><span class="sig-paren">)</span><a class="headerlink" href="#CallCenter.CallCenter_Controller.row_detail_for_update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">row_detail_for_update</code><span class="sig-paren">(</span><em>rowData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Controller.html#row_detail_for_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Controller.row_detail_for_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update Information about one particular Incident Report into the DB based on which incident the Call Operator has selected.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>rowData: a particular incident report in database.</dd>
+<dt>Returns:</dt>
+<dd>return the html page enabling updating incident information
+if’submit’button is pressed, return the updated information of the particular incident selected.</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="CallCenter.CallCenter_Controller.submit_new_incident_report">
-<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">submit_new_incident_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CallCenter.CallCenter_Controller.submit_new_incident_report" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">submit_new_incident_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Controller.html#submit_new_incident_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Controller.submit_new_incident_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>To submit a new Incident report into Database.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><blockquote class="first">
+<div>return html page enabling submitting a new incident record</div></blockquote>
+<p class="last">if ‘submit’ button is pressed, return the html page for information of the new incident submitted.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="CallCenter.CallCenter_Controller.update_incident_report">
-<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">update_incident_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CallCenter.CallCenter_Controller.update_incident_report" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">CallCenter.CallCenter_Controller.</code><code class="descname">update_incident_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Controller.html#update_incident_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Controller.update_incident_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>First Page of Updating an Incident Report.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>the html page enabling searching incident report to be updated.</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-CallCenter.CallCenter_Model">
 <span id="callcenter-callcenter-model-module"></span><h2>CallCenter.CallCenter_Model module<a class="headerlink" href="#module-CallCenter.CallCenter_Model" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
+<dt id="CallCenter.CallCenter_Model.close_connection">
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">close_connection</code><span class="sig-paren">(</span><em>exception</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#close_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.close_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close database connection.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>exception: the exception forces the disconnetion of controller and database.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="CallCenter.CallCenter_Model.delete_report">
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">delete_report</code><span class="sig-paren">(</span><em>id_of_incident_report</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#delete_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.delete_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete incident report.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>id_of_incident_report: id of the incident report that would be deleted.</dd>
+<dt>Returns:</dt>
+<dd>0</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="CallCenter.CallCenter_Model.get_db">
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">get_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#get_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.get_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get database.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>db: A reference to database.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="CallCenter.CallCenter_Model.init_db">
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">init_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#init_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.init_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize database.</p>
+<dl class="docutils">
+<dt>Raises:</dt>
+<dd>FileNotFoundError: File not found.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="CallCenter.CallCenter_Model.insert_report">
-<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">insert_report</code><span class="sig-paren">(</span><em>name</em>, <em>mobile_number</em>, <em>location</em>, <em>assistance_required</em>, <em>description</em>, <em>priority_injuries</em>, <em>priority_dangers</em>, <em>priority_help</em>, <em>report_status</em><span class="sig-paren">)</span><a class="headerlink" href="#CallCenter.CallCenter_Model.insert_report" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">insert_report</code><span class="sig-paren">(</span><em>name</em>, <em>mobile_number</em>, <em>location</em>, <em>assistance_required</em>, <em>description</em>, <em>priority_injuries</em>, <em>priority_dangers</em>, <em>priority_help</em>, <em>report_status</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#insert_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.insert_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert report into database</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><div class="first last line-block">
+<div class="line">name: name.</div>
+<div class="line">mobile_number: mobile number.</div>
+<div class="line">location: location.</div>
+<div class="line">assistance_required: if assistance is required.</div>
+<div class="line">description: description.</div>
+<div class="line">priority_injuries: priority of injuries.</div>
+<div class="line">priority_dangers: priority of dangers.</div>
+<div class="line">priority_help: priority of help.</div>
+<div class="line">report_status: report status.</div>
+</div>
+</dd>
+<dt>Returns:</dt>
+<dd>0</dd>
+<dt>Raises:</dt>
+<dd><div class="first last line-block">
+<div class="line">ValueError: in __check_name raised if the name is illegal.</div>
+<div class="line">ValueError: in __check_mobile_no raised if the mobile number is illegal.</div>
+<div class="line">ValueError: in __check_loc raised if the location in empty.</div>
+<div class="line">ValueError: in __check_description raised if the description is empty.</div>
+<div class="line">ValueError: in insert_report raised if the report type and asssistance type are inconsistent.</div>
+<div class="line">AssertionError: if the data inserted is invalid.</div>
+<div class="line">PermissionError: if the reported incident is duplicated.</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="CallCenter.CallCenter_Model.query_db">
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">query_db</code><span class="sig-paren">(</span><em>query</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#query_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.query_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query from database.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>query: an SQL query template.
+args: a list of variables.</dd>
+<dt>Returns:</dt>
+<dd>rv: the result of the exectued query.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="CallCenter.CallCenter_Model.query_time_interval">
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">query_time_interval</code><span class="sig-paren">(</span><em>start=datetime.datetime(2018</em>, <em>10</em>, <em>29</em>, <em>20</em>, <em>2</em>, <em>46</em>, <em>849976)</em>, <em>end=datetime.datetime(2018</em>, <em>10</em>, <em>29</em>, <em>20</em>, <em>32</em>, <em>46</em>, <em>849994)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#query_time_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.query_time_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is to be called by dashboard
+The two arguments are of datetime data type
+If omitted, the default query would be of interval [now - 30min, now]
+A list of json objects would be returned.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><div class="first last line-block">
+<div class="line">start: start time of the query.</div>
+<div class="line">end: end time of the query.</div>
+</div>
+</dd>
+<dt>Returns:</dt>
+<dd>ret: a list of json objects.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="CallCenter.CallCenter_Model.retrieve_active_incident_reports">
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">retrieve_active_incident_reports</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#retrieve_active_incident_reports"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.retrieve_active_incident_reports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve all active incident reports.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>list_all_active_incident_reports: get all the incident reports that are ‘PENDING’, i.e. awaiting assistance.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="CallCenter.CallCenter_Model.retrieve_all_incident_reports">
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">retrieve_all_incident_reports</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#retrieve_all_incident_reports"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.retrieve_all_incident_reports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve all incident reports.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>list_all_incident_reports: get all the incident reports.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="CallCenter.CallCenter_Model.retrieve_selected_incident_report">
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">retrieve_selected_incident_report</code><span class="sig-paren">(</span><em>id_of_incident_report</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#retrieve_selected_incident_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.retrieve_selected_incident_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve selected incident reports.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>id_of_incident_report: the id of the incident that is being searched.</dd>
+<dt>Returns:</dt>
+<dd>report: the report that is being searched.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="CallCenter.CallCenter_Model.update_report">
+<code class="descclassname">CallCenter.CallCenter_Model.</code><code class="descname">update_report</code><span class="sig-paren">(</span><em>id_of_incident_report</em>, <em>caller_name</em>, <em>caller_mobile_number</em>, <em>caller_location</em>, <em>type_of_assistance</em>, <em>description</em>, <em>priority_for_severity_of_injuries</em>, <em>priority_for_impending_dangers</em>, <em>priority_for_presence_of_nearby_help</em>, <em>report_status</em>, <em>is_first_such_incident</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/CallCenter/CallCenter_Model.html#update_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#CallCenter.CallCenter_Model.update_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update report in database</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><div class="first last line-block">
+<div class="line">id_of_incident_report: id of the incident report.</div>
+<div class="line">caller_name: name of the caller.</div>
+<div class="line">caller_mobile_number: name.</div>
+<div class="line">caller_location: location.</div>
+<div class="line">type_of_assistance: if assistance is required.</div>
+<div class="line">description: description.</div>
+<div class="line">priority_for_severity_of_injuries: priority of injuries.</div>
+<div class="line">priority_for_impending_dangers: priority of dangers.</div>
+<div class="line">priority_for_presence_of_nearby_help: priority of help.</div>
+<div class="line">report_status: report status.</div>
+<div class="line">is_first_such_incident: if is first such incident.</div>
+</div>
+</dd>
+<dt>Returns:</dt>
+<dd>0</dd>
+<dt>Raises:</dt>
+<dd><div class="first last line-block">
+<div class="line">ValueError: in __check_name raised if the name is illegal.</div>
+<div class="line">ValueError: in __check_mobile_no raised if the mobile number is illegal.</div>
+<div class="line">ValueError: in __check_loc raised if the location in empty.</div>
+<div class="line">ValueError: in __check_description raised if the description is empty.</div>
+<div class="line">ValueError: in insert_report raised if the report type and asssistance type are inconsistent.</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-CallCenter">
@@ -219,6 +458,15 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Dashboard.html" class="btn btn-neutral float-right" title="Dashboard package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="AccountManagement.html" class="btn btn-neutral" title="AccountManagement package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

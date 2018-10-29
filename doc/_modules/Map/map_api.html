@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Map.map_api &mdash; CMS 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CMS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">crisis-management-system</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CMS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>Map.map_api</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Map.map_api</h1><div class="highlight"><pre>
+<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_psi&#39;</span><span class="p">,</span> <span class="s1">&#39;get_dengue_clusters&#39;</span><span class="p">,</span> <span class="s1">&#39;get_weather&#39;</span><span class="p">,</span> <span class="s1">&#39;get_shelter&#39;</span><span class="p">,</span> <span class="s1">&#39;address_to_latlng&#39;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="k">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
+<span class="kn">import</span> <span class="nn">bs4</span>
+
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="s2">&quot;AIzaSyDc1Hx9zrh10qY4FSl-A0OwIVKRNTBkZGs&quot;</span>
+
+<span class="n">PSI_URL</span> <span class="o">=</span> <span class="s1">&#39;https://api.data.gov.sg/v1/environment/psi&#39;</span>
+<span class="n">DENGUE_URL</span> <span class="o">=</span> <span class="s1">&#39;https://www.nea.gov.sg/dengue-zika/dengue/dengue-clusters&#39;</span>
+<span class="n">WEATHER_URL</span> <span class="o">=</span> <span class="s1">&#39;https://api.data.gov.sg/v1/environment/2-hour-weather-forecast&#39;</span>
+<span class="n">SHELTER_URL</span> <span class="o">=</span> <span class="s1">&#39;https://data.gov.sg/api/action/datastore_search?resource_id=4ee17930-4780-403b-b6d4-b963c7bb1c09&#39;</span>
+
+<span class="n">REGION_LAT_LNG</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">east</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mf">1.3413</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="mf">103.9638</span><span class="p">),</span>
+                <span class="n">west</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mf">1.3483</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="mf">103.6831</span><span class="p">),</span>
+                <span class="n">south</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mf">1.2957</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="mf">103.8065</span><span class="p">),</span>
+                <span class="n">north</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mf">1.4382</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="mf">103.7890</span><span class="p">),</span>
+                <span class="n">central</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mf">1.36</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="mf">103.8</span><span class="p">))</span>
+
+<div class="viewcode-block" id="get_psi"><a class="viewcode-back" href="../../Map.html#Map.map_api.get_psi">[docs]</a><span class="k">def</span> <span class="nf">get_psi</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :return: 4 dictionaries of the same formats</span>
+<span class="sd">        {&#39;status&#39;: &#39;Healthy&#39;,</span>
+<span class="sd">        &#39;psi&#39;: 30,</span>
+<span class="sd">        &#39;color&#39;: &#39;green&#39;,</span>
+<span class="sd">        &#39;lat&#39;: 130.21,</span>
+<span class="sd">        &#39;lng&#39;: 128.12</span>
+<span class="sd">        }</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">_get_psi_info</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">psi_json_dict_list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="n">REGION_LAT_LNG</span><span class="p">[</span><span class="n">region</span><span class="p">],</span> <span class="n">lng</span><span class="o">=</span><span class="n">REGION_LAT_LNG</span><span class="p">[</span><span class="n">region</span><span class="p">],</span> <span class="n">psi</span><span class="o">=</span><span class="n">psi_json_dict_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;items&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;readings&#39;</span><span class="p">][</span><span class="s1">&#39;pm25_twenty_four_hourly&#39;</span><span class="p">][</span><span class="n">region</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_check_status</span><span class="p">(</span><span class="n">info_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">50</span><span class="p">:</span> <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;Healthy&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">:</span> <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;Moderate&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">200</span><span class="p">:</span> <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;Unhealthy&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">info_dict</span><span class="p">[</span><span class="s1">&#39;psi&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">300</span><span class="p">:</span> <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;Very Unhealthy&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;Hazardous&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+
+    <span class="n">psi_response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">PSI_URL</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">psi</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">psi_response</span><span class="p">]</span>
+    <span class="n">psi_json_dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">js</span><span class="p">)</span> <span class="k">for</span> <span class="n">js</span> <span class="ow">in</span> <span class="n">psi</span><span class="p">]</span>
+
+    <span class="n">east_info</span> <span class="o">=</span> <span class="n">_get_psi_info</span><span class="p">(</span><span class="s1">&#39;east&#39;</span><span class="p">,</span> <span class="n">psi_json_dict_list</span><span class="p">)</span>
+    <span class="n">west_info</span> <span class="o">=</span> <span class="n">_get_psi_info</span><span class="p">(</span><span class="s1">&#39;west&#39;</span><span class="p">,</span> <span class="n">psi_json_dict_list</span><span class="p">)</span>
+    <span class="n">south_info</span> <span class="o">=</span> <span class="n">_get_psi_info</span><span class="p">(</span><span class="s1">&#39;south&#39;</span><span class="p">,</span> <span class="n">psi_json_dict_list</span><span class="p">)</span>
+    <span class="n">north_info</span> <span class="o">=</span> <span class="n">_get_psi_info</span><span class="p">(</span><span class="s1">&#39;north&#39;</span><span class="p">,</span> <span class="n">psi_json_dict_list</span><span class="p">)</span>
+    <span class="n">central_info</span> <span class="o">=</span> <span class="n">_get_psi_info</span><span class="p">(</span><span class="s1">&#39;central&#39;</span><span class="p">,</span> <span class="n">psi_json_dict_list</span><span class="p">)</span>
+
+    <span class="n">east_info</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">east_info</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_status</span><span class="p">(</span><span class="n">east_info</span><span class="p">)</span>
+    <span class="n">west_info</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">west_info</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_status</span><span class="p">(</span><span class="n">west_info</span><span class="p">)</span>
+    <span class="n">south_info</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">south_info</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_status</span><span class="p">(</span><span class="n">south_info</span><span class="p">)</span>
+    <span class="n">north_info</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">north_info</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_status</span><span class="p">(</span><span class="n">north_info</span><span class="p">)</span>
+    <span class="n">central_info</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">],</span> <span class="n">central_info</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_check_status</span><span class="p">(</span><span class="n">central_info</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">east_info</span><span class="p">,</span> <span class="n">west_info</span><span class="p">,</span> <span class="n">south_info</span><span class="p">,</span> <span class="n">north_info</span><span class="p">,</span> <span class="n">central_info</span></div>
+
+
+<div class="viewcode-block" id="get_dengue_clusters"><a class="viewcode-back" href="../../Map.html#Map.map_api.get_dengue_clusters">[docs]</a><span class="k">def</span> <span class="nf">get_dengue_clusters</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :return: a list of dictionaries</span>
+<span class="sd">        [{&#39;locality&#39;: &#39;sldfjla&#39;,</span>
+<span class="sd">        &#39;cluster&#39;: &#39;jdsfaf&#39;,</span>
+<span class="sd">        &#39;num_last2weeks: 10,</span>
+<span class="sd">        &#39;num_all&#39;: 100},</span>
+<span class="sd">                        ...</span>
+<span class="sd">        ]</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DENGUE_URL</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">bs4</span><span class="o">.</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;html.parser&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;data-type&#39;</span><span class="p">:</span><span class="s1">&#39;locality&#39;</span><span class="p">}):</span>
+        <span class="n">cluster</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+        <span class="n">cases_last2weeks</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">find_next</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)</span>
+        <span class="n">cases_sincestart</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">find_next</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">find_next</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)</span>
+        <span class="n">locality</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">find_next</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">find_next</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">find_next</span><span class="p">(</span><span class="s1">&#39;td&#39;</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;locality&#39;</span><span class="p">:</span> <span class="n">locality</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;cluster&#39;</span><span class="p">:</span> <span class="n">cluster</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;num_last2weeks&#39;</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">cases_last2weeks</span><span class="o">.</span><span class="n">text</span><span class="p">),</span> <span class="s1">&#39;num_all&#39;</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">cases_sincestart</span><span class="o">.</span><span class="n">text</span><span class="p">)})</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="get_weather"><a class="viewcode-back" href="../../Map.html#Map.map_api.get_weather">[docs]</a><span class="k">def</span> <span class="nf">get_weather</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :return: a dictionary of dictionaries</span>
+<span class="sd">        {&#39;Ang Mo Kio&#39;: {&#39;forecast&#39;: &#39;sldfjla&#39;,</span>
+<span class="sd">                        &#39;label_location&#39;: {&#39;latitude&#39;: &#39;130.3&#39;, &#39;longitude&#39;: &#39;130.2&#39;}},</span>
+<span class="sd">                        ...</span>
+<span class="sd">        }</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">weather_response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">WEATHER_URL</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">weather</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">weather_response</span><span class="p">]</span>
+    <span class="n">weather_json_dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">js</span><span class="p">)</span> <span class="k">for</span> <span class="n">js</span> <span class="ow">in</span> <span class="n">weather</span><span class="p">]</span>
+
+    <span class="n">weather_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;label_location&#39;</span><span class="p">][</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span> <span class="n">lng</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;label_location&#39;</span><span class="p">][</span><span class="s1">&#39;longitude&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">weather_json_dict_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;area_metadata&#39;</span><span class="p">]}</span> 
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">weather_json_dict_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;items&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;forecasts&#39;</span><span class="p">]:</span>
+        <span class="n">weather_dict</span><span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]][</span><span class="s1">&#39;forecast&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;forecast&#39;</span><span class="p">]</span>
+
+
+    <span class="k">return</span> <span class="n">weather_dict</span></div>
+
+
+
+<div class="viewcode-block" id="get_shelter"><a class="viewcode-back" href="../../Map.html#Map.map_api.get_shelter">[docs]</a><span class="k">def</span> <span class="nf">get_shelter</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :return: a dictionary of dictionaries</span>
+<span class="sd">        {&#39;Pioneer MRT&#39;: {&#39;address&#39;: &#39;sldfjla&#39;,</span>
+<span class="sd">                        &#39;postal_code&#39;: &#39;123981&#39;,</span>
+<span class="sd">                        &#39;description&#39;: &#39;jfsao&#39;},</span>
+<span class="sd">                        ...</span>
+<span class="sd">        }</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">shelters_response</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">SHELTER_URL</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0&#39;</span><span class="p">})</span>
+    <span class="n">shelters_response</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">shelters_response</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">shelters_dict_list</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">shelters_response</span><span class="p">)[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="s1">&#39;records&#39;</span><span class="p">]</span>
+
+    <span class="n">shelters_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">shelters_dict_list</span><span class="p">:</span>
+        <span class="n">tmp_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">],</span>
+            <span class="n">postal_code</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;postal_code&#39;</span><span class="p">],</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">])</span>
+        <span class="n">tmp_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">address_to_latlng</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">]))</span>
+
+        <span class="n">shelters_dict</span><span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">tmp_dict</span>
+
+    <span class="k">return</span> <span class="n">shelters_dict</span></div>
+
+
+<div class="viewcode-block" id="address_to_latlng"><a class="viewcode-back" href="../../Map.html#Map.map_api.address_to_latlng">[docs]</a><span class="k">def</span> <span class="nf">address_to_latlng</span><span class="p">(</span><span class="n">address</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :parameter:</span>
+<span class="sd">            address(str) : The address need to be converted to geo coordinates</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">            dict: a dictionary of latitude and longitude of the address</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">geo_api_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://maps.googleapis.com/maps/api/geocode/json?address=</span><span class="si">{}</span><span class="s1">&amp;key=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">address</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">),</span> <span class="n">API_KEY</span><span class="p">))</span>
+    <span class="n">geo_api_response_dict</span> <span class="o">=</span> <span class="n">geo_api_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">geo_api_response_dict</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;OK&#39;</span><span class="p">:</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">geo_api_response_dict</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">][</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+        <span class="n">lng</span> <span class="o">=</span> <span class="n">geo_api_response_dict</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">][</span><span class="s1">&#39;location&#39;</span><span class="p">][</span><span class="s1">&#39;lng&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">lng</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="n">lng</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, giligili
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

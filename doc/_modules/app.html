@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>app &mdash; CMS 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CMS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">crisis-management-system</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CMS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>app</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for app</h1><div class="highlight"><pre>
+<span></span><span class="c1"># import the Flask class from the flask module</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">session</span>
+<span class="kn">from</span> <span class="nn">flask_googlemaps</span> <span class="k">import</span> <span class="n">GoogleMaps</span>
+<span class="kn">from</span> <span class="nn">flask_sqlalchemy</span> <span class="k">import</span> <span class="n">SQLAlchemy</span>
+<span class="kn">from</span> <span class="nn">flask_migrate</span> <span class="k">import</span> <span class="n">Migrate</span>
+<span class="kn">from</span> <span class="nn">Map.map</span> <span class="k">import</span> <span class="n">periodic_psi_check</span>
+
+<span class="c1"># create the application object</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">secret_key</span> <span class="o">=</span> <span class="s2">&quot;aD1R3s2&quot;</span>
+<span class="c1"># db part</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">SQLAlchemy</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">migrate</span> <span class="o">=</span> <span class="n">Migrate</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">Dashboard.dashboard</span> <span class="k">import</span> <span class="n">dashboard_api</span>
+<span class="kn">from</span> <span class="nn">AccountManagement.account_management</span> <span class="k">import</span> <span class="n">account_api</span>
+<span class="kn">from</span> <span class="nn">Map.map</span> <span class="k">import</span> <span class="n">map_api</span>
+<span class="kn">from</span> <span class="nn">CallCenter.CallCenter_Controller</span> <span class="k">import</span> <span class="n">callcenter_api</span>
+
+<span class="kn">from</span> <span class="nn">flask_apscheduler</span> <span class="k">import</span> <span class="n">APScheduler</span>
+<span class="kn">from</span> <span class="nn">flask_mail</span> <span class="k">import</span> <span class="n">Mail</span><span class="p">,</span> <span class="n">Message</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">dashboard_api</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">account_api</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/account&#39;</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">map_api</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/map&#39;</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">callcenter_api</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/callcenter&#39;</span><span class="p">)</span>
+
+<span class="c1"># for google maps blueprint. not sure if this is a good design</span>
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="s2">&quot;AIzaSyDc1Hx9zrh10qY4FSl-A0OwIVKRNTBkZGs&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;GOOGLEMAPS_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">API_KEY</span>
+<span class="n">GoogleMaps</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
+
+<span class="n">basedir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../app.html#app.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">JOBS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;job1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="s1">&#39;Dashboard.report:send_report&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;trigger&#39;</span><span class="p">:</span> <span class="s1">&#39;interval&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;seconds&#39;</span><span class="p">:</span> <span class="mi">60</span><span class="o">*</span><span class="mi">30</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+
+    <span class="n">SCHEDULER_API_ENABLED</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DATABASE_URL&#39;</span><span class="p">)</span> <span class="ow">or</span> \
+                              <span class="s1">&#39;sqlite:///&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="s1">&#39;app.db&#39;</span><span class="p">)</span>
+    <span class="n">SQLALCHEMY_TRACK_MODIFICATIONS</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="n">Config</span><span class="p">)</span>
+
+
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="login"><a class="viewcode-back" href="../app.html#app.login">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    View function for login page.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        render a template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">__verify_login</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">]):</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="s1">&#39;Invalid Credentials. Please try again.&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">session</span><span class="p">[</span><span class="s2">&quot;logged_in&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">session</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+            <span class="n">session</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;role&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;dashboard.dashboard&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;login-new.html&#39;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="logout"><a class="viewcode-back" href="../app.html#app.logout">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/logout&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">logout</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    View function for logout page.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        render a template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;logged_in&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">))</span></div>
+
+<span class="kn">from</span> <span class="nn">model</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="k">def</span> <span class="nf">__verify_login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+
+    <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">()</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">u</span> <span class="ow">and</span> <span class="n">u</span><span class="o">.</span><span class="n">password</span> <span class="o">==</span> <span class="n">password</span> <span class="ow">and</span> <span class="n">Role</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">role_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">role</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># string = &#39;{},{},{}&#39;.format(username, password, role)</span>
+    <span class="c1"># userlist = open(&#39;db/userlist.csv&#39;).readlines()</span>
+    <span class="c1"># for line in userlist:</span>
+    <span class="c1">#     if string in line:</span>
+    <span class="c1">#         return True</span>
+    <span class="c1"># return False</span>
+
+
+<div class="viewcode-block" id="make_shell_context"><a class="viewcode-back" href="../app.html#app.make_shell_context">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">shell_context_processor</span>
+<span class="k">def</span> <span class="nf">make_shell_context</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Import models into shell context so they can be available once the shell start.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dictionary of database objects mappting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;db&#39;</span><span class="p">:</span> <span class="n">db</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">:</span> <span class="n">User</span><span class="p">,</span> <span class="s1">&#39;Role&#39;</span><span class="p">:</span> <span class="n">Role</span><span class="p">}</span></div>
+
+<span class="c1"># start the server with the &#39;run()&#39; method</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="c1"># scheduler</span>
+
+    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">APScheduler</span><span class="p">()</span>
+    <span class="n">scheduler</span><span class="o">.</span><span class="n">api_enabled</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">scheduler</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">scheduler</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">periodic_psi_check</span><span class="p">()</span>
+
+    <span class="c1"># turn off use reloader to prevent sending two duplicate emails</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_reloader</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, giligili
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

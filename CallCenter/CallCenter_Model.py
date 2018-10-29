@@ -21,11 +21,9 @@ app = Flask(__name__, template_folder = "templates")
 def get_db():
     '''
      Get database.
-     :param: None
-     :returns db:
-         A reference to database
-     :raises:
-         No exception
+     
+     Returns:
+        db: A reference to database.
      '''
     # getattr() will return the value of the '_database' attribute from g [see comment on g in the next line].
     # if g has no attribute called "_database", then 'None' is returned
@@ -41,10 +39,9 @@ def get_db():
 def close_connection(exception):
     '''
      Close database connection.
-     :param exception: the exception forces the disconnetion of controller and database
-     :returns: None
-     :raises:
-         No exception
+     
+     Args:
+        exception: the exception forces the disconnetion of controller and database.
      '''
     db = getattr(g, '_database', None)
     if db is not None:
@@ -54,9 +51,9 @@ def close_connection(exception):
 def init_db():
     '''
      Initialize database.
-     :param: None
-     :returns: None
-     :raises FileNotFoundError: File not found.
+     
+     Raises:
+         FileNotFoundError: File not found.
      '''
     with app.app_context():  # Within flask's application context
         db = get_db()
@@ -71,10 +68,13 @@ def init_db():
 def query_db(query, args = ()):
     '''
     Query from database.
-    :param query: an SQL query template
-    :param args: a list of variables
-    :returns rv: the result of the exectued query
-    :raises: None
+    
+    Args:
+        query: an SQL query template.
+        args: a list of variables.
+    
+    Returns:
+        rv: the result of the exectued query.
     '''
     cur = get_db().execute(query, args)  # cur is a Cursor object that contains the Results of the executed 'query'
     rv = cur.fetchall()  # retrieve the results from the Cursor object
@@ -85,9 +85,12 @@ def query_db(query, args = ()):
 def __check_name(name):
     '''
     Checks if the name is legal. If not a ValueError would be raised.
-    :param name: the name of the reporter
-    :returns: None
-    :raises ValueError: Illigal name
+    
+    Args:
+        name: the name of the reporter.
+    
+    Raises:
+        ValueError: Illigal name.
     '''
     if len(name) == 0:
         raise ValueError('name cannot be empty')
@@ -103,9 +106,12 @@ def __check_mobile_no(no):
     The legal ones are defined as: [country code][' '|'-'][number]
     Country code is either started by a '+' and followed by 1-3 digits or 4 digits
     Number is defined as 8 to 13 digits.
-    :param no: the phone number of the reporter
-    :returns: None
-    :raises ValueError: Illigal mobile number
+    
+    Args:
+        no: the phone number of the reporter.
+    
+    Returns:
+        ValueError: Illigal mobile number.
     '''
     if len(no) == 0:
         raise ValueError('mobile number cannot be empty')
@@ -146,9 +152,12 @@ def __check_mobile_no(no):
 def __check_loc(loc):
     '''
     Check if the location is empty.
-    :param loc: the location of the incident reported
-    :returns: None
-    :raises ValueError: Empty location
+    
+    Args:
+        loc: the location of the incident reported.
+    
+    Raises:
+        ValueError: Empty location.
     '''
     loc = str(loc)
     if len(loc) == 0:
@@ -158,9 +167,12 @@ def __check_loc(loc):
 def __check_description(description):
     '''
     Check if the description is empty.
-    :param description: the description of the incident reported
-    :returns: None
-    :raises ValueError: Empty description
+    
+    Args:
+        description: the description of the incident reported.
+    
+    Raises:
+        ValueError: Empty description.
     '''
     if len(description) == 0:
         raise ValueError('description cannot be empty')
@@ -172,20 +184,23 @@ def __insert_incident(name, mobile_number, location, assistance_required, descri
     '''
     The same report judgement is buggy and I have no idea how to fix it
     The current assumption is the first reported case would always report the earliest time...
-    :param name: name
-    :param mobile_number: name
-    :param location: location
-    :param assistance_required: if assistance is required
-    :param description: description
-    :param priority_injuries: priority of injuries
-    :param priority_dangers: priority of dangers
-    :param priority_help: priority of help
-    :param report_status: report status
-    :param report_time: reort time
-    :param latitude: latitude
-    :param longitude: longitute
-    :returns _id: the id of the newest inserted report
-    :raises: None
+    
+    Args:
+        | name: name.
+        | mobile_number: mobile number.
+        | location: location.
+        | assistance_required: if assistance is required.
+        | description: description.
+        | priority_injuries: priority of injuries.
+        | priority_dangers: priority of dangers.
+        | priority_help: priority of help.
+        | report_status: report status.
+        | report_time: reort time.
+        | latitude: latitude.
+        | longitude: longitute.
+    
+    Returns:
+        _id: the id of the newest inserted report.
     '''
     # creating a time interval that another new incident report would be classified as being about the same incident as this current incident report.
     earliest_time = report_time - timedelta(minutes = 5)
@@ -285,23 +300,29 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
                   priority_help, report_status):
     '''
     Insert report into database
-    :param name: name
-    :param mobile_number: name
-    :param location: location
-    :param assistance_required: if assistance is required
-    :param description: description
-    :param priority_injuries: priority of injuries
-    :param priority_dangers: priority of dangers
-    :param priority_help: priority of help
-    :param report_status: report status
-    :returns: 0
-    :raises ValueError: in __check_name raised if the name is illegal
-    :raises ValueError: in __check_mobile_no raised if the mobile number is illegal
-    :raises ValueError: in __check_loc raised if the location in empty
-    :raises ValueError: in __check_description raised if the description is empty
-    :raises ValueError: in insert_report raised if the report type and asssistance type are inconsistent
-    :raises AssertionError: if the data inserted is invalid
-    :raises PermissionError: if the reported incident is duplicated
+    
+    Args:
+        | name: name.
+        | mobile_number: mobile number.
+        | location: location.
+        | assistance_required: if assistance is required.
+        | description: description.
+        | priority_injuries: priority of injuries.
+        | priority_dangers: priority of dangers.
+        | priority_help: priority of help.
+        | report_status: report status.
+    
+    Returns:
+        0
+    
+    Raises:
+        | ValueError: in __check_name raised if the name is illegal.
+        | ValueError: in __check_mobile_no raised if the mobile number is illegal.
+        | ValueError: in __check_loc raised if the location in empty.
+        | ValueError: in __check_description raised if the description is empty.
+        | ValueError: in insert_report raised if the report type and asssistance type are inconsistent.
+        | AssertionError: if the data inserted is invalid.
+        | PermissionError: if the reported incident is duplicated.
     '''
     __check_name(name)
     __check_mobile_no(mobile_number)
@@ -403,9 +424,12 @@ def insert_report(name, mobile_number, location, assistance_required, descriptio
 def delete_report(id_of_incident_report):
     '''
     Delete incident report.
-    :param id_of_incident_report: id of the incident report that would be deleted
-    :returns: 0
-    :raises: None
+    
+    Args:
+        id_of_incident_report: id of the incident report that would be deleted.
+    
+    Returns:
+        0
     '''
     with app.app_context():  # Within the Application Context:
         db = get_db()  # call our private method to retreive the DB
@@ -428,23 +452,29 @@ def update_report(id_of_incident_report, caller_name, caller_mobile_number, call
                   priority_for_presence_of_nearby_help, report_status, is_first_such_incident):
     '''
     Update report in database
-    :param id_of_incident_report: id of the incident report
-    :param caller_name: name of the caller
-    :param caller_mobile_number: name
-    :param caller_location: location
-    :param type_of_assistance: if assistance is required
-    :param description: description
-    :param priority_for_severity_of_injuries: priority of injuries
-    :param priority_for_impending_dangers: priority of dangers
-    :param priority_for_presence_of_nearby_help: priority of help
-    :param report_status: report status
-    :param is_first_such_incident: if is first such incident
-    :returns: 0
-    :raises ValueError: in __check_name raised if the name is illegal
-    :raises ValueError: in __check_mobile_no raised if the mobile number is illegal
-    :raises ValueError: in __check_loc raised if the location in empty
-    :raises ValueError: in __check_description raised if the description is empty
-    :raises ValueError: in insert_report raised if the report type and asssistance type are inconsistent
+    
+    Args:
+        | id_of_incident_report: id of the incident report.
+        | caller_name: name of the caller.
+        | caller_mobile_number: name.
+        | caller_location: location.
+        | type_of_assistance: if assistance is required.
+        | description: description.
+        | priority_for_severity_of_injuries: priority of injuries.
+        | priority_for_impending_dangers: priority of dangers.
+        | priority_for_presence_of_nearby_help: priority of help.
+        | report_status: report status.
+        | is_first_such_incident: if is first such incident.
+    
+    Returns:
+        0
+    
+    Raises:
+        | ValueError: in __check_name raised if the name is illegal.
+        | ValueError: in __check_mobile_no raised if the mobile number is illegal.
+        | ValueError: in __check_loc raised if the location in empty.
+        | ValueError: in __check_description raised if the description is empty.
+        | ValueError: in insert_report raised if the report type and asssistance type are inconsistent.
     '''
     # assistance_required is an int: 0 = No Assistance required; 1 = Emergency Ambulance; 2 = Rescue and Evacuation; 3 = Gas Leak Control
     # report_status is an int: 1 = REPORTED [No assistance required]; 2 = PENDING [Waiting for Assistance but Assistance has not reached the victim yet]; 3 = CLOSED [Assistance has reached the victim already]
@@ -501,9 +531,9 @@ def update_report(id_of_incident_report, caller_name, caller_mobile_number, call
 def retrieve_all_incident_reports():
     '''
     Retrieve all incident reports.
-    :param: None
-    :returns list_all_incident_reports: get all the incident reports
-    :raises: None
+    
+    Returns:
+        list_all_incident_reports: get all the incident reports.
     '''
     with app.app_context():  # Within the Application Context:
         db = get_db()  # call our private method to retreive the DB
@@ -542,9 +572,9 @@ def retrieve_all_incident_reports():
 def retrieve_active_incident_reports():
     '''
     Retrieve all active incident reports.
-    :param: None
-    :returns list_all_active_incident_reports: get all the incident reports that are 'PENDING', i.e. awaiting assistance
-    :raises: None
+    
+    Returns:
+        list_all_active_incident_reports: get all the incident reports that are 'PENDING', i.e. awaiting assistance.
     '''
     with app.app_context():  # Within the Application Context:
         db = get_db()  # call our private method to retreive the DB
@@ -583,9 +613,12 @@ def retrieve_active_incident_reports():
 def retrieve_selected_incident_report(id_of_incident_report):
     '''
     Retrieve selected incident reports.
-    :param id_of_incident_report: the id of the incident that is being searched
-    :returns report: the report that is being searched
-    :raises: None
+    
+    Args:
+        id_of_incident_report: the id of the incident that is being searched.
+
+    Returns:
+        report: the report that is being searched.
     '''
     with app.app_context():  # Within the Application Context:
         db = get_db()  # call our private method to retreive the DB
@@ -624,11 +657,14 @@ def query_time_interval(start = datetime.now() - timedelta(minutes = 30), end = 
     This function is to be called by dashboard
     The two arguments are of datetime data type
     If omitted, the default query would be of interval [now - 30min, now]
-    A list of json objects would be returned
-    :param start: start time of the query
-    :param end: end time of the query
-    :returns ret: a list of json objects
-    :raises: None
+    A list of json objects would be returned.
+    
+    Args:
+        | start: start time of the query.
+        | end: end time of the query.
+    
+    Returns:
+        ret: a list of json objects.
     '''
     with app.app_context():
         res = query_db(

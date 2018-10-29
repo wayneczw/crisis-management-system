@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; cms  documentation</title>
+  <title>Index &mdash; CMS 1.0 documentation</title>
   
 
   
@@ -47,7 +47,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> cms
+            <a href="index.html" class="icon icon-home"> CMS
           
 
           
@@ -77,8 +77,11 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">crisis-management-system</a></li>
+</ul>
+
             
           
         </div>
@@ -91,7 +94,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">cms</a>
+          <a href="index.html">CMS</a>
         
       </nav>
 
@@ -156,6 +159,7 @@
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
@@ -210,9 +214,11 @@
 </li>
       <li><a href="CallCenter.html#module-CallCenter.CallCenter_Controller">CallCenter.CallCenter_Controller (module)</a>
 </li>
+      <li><a href="CallCenter.html#module-CallCenter.CallCenter_Model">CallCenter.CallCenter_Model (module)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="CallCenter.html#module-CallCenter.CallCenter_Model">CallCenter.CallCenter_Model (module)</a>
+      <li><a href="CallCenter.html#CallCenter.CallCenter_Model.close_connection">close_connection() (in module CallCenter.CallCenter_Model)</a>
 </li>
       <li><a href="app.html#app.Config">Config (class in app)</a>
 </li>
@@ -236,11 +242,13 @@
 </li>
       <li><a href="Dashboard.html#module-Dashboard.report">Dashboard.report (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="load_test_locust.html#load_test_locust.UserBehavior.dashboard_load_test">dashboard_load_test() (load_test_locust.UserBehavior method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="CallCenter.html#CallCenter.CallCenter_Controller.delete_incident_report">delete_incident_report() (in module CallCenter.CallCenter_Controller)</a>
+</li>
+      <li><a href="CallCenter.html#CallCenter.CallCenter_Model.delete_report">delete_report() (in module CallCenter.CallCenter_Model)</a>
 </li>
       <li><a href="AccountManagement.html#AccountManagement.account_management.deregister">deregister() (in module AccountManagement.account_management)</a>
 </li>
@@ -275,6 +283,8 @@
       <li><a href="Dashboard.html#Dashboard.report.generate_trend_chart">generate_trend_chart() (in module Dashboard.report)</a>
 </li>
       <li><a href="SocialMedia.html#SocialMedia.model.GeoCoordinate">GeoCoordinate (class in SocialMedia.model)</a>
+</li>
+      <li><a href="CallCenter.html#CallCenter.CallCenter_Model.get_db">get_db() (in module CallCenter.CallCenter_Model)</a>
 </li>
       <li><a href="Map.html#Map.map_api.get_dengue_clusters">get_dengue_clusters() (in module Map.map_api)</a>
 </li>
@@ -322,13 +332,15 @@
       </ul></li>
       <li><a href="CallCenter.html#CallCenter.CallCenter_Controller.incident_report_delete_completion_page">incident_report_delete_completion_page() (in module CallCenter.CallCenter_Controller)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="CallCenter.html#CallCenter.CallCenter_Controller.incident_report_sent_completion_page">incident_report_sent_completion_page() (in module CallCenter.CallCenter_Controller)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="CallCenter.html#CallCenter.CallCenter_Controller.incident_report_update_completion_page">incident_report_update_completion_page() (in module CallCenter.CallCenter_Controller)</a>
 </li>
       <li><a href="SocialMedia.html#SocialMedia.model.IncidentReport">IncidentReport (class in SocialMedia.model)</a>
+</li>
+      <li><a href="CallCenter.html#CallCenter.CallCenter_Model.init_db">init_db() (in module CallCenter.CallCenter_Model)</a>
 </li>
       <li><a href="Dashboard.html#Dashboard.report.insert_db">insert_db() (in module Dashboard.report)</a>
 </li>
@@ -431,6 +443,18 @@
   </ul></td>
 </tr></table>
 
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="CallCenter.html#CallCenter.CallCenter_Model.query_db">query_db() (in module CallCenter.CallCenter_Model)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="CallCenter.html#CallCenter.CallCenter_Model.query_time_interval">query_time_interval() (in module CallCenter.CallCenter_Model)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -452,15 +476,23 @@
         <li><a href="SocialMedia.html#SocialMedia.model.Report">(class in SocialMedia.model)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="Dashboard.html#Dashboard.dashboard.report">report() (in module Dashboard.dashboard)</a>
 </li>
-      <li><a href="Dashboard.html#Dashboard.report.retrieve_active_incident_reports">retrieve_active_incident_reports() (in module Dashboard.report)</a>
+      <li><a href="CallCenter.html#CallCenter.CallCenter_Model.retrieve_active_incident_reports">retrieve_active_incident_reports() (in module CallCenter.CallCenter_Model)</a>
+
+      <ul>
+        <li><a href="Dashboard.html#Dashboard.report.retrieve_active_incident_reports">(in module Dashboard.report)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="CallCenter.html#CallCenter.CallCenter_Model.retrieve_all_incident_reports">retrieve_all_incident_reports() (in module CallCenter.CallCenter_Model)</a>
 </li>
       <li><a href="SocialMedia.html#SocialMedia.model.Contact.retrieve_authority_contact">retrieve_authority_contact() (SocialMedia.model.Contact static method)</a>
 </li>
       <li><a href="SocialMedia.html#SocialMedia.model.Person.retrieve_nearby_residents">retrieve_nearby_residents() (SocialMedia.model.Person static method)</a>
+</li>
+      <li><a href="CallCenter.html#CallCenter.CallCenter_Model.retrieve_selected_incident_report">retrieve_selected_incident_report() (in module CallCenter.CallCenter_Model)</a>
 </li>
       <li><a href="model.html#model.Role">Role (class in model)</a>
 </li>
@@ -573,6 +605,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="CallCenter.html#CallCenter.CallCenter_Controller.update_incident_report">update_incident_report() (in module CallCenter.CallCenter_Controller)</a>
+</li>
+      <li><a href="CallCenter.html#CallCenter.CallCenter_Model.update_report">update_report() (in module CallCenter.CallCenter_Model)</a>
 </li>
       <li><a href="model.html#model.User">User (class in model)</a>
 </li>

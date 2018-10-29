@@ -290,8 +290,6 @@ def retrieve_active_incident_reports():
 
     Retrieve active incident report from /CallCenter/database.db
 
-    Args:
-
     Returns:
         list_all_incident_reports: A list of all incident reports.
 
@@ -329,8 +327,6 @@ def get_incident_report():
     """
 
     Generate incident html table report by calling psi API from map_api.py
-
-    Args:
 
     Returns:
         incident_report: A string of incident html table report.
@@ -379,9 +375,9 @@ def insert_db(name, timestamp, path):
     Insert status report into app.db.
 
     Args:
-        name: name of  the status report
-        timastamp: timastamp of the status report
-        path: path of the status report
+        | name: name of  the status report
+        | timastamp: timastamp of the status report
+        | path: path of the status report
 
     Returns:
         Print after successful add.

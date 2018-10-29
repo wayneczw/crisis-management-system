@@ -6,8 +6,12 @@ from threading import Thread
 def login_required(f):
     """
     Login required decorator.
-    :param f: view function
-    :return: if is looged in, return function, else return login page.
+
+    Args:
+        f: view function.
+
+    Returns:
+        if is looged in, return function, else return login page.
     """
     @wraps(f)
     def wrap(*args, **kwargs):

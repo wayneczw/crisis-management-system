@@ -17,18 +17,13 @@ that ends with "/submit_new_incident_report"
 '''
 
 
-# First Page of Updating an Incident Report
-
 @callcenter_api.route("/update_incident_report_page", methods = ['GET', 'POST'])
 def update_incident_report():
     '''
     First Page of Updating an Incident Report.
-    :param:
-        No arguments
-    :returns:
-        the html page enabling searching incident report to be updated
-    :raises:
-        No exception
+
+    Returns:
+        the html page enabling searching incident report to be updated.
     '''
     all_incident_reports = retrieve_all_incident_reports() # Call a Method from Model to retrieve all the Incident Reports
     # Render the html page that corresponds to this method [And we give the html file some arguments]:
@@ -42,12 +37,14 @@ def update_incident_report():
 def row_detail_for_update(rowData):
     '''
     Update Information about one particular Incident Report into the DB based on which incident the Call Operator has selected.
-    :param rowData: a particular incident report in database
-    :returns:
+
+    Args:
+        rowData: a particular incident report in database.
+
+    Returns:
         return the html page enabling updating incident information
-        if'submit'button is pressed, return the updated information of the particular incident selected
-    :raises:
-        No exception
+        if'submit'button is pressed, return the updated information of the particular incident selected.
+
     '''
 
     if request.method == 'POST':  # i.e. Once "Submit" Button is pressed
@@ -139,12 +136,10 @@ def row_detail_for_update(rowData):
 def incident_report_update_completion_page():
     '''
     Show the Completion Page after Updating an Incident Report
-    :param: None
-    :returns:
+
+    Returns:
         return the html page for the updated incident information of the particular incident selected
-        if'go back'button is pressed, return the html page enabling updating incident
-    :raises:
-        No exception
+        if'go back'button is pressed, return the html page enabling updating incident.
     '''
 
     if request.method == 'POST':  # i.e. "Submit" Button has been pressed
@@ -192,31 +187,14 @@ def incident_report_update_completion_page():
                             )
 
 
-# First Page of Deleting an Incident Report
-
-'''
-Function:
-    delete_incident_report
-Args:
-    no arguments
-Returns:
-    return the html page for incident information of the all incident reports for Call Operator to select
-    if a particular record is selected for deletion, return the html page for the details of the incident to be deleted
-Raises:
-    No exception
-'''
-
-
 @callcenter_api.route("/delete_incident_report_page", methods = ['GET', 'POST'])
 def delete_incident_report():
     '''
     First Page of Deleting an Incident Report
-    :param: None
-    :returns:
+    
+    Returns:
         return the html page for incident information of the all incident reports for Call Operator to select
-        if a particular record is selected for deletion, return the html page for the details of the incident to be deleted
-    :raises:
-        No exception
+        if a particular record is selected for deletion, return the html page for the details of the incident to be deleted.
     '''
     all_incident_reports = retrieve_all_incident_reports()
     if request.method == 'POST':
@@ -228,12 +206,13 @@ def delete_incident_report():
 def row_detail_for_delete(rowData):
     '''
     Delete Information about one particular Incident Report into the DB based on which incident the Call Operator has selected
-    :param rowData: a particular incident report in database
-    :returns:
+
+    Args:
+        rowData: a particular incident report in database.
+
+    Returns:
         return the incident information of a particular incident selected by Call Operator for deletion
-        if 'delete' button is pressed, return the html page for incident report delete completion
-    :raises:
-        No exception
+        if 'delete' button is pressed, return the html page for incident report delete completion.
     '''
 
     if request.method == 'POST':
@@ -323,12 +302,10 @@ def row_detail_for_delete(rowData):
 def incident_report_delete_completion_page():
     '''
     Show the Completion Page after Deleting an Incident Report.
-    :param: None
-    :returns:
-        return html page for the information of the deleted incident
-        if 'go back' button is pressed, return the html page enabling deleting incident report
-    :raises:
-        No exception
+    
+    Returns:
+        return html page for the information of the deleted incident.
+        if 'go back' button is pressed, return the html page enabling deleting incident report.
     '''
 
     if request.method == 'POST':
@@ -379,12 +356,10 @@ def incident_report_delete_completion_page():
 def incident_report_sent_completion_page():
     '''
     Show the Completion Page after sending an Incident Report.
-    :param: None
-    :returns:
+
+    Returns:
         return html page for the information of the new incident submitted
-        if 'go back' button is pressed, return the html page enabling submitting new incident record
-    :raises:
-        No exception
+        if 'go back' button is pressed, return the html page enabling submitting new incident record.
     '''
     caller_name = session['caller_name']
     caller_mobile_number = session['caller_mobile_number']
@@ -426,12 +401,10 @@ def incident_report_sent_completion_page():
 def submit_new_incident_report():
     '''
      To submit a new Incident report into Database.
-     :param: None
-     :returns:
+     
+     Returns:
          return html page enabling submitting a new incident record
-        if 'submit' button is pressed, return the html page for information of the new incident submitted
-     :raises:
-         No exception
+        if 'submit' button is pressed, return the html page for information of the new incident submitted.
      '''
     # Public Method
     # To submit a new Incident report into Database; No parameters is required;
