@@ -484,6 +484,9 @@ def update_report(id_of_incident_report, caller_name, caller_mobile_number, call
     __check_loc(caller_location)
     __check_description(description)
 
+    _dict =  address_to_latlng(caller_location)
+    latitude = _dict['lat']
+    longitude = _dict['lng']
     if report_status == 1 and type_of_assistance != 0:
         raise ValueError('Inconsistent report type and assistance type')
 
@@ -505,7 +508,9 @@ def update_report(id_of_incident_report, caller_name, caller_mobile_number, call
                   mobile_number = ?,
                   description = ?,
                   report_status = ?,
-                  is_first_such_incident = ?
+                  is_first_such_incident = ?,
+                  latitude = ?,
+                  longitude = ? 
                   WHERE id = ?
                 ''',
                 [
@@ -519,6 +524,8 @@ def update_report(id_of_incident_report, caller_name, caller_mobile_number, call
                     description,
                     report_status,
                     is_first_such_incident,
+                    latitude,
+                    longitude,
                     id_of_incident_report
                 ]
         )
