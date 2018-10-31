@@ -20,6 +20,9 @@ class TestReport(unittest.TestCase):
         latest_report = get_latest_report(1)
         self.assertIsNotNone(parse_table(latest_report[0], id='dengue'))
         self.assertIsNotNone(parse_table(latest_report[0], id='psi'))
+        self.assertIsNotNone(parse_table(latest_report[0], id='weather'))
+        self.assertIsNotNone(parse_table(latest_report[0], id='incident'))
+
 
 if __name__ == '__main__':
     unittest.main()

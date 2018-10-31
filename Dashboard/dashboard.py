@@ -14,8 +14,9 @@ def dashboard():
     Returns:
         render a template
     """
-    psi, dengue = get_trend_values()
-    return render_template('dashboard.html', psi=psi, dengue=dengue)  # render a template
+    psi, dengue, weather, incident = get_trend_values()
+    return render_template('dashboard.html', psi=psi, dengue=dengue,
+                           weather=weather, incident=incident)
 
 
 from model import *

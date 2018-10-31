@@ -37,9 +37,6 @@ call_operator_test      call_operator_test      Call Operator
 government_agency_test  government_agency_test  Government Agency
 ```
 
-Access control feature has yet to be done, so for the dashboard looks
-the same for all types of user roles.
-
 After successful login, you will be redirected to the dashboard route at `localhost:5000/dashboard`.
 
 ### About file organization

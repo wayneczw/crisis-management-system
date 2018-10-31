@@ -102,7 +102,10 @@ def parse_table(html_path, id):
     for row in bs.findAll('tr')[1:]:
         aux = row.findAll('td')
         # remove (new), (+1), (-5)
-        results[aux[0].get_text().replace('(new)', '')] = [aux[1].get_text().split('(')[0], aux[2].get_text().split('(')[0]]
+        if id != 'weather':
+            results[aux[0].get_text().replace('(new)', '')] = [aux[1].get_text().split('(')[0], aux[2].get_text().split('(')[0]]
+        else:
+            results[aux[0].get_text().replace('(new)', '')] = aux[1].get_text().split('(')[0]
     return results
 
 
@@ -180,11 +183,9 @@ def get_dengue_report():
     # if last report exists
     if len(last_dengue) > 0:
         last_dengue_dict = parse_table(last_dengue[0], id='dengue')
-        print(last_dengue_dict)
 
     # keys = list(dengue_dict.keys())
     keys = ['locality', 'Case with onset in last 2 weeks', 'Cases since start of cluster']
-    print(keys)
     length = len(dengue_dict[keys[0]])
 
     # sort three list by first list order
@@ -201,7 +202,6 @@ def get_dengue_report():
         items.append('<tr>')
         location = None
         for k in keys:
-            print(k)
             if k == attrs[0] and int(dengue_dict[k][i]) >= DENGUE_SHORT_THRESHOLD or \
                     k == attrs[1] and int(dengue_dict[k][i]) >= DENGUE_LONG_THRESHOLD:
                 color = "red"
@@ -257,7 +257,7 @@ def get_weather_report():
         weather_dict['locality'].append(w)
         weather_dict['weather'].append(weather[w]['forecast'])
 
-    keys = list(weather_dict.keys())
+    keys = ['locality', 'weather']
     length = len(weather_dict[keys[0]])
 
     items = ['<table id="weather">', '<caption><h3>2. Weather Report</h3></caption>', '<tr>']
@@ -295,7 +295,7 @@ def retrieve_active_incident_reports():
 
     """
     script_path = os.path.dirname(os.path.abspath(__file__))
-    db_path = '/'.join(script_path.split('/')[:-1]) + '/CallCenter/database.db'
+    db_path = '/'.join(script_path.split('/')[:-1]) + '/database.db'
     print(db_path)
     conn = sqlite3.connect(db_path)
 
@@ -334,17 +334,18 @@ def get_incident_report():
     """
 
     incident_list = retrieve_active_incident_reports()
-    print(incident_list)
-
     incident_dict = {'id': [], 'report date': [], 'reporter': [],
                      "report's HP": [], 'location': [],
-                     'tyoe of assistance need': [], 'description': [],
+                     'type of assistance need': [], 'description': [],
                      'priority for severity of injuries': [],
                      'priority for impending dangers': [],
                      'priority for presence of nearyby help': [],
                      'status': []}
 
-    keys = list(incident_dict.keys())
+    keys = ['id', 'report date', 'reporter', "report's HP", 'location',
+            'type of assistance need', 'description',
+            'priority for severity of injuries', 'priority for impending dangers',
+            'priority for presence of nearyby help', 'status']
 
     for inc in incident_list:
         for i, attr in enumerate(inc[:11]):
@@ -488,7 +489,7 @@ def send_report(subject=SUBJECT):
 
 def get_trend_values():
     reports = get_latest_report(10)
-    psi_trend, dengue_trend = {}, {}
+    psi_trend, dengue_trend, weather, incident = {}, {}, '', ''
     dengue_trend["2 weeks total"] = []
     dengue_trend["overall total"] = []
     for r in reports:   
@@ -519,7 +520,15 @@ def get_trend_values():
         dengue_trend["2 weeks total"].append(sum_two_weeks)
         dengue_trend["overall total"].append(sum_overall)
 
-    return psi_trend, dengue_trend
+    # count weather
+    latest_report = get_latest_report(1)
+    dic = list(parse_table(latest_report[0], id='weather').values())
+    weather = max(dic, key=dic.count)
+
+    # count incident
+    dic_incident = parse_table(latest_report[0], id='incident').keys()
+    incident = len(dic_incident)
+    return psi_trend, dengue_trend, weather, incident
 
 
 def generate_trend_chart():
@@ -527,7 +536,7 @@ def generate_trend_chart():
     Generate chart using the latest 10 reports.
     :return: chart - a chart image name
     '''
-    psi, dengue = get_trend_values()
+    psi, dengue, _, _ = get_trend_values()
 
     start_x = 10 - len(dengue['overall total'])
     print('len', start_x)
@@ -545,7 +554,6 @@ def generate_trend_chart():
     plt.close()
 
     for key in dengue.keys():
-        print(dengue[key])
         plt.plot([start_x + i for i in range(len(dengue[key]))], dengue[key], label=key)
         plt.scatter([start_x + i for i in range(len(dengue[key]))], dengue[key])
     plt.xticks(range(len(time_ticks)), time_ticks)
@@ -564,7 +572,7 @@ def generate_time_ticks():
     current_hours = current_time.hour
     current_minutes = current_time.minute
 
-    times = [];
+    times = []
     if 0 <= current_minutes <= 9:
         current_minutes = "0" + str(current_minutes)
     times.append(str(current_hours) + ":" + str(current_minutes))
@@ -589,8 +597,8 @@ def generate_time_ticks():
     return times
 
 
-# if __name__ == '__main__':
-#     for i in range(10):
-#         send_report()
+if __name__ == '__main__':
+    # for i in range(10):
+    send_report()
 #     # get_dengue_report()
 #     # send_report()
