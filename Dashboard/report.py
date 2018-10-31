@@ -15,7 +15,7 @@ FOLDER_PATH = os.path.join(SCRIPT_PATH, 'report_history')
 
 SENDER = '809955765@qq.com'
 PASSWORD = 'uruirwekuirkbejf'
-RECEIVERS = ['yue0068@gmail.com']
+RECEIVERS = ['809955765@qq.com']
 
 SUBJECT = "Status Report @ {0}"
 TEMPLATE = '''\
@@ -320,6 +320,7 @@ def retrieve_active_incident_reports():
         report = report[:12]  # Remove information on Latitude and Longitude as they are not needed
         list_all_incident_reports.append(report)
 
+    conn.close()
     return list_all_incident_reports
 
 
@@ -391,6 +392,7 @@ def insert_db(name, timestamp, path):
     query = "INSERT INTO report (NAME, TIMESTAMP, HTML_PATH) VALUES ('{}', '{}', '{}')".format(name, timestamp, path)
     conn.execute(query)
     conn.commit()
+    conn.close()
     print('Db saved successfully!')
 
 

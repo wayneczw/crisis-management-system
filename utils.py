@@ -22,6 +22,25 @@ def login_required(f):
             return redirect(url_for('login'))
     return wrap
 
+def admin_required(f):
+    """
+    Login required decorator.
+
+    Args:
+        f: view function.
+
+    Returns:
+        if is looged in, return function, else return login page.
+    """
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'Admin' in session['role']:
+            return f(*args, **kwargs)
+        else:
+            flash('You are not allowed to access this page!')
+            return redirect(url_for('dashboard.dashboard'))
+    return wrap
+
 
 def async_(f):
     def wrapper(*args, **kwargs):

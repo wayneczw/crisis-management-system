@@ -87,6 +87,7 @@ def register_user(new_username, new_password, new_role):
             db.session.commit()
             return 1    # OK
         except Exception as e:
+            print(e)
             return 3    # exception, user already exist
 
 

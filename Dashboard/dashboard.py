@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, request, session, flash, Blueprint, send_from_directory
-from utils import login_required
+from utils import login_required, admin_required
 from Dashboard.report import send_report, parse_table, get_latest_report, get_trend_values
 
 dashboard_api = Blueprint('dashboard', __name__, template_folder='templates')
@@ -22,6 +22,7 @@ def dashboard():
 from model import *
 @dashboard_api.route('/report')
 @login_required
+@admin_required
 def report():
     """
     View function for report.
