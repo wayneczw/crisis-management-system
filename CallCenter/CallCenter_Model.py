@@ -535,67 +535,6 @@ def update_report(id_of_incident_report, caller_name, caller_mobile_number, call
     return 0
 
 
-# def update_report(id_of_incident_report, caller_name, caller_mobile_number, caller_location, type_of_assistance,
-#                   description, priority_for_severity_of_injuries, priority_for_impending_dangers,
-#                   priority_for_presence_of_nearby_help, report_status, is_first_such_incident):
-#     # assistance_required is an int: 0 = No Assistance required; 1 = Emergency Ambulance; 2 = Rescue and Evacuation; 3 = Gas Leak Control
-#     # report_status is an int: 1 = REPORTED [No assistance required]; 2 = PENDING [Waiting for Assistance but Assistance has not reached the victim yet]; 3 = CLOSED [Assistance has reached the victim already]
-
-#     __check_name(caller_name)
-#     __check_mobile_no(caller_mobile_number)
-#     __check_loc(caller_location)
-#     __check_description(description)
-
-#     _dict =  address_to_latlng(location)
-#     latitude = _dict['lat']
-#     longitude = _dict['lng']
-#     if report_status == 1 and type_of_assistance != 0:
-#         raise ValueError('Inconsistent report type and assistance type')
-
-#     if report_status != 1 and type_of_assistance == 0:
-#         raise ValueError('Inconsistent report type and assistance type')
-
-#     with app.app_context():  # Within the Application Context:
-#         db = get_db()  # call our private method to retreive the DB
-
-#         query_db(
-#                 '''
-#                 UPDATE INCIDENT_REPORT SET
-#                   name = ?,
-#                   location = ?,
-#                   priority_injuries = ?,
-#                   priority_dangers = ?,
-#                   priority_help = ?,
-#                   assistance_required = ?,
-#                   mobile_number = ?,
-#                   description = ?,
-#                   report_status = ?,
-#                   is_first_such_incident = ?,
-#                   latitude = ?,
-#                   longitude = ? 
-#                   WHERE id = ?
-#                 ''',
-#                 [
-#                     caller_name,
-#                     caller_location,
-#                     priority_for_severity_of_injuries,
-#                     priority_for_impending_dangers,
-#                     priority_for_presence_of_nearby_help,
-#                     type_of_assistance,
-#                     caller_mobile_number,
-#                     description,
-#                     report_status,
-#                     is_first_such_incident,
-#                     latitude,
-#                     longitude,
-#                     id_of_incident_report
-#                 ]
-#         )
-
-#         db.commit()  # Confirm the changes made to the DB
-
-#     return 0
-
 def retrieve_all_incident_reports():
     '''
     Retrieve all incident reports.
