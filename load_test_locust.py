@@ -9,7 +9,7 @@ To run load test:
 1) first, run the main app [get the system running first]
 
 2) in a separate terminal: ["localhost" below refers to where you are running the main app/our system]
-locust -f load_test_locust.py --host=http://localhost     
+locust -f load_test_locust.py --host=http://localhost:5000
 
 3) Then, in a separate web browser tab [will take you to the locust web interface]:
 go to http://127.0.0.1:8089/
