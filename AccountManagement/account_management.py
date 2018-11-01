@@ -122,7 +122,8 @@ def deregister_user(username):
 
 def __insert_user_to_db(name, password, role_id):
     script_path = os.path.dirname(os.path.abspath(__file__))
-    db_path = '/'.join(script_path.split('\\')[:-1]) + '/app.db'
+    db_path = '/'.join(script_path.split('/')[:-1]) + '/app.db'
+    print(db_path)
     conn = sqlite3.connect(db_path)
 
     query = "INSERT INTO user (username, password, role_id) VALUES ('{}', '{}', '{}')".format(name, password, role_id)
@@ -135,7 +136,8 @@ def __insert_user_to_db(name, password, role_id):
 
 def __delete_user_from_db(name):
     script_path = os.path.dirname(os.path.abspath(__file__))
-    db_path = '/'.join(script_path.split('\\')[:-1]) + '/app.db'
+    db_path = '/'.join(script_path.split('/')[:-1]) + '/app.db'
+    print(db_path)
     conn = sqlite3.connect(db_path)
 
     query = "SELECT * FROM user WHERE username='{}'".format(name)

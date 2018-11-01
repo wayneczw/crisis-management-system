@@ -41,9 +41,6 @@ that an incident has occurred on {0.date} {0.time}
 in the vicinity of your residential area, 
 please follow the advisory stated below on any possible 
 follow-up actions.
-        
-Incident Name: 
-{0.name}
 
 Incident Category: 
 {0.category}
