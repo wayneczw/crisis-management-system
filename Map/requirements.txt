@@ -33,5 +33,5 @@ tqdm==4.26.0
 undecorated==0.3.0
 urllib3==1.23
 utils==0.9.0
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 yarl==1.2.6
