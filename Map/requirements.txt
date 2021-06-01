@@ -31,7 +31,7 @@ s3transfer==0.1.13
 six==1.11.0
 tqdm==4.26.0
 undecorated==0.3.0
-urllib3==1.23
+urllib3==1.26.5
 utils==0.9.0
 Werkzeug==0.14.1
 yarl==1.2.6
